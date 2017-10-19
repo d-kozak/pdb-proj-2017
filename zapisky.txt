@@ -1,0 +1,13 @@
+Aplikace: Mapa statu + informace o nich
+  - polygony - staty
+  - tecka - mesto
+  - linestring - cesty/ reky
+  - kruh - velke mesto
+  - ploygon s dirou - napr. Italie
+
+Motivace:
+  - moznost vytvorit mapu cehokoli
+  - interaktivni
+  - ucebni pomucka - hranice statu v case
+  - slepa mapa
+  - obrazky mest
