@@ -1,0 +1,8 @@
+Zkusit otestovat možnosti použití Nazhornu
+ - Jan
+
+Najít vhodnout JS knihovnu pro kreslení a úpravu geometrických entit, zejména polygonù
+ - Pavol
+
+Naèrtnout specifikaci aplikace a její pøípady užití
+ - David
