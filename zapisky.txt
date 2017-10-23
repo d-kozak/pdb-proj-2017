@@ -9,5 +9,5 @@ Motivace:
   - moznost vytvorit mapu cehokoli
   - interaktivni
   - ucebni pomucka - hranice statu v case
-  - slepa mapa
+  - slepa mapa - priprava mapy, uceni se
   - obrazky mest
