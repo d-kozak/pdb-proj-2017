@@ -3,15 +3,17 @@ ALTER SESSION SET NLS_DATE_FORMAT='DD-MM-YYYY';
 DROP TABLE SpatialEntity CASCADE CONSTRAINT;
 DROP TABLE Picture;
 DROP TABLE Description;
+DROP TABLE BlindMapResult;
 
 CREATE TABLE SpatialEntity (
   id NUMBER NOT NULL,
   name VARCHAR(30) NOT NULL,
   geometry SDO_GEOMETRY NOT NULL,
-  validFrom DATE NOT NULL,
-  validTo DATE NOT NULL,
+  validFrom DATE NULL,
+  validTo DATE NULL,
   entityType VARCHAR(10) CHECK(entityType in ('country', 'river', 'place')),
 
+  CHECK(validTo >= validFrom),
   CONSTRAINT PKSpatialEntity PRIMARY KEY (id)
 );
 
@@ -19,7 +21,7 @@ CREATE TABLE Picture (
   id NUMBER NOT NULL,
   description VARCHAR(255),
   pictureType VARCHAR(10) CHECK( pictureType in ('normal', 'flag')),
-  created_at DATE,
+  createdAt DATE,
   spatialEntityId NUMBER,
   img ORDSYS.ORDIMAGE,
   img_ac ORDSYS.SI_AVERAGECOLOR,
@@ -34,12 +36,21 @@ CREATE TABLE Picture (
 CREATE TABLE Description (
   id NUMBER NOT NULL,
   description VARCHAR(255),
-  validFrom DATE NOT NULL,
-  validTo DATE NOT NULL,
+  validFrom DATE NULL,
+  validTo DATE NULL,
   spatialEntityId NUMBER,
 
+  CHECK(validTo >= validFrom),
   CONSTRAINT PKDescription PRIMARY KEY(id),
   CONSTRAINT FKDescriptionSpatialEntity FOREIGN KEY (spatialEntityId) REFERENCES SpatialEntity(id)
+);
+
+CREATE TABLE BlindMapResult (
+ id NUMBER NOT NULL,
+ person VARCHAR(30) NOT NULL,
+ points NUMBER NOT NULL,
+
+ CONSTRAINT PKBlindMapResult PRIMARY KEY (id)
 );
 
 DELETE FROM USER_SDO_GEOM_METADATA WHERE
