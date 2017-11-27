@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+<HBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="cz.vutbr.fit.pdb.component.toolbar.ToolbarPresenter" alignment="CENTER_LEFT">
+    <children>
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Elements: ">
+            <HBox.margin>
+                <Insets left="10.0"/>
+            </HBox.margin>
+        </Text>
+        <Button mnemonicParsing="false" text="Point"/>
+        <Button mnemonicParsing="false" text="Line"/>
+        <Button mnemonicParsing="false" text="Circle"/>
+        <Button mnemonicParsing="false" text="Polygon"/>
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mode:">
+            <HBox.margin>
+                <Insets left="10.0"/>
+            </HBox.margin>
+        </Text>
+        <Button mnemonicParsing="false" text="View"/>
+        <Button mnemonicParsing="false" text="Edit"/>
+        <Button mnemonicParsing="false" text="BlindMap"/>
+    </children>
+</HBox>

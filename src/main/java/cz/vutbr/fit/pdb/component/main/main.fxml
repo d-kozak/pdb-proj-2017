@@ -6,10 +6,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.WebView?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.vutbr.fit.pdb.component.main.MainPresenter"
-            maxHeight="-Infinity"
-            maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
-            prefWidth="800.0" xmlns="http://javafx.com/javafx/8">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"
+            xmlns="http://javafx.com/javafx/8" fx:controller="cz.vutbr.fit.pdb.component.main.MainPresenter">
     <right>
         <Accordion prefHeight="530.0" prefWidth="272.0" BorderPane.alignment="CENTER">
             <panes>
@@ -84,67 +83,6 @@
             </panes>
         </Accordion>
     </right>
-    <top>
-        <VBox>
-            <children>
-                <MenuBar BorderPane.alignment="CENTER">
-                    <menus>
-                        <Menu mnemonicParsing="false" text="File">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="New"/>
-                                <MenuItem mnemonicParsing="false" text="Load"/>
-                                <MenuItem mnemonicParsing="false" text="Save"/>
-                                <MenuItem mnemonicParsing="false" text="Settings"/>
-                                <MenuItem mnemonicParsing="false" text="Close"/>
-                            </items>
-                        </Menu>
-                        <Menu mnemonicParsing="false" text="View">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Show terminal dialog"/>
-                            </items>
-                        </Menu>
-                        <Menu mnemonicParsing="false" text="Edit">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Clear all"/>
-                            </items>
-                        </Menu>
-                        <Menu mnemonicParsing="false" text="Export">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Export png"/>
-                            </items>
-                        </Menu>
-                        <Menu mnemonicParsing="false" text="Help">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Show tutorial"/>
-                                <MenuItem mnemonicParsing="false" text="About"/>
-                            </items>
-                        </Menu>
-                    </menus>
-                </MenuBar>
-                <HBox alignment="CENTER_LEFT">
-                    <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Elements: ">
-                            <HBox.margin>
-                                <Insets left="10.0"/>
-                            </HBox.margin>
-                        </Text>
-                        <Button mnemonicParsing="false" text="Point"/>
-                        <Button mnemonicParsing="false" text="Line"/>
-                        <Button mnemonicParsing="false" text="Kruh"/>
-                        <Button mnemonicParsing="false" text="Polygon"/>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mode:">
-                            <HBox.margin>
-                                <Insets left="10.0"/>
-                            </HBox.margin>
-                        </Text>
-                        <Button mnemonicParsing="false" text="View"/>
-                        <Button mnemonicParsing="false" text="Edit"/>
-                        <Button mnemonicParsing="false" text="BlindMap"/>
-                    </children>
-                </HBox>
-            </children>
-        </VBox>
-    </top>
     <center>
         <WebView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
     </center>
