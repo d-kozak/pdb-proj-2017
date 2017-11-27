@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="cz.vutbr.fit.pdb.component.bottombar.BottombarPresenter"
+>
+    <children>
+        <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+            <children>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Year:">
+                    <HBox.margin>
+                        <Insets left="5.0" right="5.0"/>
+                    </HBox.margin>
+                </Text>
+                <TextField fx:id="yearTextField"/>
+                <Slider min="-1000" value="1000" max="2000" fx:id="yearSlider" prefHeight="16.0" prefWidth="542.0">
+                    <HBox.margin>
+                        <Insets left="5.0" right="5.0"/>
+                    </HBox.margin>
+                </Slider>
+            </children>
+            <VBox.margin>
+                <Insets top="5.0"/>
+            </VBox.margin>
+        </HBox>
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Message bar  - New Interesting message">
+            <VBox.margin>
+                <Insets bottom="1.0" left="3.0" right="3.0" top="3.0"/>
+            </VBox.margin>
+        </Text>
+    </children>
+
+
+</VBox>

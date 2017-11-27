@@ -1,6 +1,8 @@
 package cz.vutbr.fit.pdb.component.main;
 
+import cz.vutbr.fit.pdb.component.bottombar.BottombarView;
 import cz.vutbr.fit.pdb.component.menubar.MenubarView;
+import cz.vutbr.fit.pdb.component.rightbar.RightbarView;
 import cz.vutbr.fit.pdb.component.toolbar.ToolbarView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -32,6 +34,12 @@ public class MainPresenter implements Initializable {
         vBox.getChildren()
             .addAll(menubarView.getView(), toolbarView.getView());
         borderPane.setTop(vBox);
+
+        val bottombarView = new BottombarView();
+        borderPane.setBottom(bottombarView.getView());
+
+        val rightbarView = new RightbarView();
+        borderPane.setRight(rightbarView.getView());
     }
 
 }
