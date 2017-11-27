@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-<Accordion xmlns:fx="http://javafx.com/fxml" prefHeight="530.0" prefWidth="272.0"
-           BorderPane.alignment="CENTER"
+<Accordion xmlns:fx="http://javafx.com/fxml/1" fx:id="accordion" prefHeight="530.0" prefWidth="272.0"
+           BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8"
            fx:controller="cz.vutbr.fit.pdb.component.rightbar.RightbarPresenter">
-
-
     <panes>
-        <TitledPane animated="false" text="Common">
+        <TitledPane fx:id="commonPane" animated="false" expanded="true" text="Common">
             <content>
                 <GridPane layoutX="-22.0" layoutY="29.0">
                     <columnConstraints>
@@ -28,9 +25,9 @@
                     <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Name" GridPane.rowIndex="1"/>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description" GridPane.rowIndex="2"/>
-                        <TextField GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                        <TextArea prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"
-                                  GridPane.rowIndex="2"/>
+                        <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <TextArea fx:id="descriptionField" prefHeight="200.0" prefWidth="200.0" scaleShape="false"
+                                  GridPane.columnIndex="1" GridPane.rowIndex="2" wrapText="true"/>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" GridPane.rowIndex="3"/>
                         <ImageView fx:id="flagView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true"
                                    preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER"
@@ -41,24 +38,28 @@
         </TitledPane>
         <TitledPane animated="false" prefHeight="480.0" prefWidth="328.0" text="Geometry">
             <content>
-                <TabPane tabClosingPolicy="UNAVAILABLE">
+                <TabPane fx:id="geometryTabPane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                        <Tab text="Point">
+                        <Tab fx:id="pointTab" text="Point">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
-                                            prefWidth="200.0"/>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
                             </content>
                         </Tab>
-                        <Tab text="Line">
+                        <Tab fx:id="lineTab" text="Line">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
-                                            prefWidth="200.0"/>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
                             </content>
                         </Tab>
-                        <Tab text="Polygon">
+
+                        <Tab fx:id="circleTab" text="Circle">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0"
-                                            prefWidth="200.0"/>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                            </content>
+                        </Tab>
+
+                        <Tab fx:id="polygonTab" text="Polygon">
+                            <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
                             </content>
                         </Tab>
                     </tabs>
@@ -70,17 +71,15 @@
                 <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                     <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Saved pictures"/>
-                        <ListView prefHeight="200.0" prefWidth="200.0">
+                        <ListView fx:id="picturesView" prefHeight="200.0" prefWidth="200.0">
                             <VBox.margin>
                                 <Insets bottom="10.0"/>
                             </VBox.margin>
                         </ListView>
-                        <Button mnemonicParsing="false" text="Load new photo"/>
+                        <Button mnemonicParsing="false" onAction="#onLoadNewPhoto" text="Load new photo"/>
                     </children>
                 </VBox>
             </content>
         </TitledPane>
     </panes>
 </Accordion>
-
-

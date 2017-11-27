@@ -215,6 +215,7 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
+                    <include>**/*.svg</include>
                     <include>**/*.xml</include>
                     <include>**/*.css</include>
                     <include>**/*.properties</include>
