@@ -2,7 +2,9 @@ package cz.vutbr.fit.pdb.service;
 
 import cz.vutbr.fit.pdb.entity.Entity;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
+import lombok.val;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,7 +31,14 @@ public class DummyData {
         entity.setName("Brno");
         entity.setDescription("The best town in the Czech Republic");
         try {
-            entity.setFlag(new Image(new FileInputStream("src/resources/brno.jpg")));
+            val image = new Image(new FileInputStream("src/resources/brno.jpg"));
+            entity.setFlag(image);
+
+            ObservableList<Image> images = FXCollections.observableArrayList();
+            for (int i = 0; i < 10; i++) {
+                images.add(image);
+            }
+            entity.setImages(images);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

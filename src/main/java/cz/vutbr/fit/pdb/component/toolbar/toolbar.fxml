@@ -13,17 +13,17 @@
                 <Insets left="10.0"/>
             </HBox.margin>
         </Text>
-        <Button mnemonicParsing="false" text="Point"/>
-        <Button mnemonicParsing="false" text="Line"/>
-        <Button mnemonicParsing="false" text="Circle"/>
-        <Button mnemonicParsing="false" text="Polygon"/>
+        <Button onAction="#onPoint" mnemonicParsing="false" text="Point"/>
+        <Button onAction="#onLine" mnemonicParsing="false" text="Line"/>
+        <Button onAction="#onCircle" mnemonicParsing="false" text="Circle"/>
+        <Button onAction="#onPolygon" mnemonicParsing="false" text="Polygon"/>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mode:">
             <HBox.margin>
                 <Insets left="10.0"/>
             </HBox.margin>
         </Text>
-        <Button mnemonicParsing="false" text="View"/>
-        <Button mnemonicParsing="false" text="Edit"/>
-        <Button mnemonicParsing="false" text="BlindMap"/>
+        <Button onAction="#onModeView" mnemonicParsing="false" text="View"/>
+        <Button onAction="#onModeEdit" mnemonicParsing="false" text="Edit"/>
+        <Button onAction="#onModeBlindMap" mnemonicParsing="false" text="BlindMap"/>
     </children>
 </HBox>

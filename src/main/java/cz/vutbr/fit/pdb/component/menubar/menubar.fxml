@@ -11,32 +11,29 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="New"/>
-                        <MenuItem mnemonicParsing="false" text="Load"/>
-                        <MenuItem mnemonicParsing="false" text="Save"/>
-                        <MenuItem mnemonicParsing="false" text="Settings"/>
-                        <MenuItem mnemonicParsing="false" text="Close"/>
+                        <MenuItem onAction="#onSettings" mnemonicParsing="false" text="Settings"/>
+                        <MenuItem onAction="#onClose" mnemonicParsing="false" text="Close"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="View">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Show terminal dialog"/>
+                        <MenuItem onAction="#onShowTerminal" mnemonicParsing="false" text="Show terminal dialog"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Clear all"/>
+                        <MenuItem onAction="#onClearAll" mnemonicParsing="false" text="Clear all"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Export">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Export png"/>
+                        <MenuItem onAction="#onExportPng" mnemonicParsing="false" text="Export png"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Show tutorial"/>
-                        <MenuItem mnemonicParsing="false" text="About"/>
+                        <MenuItem onAction="#onShowTutorial" mnemonicParsing="false" text="Show tutorial"/>
+                        <MenuItem onAction="#onShowAbout" mnemonicParsing="false" text="About"/>
                     </items>
                 </Menu>
             </menus>
