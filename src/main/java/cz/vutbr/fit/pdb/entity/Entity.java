@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class Entity {
+    public static final Entity NULL = new Entity("", "", null, FXCollections.observableArrayList(), null);
     private StringProperty name = new SimpleStringProperty();
     private StringProperty description = new SimpleStringProperty();
     private ObjectProperty<Image> flag = new SimpleObjectProperty<>();

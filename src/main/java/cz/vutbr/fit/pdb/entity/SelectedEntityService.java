@@ -1,32 +1,49 @@
 package cz.vutbr.fit.pdb.entity;
 
+import cz.vutbr.fit.pdb.configuration.Configuration;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.time.LocalDate;
 
 public class SelectedEntityService {
-    private ObjectProperty<Entity> objectProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<Entity> entityProperty = new SimpleObjectProperty<>();
 
     @Inject
     private EntityService entityService;
 
+    @Inject
+    private Configuration configuration;
+
     @PostConstruct
     public void init() {
-        objectProperty.setValue(entityService.getEntities()
+        entityProperty.setValue(entityService.getEntities()
                                              .get(0));
+
+        configuration.yearProperty()
+                     .addListener((observable, oldValue, newValue) -> {
+                         Entity entity = entityProperty.get();
+                         if (entity != null) {
+                             LocalDate from = entity.getFrom();
+                             LocalDate to = entity.getTo();
+                             if (newValue.intValue() < from.getYear() || newValue.intValue() > to.getYear()) {
+                                 entityProperty.set(null);
+                             }
+                         }
+                     });
     }
 
-    public Entity getObjectProperty() {
-        return objectProperty.get();
+    public Entity getEntityProperty() {
+        return entityProperty.get();
     }
 
-    public void setObjectProperty(Entity objectProperty) {
-        this.objectProperty.set(objectProperty);
+    public void setEntityProperty(Entity entityProperty) {
+        this.entityProperty.set(entityProperty);
     }
 
-    public ObjectProperty<Entity> objectPropertyProperty() {
-        return objectProperty;
+    public ObjectProperty<Entity> entityPropertyProperty() {
+        return entityProperty;
     }
 }

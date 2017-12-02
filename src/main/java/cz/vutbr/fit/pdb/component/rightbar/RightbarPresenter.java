@@ -7,6 +7,7 @@ import cz.vutbr.fit.pdb.entity.SelectedEntityService;
 import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
 import cz.vutbr.fit.pdb.utils.StringNumConverter;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -91,14 +92,41 @@ public class RightbarPresenter implements Initializable {
     @Inject
     private SelectedEntityService selectedEntityService;
 
+    private Entity selectedEntity;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        initViewForEntity(selectedEntityService.getObjectProperty());
+        this.selectedEntity = selectedEntityService.getEntityProperty();
+        initViewForEntity(selectedEntity);
+        selectedEntityService.entityPropertyProperty()
+                             .addListener((observable, oldValue, newValue) -> {
+                                 if (newValue != null) {
+                                     initViewForEntity(newValue);
+                                 } else {
+                                     clearView();
+                                 }
+                             });
         commonPane.setExpanded(true);
         accordion.setExpandedPane(commonPane);
     }
 
+    private void clearView() {
+        unbindAll();
+        nameField.textProperty()
+                 .setValue("");
+        descriptionField.textProperty()
+                        .setValue("");
+        flagView.imageProperty()
+                .setValue(null);
+        fromDate.getEditor()
+                .clear();
+        toDate.getEditor()
+              .clear();
+        selectedEntity = null;
+    }
+
     private void initViewForEntity(Entity entity) {
+        unbindAll();
         nameField.textProperty()
                  .bindBidirectional(entity.nameProperty());
         descriptionField.textProperty()
@@ -129,6 +157,24 @@ public class RightbarPresenter implements Initializable {
             default:
                 throw new RuntimeException();
         }
+    }
+
+    private void unbindAll() {
+        if (selectedEntity == null)
+            return;
+        nameField.textProperty()
+                 .unbindBidirectional(selectedEntity.nameProperty());
+        descriptionField.textProperty()
+                        .unbindBidirectional(selectedEntity.descriptionProperty());
+        flagView.imageProperty()
+                .unbindBidirectional(selectedEntity.flagProperty());
+        picturesView.setItems(FXCollections.observableArrayList());
+        fromDate.valueProperty()
+                .unbindBidirectional(selectedEntity.fromProperty());
+        toDate.valueProperty()
+              .unbindBidirectional(selectedEntity.toProperty());
+
+        // TODO finish unbiding for geometrical entities
     }
 
     private void initForPolygon(EntityGeometry geometry) {
@@ -168,7 +214,7 @@ public class RightbarPresenter implements Initializable {
         if (file != null) {
             val image = new Image(file.toURI()
                                       .toString());
-            selectedEntityService.getObjectProperty()
+            selectedEntityService.getEntityProperty()
                                  .getImages()
                                  .add(image);
 
