@@ -1,4 +1,4 @@
-package cz.vutbr.fit.pdb.service;
+package cz.vutbr.fit.pdb.utils;
 
 import cz.vutbr.fit.pdb.entity.Entity;
 import javafx.collections.FXCollections;
@@ -34,7 +34,7 @@ public class DummyData {
             entity.setFlag(image);
 
             ObservableList<Image> images = FXCollections.observableArrayList();
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 3; i++) {
                 images.add(image);
             }
             entity.setImages(images);

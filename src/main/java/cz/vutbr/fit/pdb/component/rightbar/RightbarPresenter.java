@@ -2,8 +2,8 @@ package cz.vutbr.fit.pdb.component.rightbar;
 
 import cz.vutbr.fit.pdb.component.rightbar.listViewItem.ListViewCell;
 import cz.vutbr.fit.pdb.entity.Entity;
-import cz.vutbr.fit.pdb.service.EntityService;
-import cz.vutbr.fit.pdb.service.SelectedEntityService;
+import cz.vutbr.fit.pdb.entity.EntityService;
+import cz.vutbr.fit.pdb.entity.SelectedEntityService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

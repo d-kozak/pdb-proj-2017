@@ -1,6 +1,5 @@
-package cz.vutbr.fit.pdb.service;
+package cz.vutbr.fit.pdb.entity;
 
-import cz.vutbr.fit.pdb.entity.Entity;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 

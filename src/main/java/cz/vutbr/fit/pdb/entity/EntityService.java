@@ -1,6 +1,6 @@
-package cz.vutbr.fit.pdb.service;
+package cz.vutbr.fit.pdb.entity;
 
-import cz.vutbr.fit.pdb.entity.Entity;
+import cz.vutbr.fit.pdb.utils.DummyData;
 import javafx.collections.ObservableList;
 
 public class EntityService {
