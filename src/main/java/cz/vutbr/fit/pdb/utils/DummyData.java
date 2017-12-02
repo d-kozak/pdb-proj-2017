@@ -10,6 +10,7 @@ import lombok.val;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
 
 public class DummyData {
 
@@ -44,6 +45,9 @@ public class DummyData {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+
+        entity.setFrom(LocalDate.of(42, 11, 1));
+        entity.setTo(LocalDate.of(2000, 1, 1));
 
         return entity;
     }

@@ -34,6 +34,12 @@ public class RightbarPresenter implements Initializable {
     private TextField nameField;
     @FXML
     private ImageView flagView;
+
+    @FXML
+    private DatePicker fromDate;
+    @FXML
+    private DatePicker toDate;
+
     @FXML
     private TabPane geometryTabPane;
 
@@ -101,6 +107,11 @@ public class RightbarPresenter implements Initializable {
                 .setValue(entity.getFlag());
         picturesView.setItems(entity.getImages());
         picturesView.setCellFactory(param -> new ListViewCell());
+        fromDate.valueProperty()
+                .bindBidirectional(entity.fromProperty());
+        toDate.valueProperty()
+              .bindBidirectional(entity.toProperty());
+
         switch (entity.getGeometryType()) {
             case POINT:
                 initForPoint(entity.getGeometry());

@@ -10,7 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public class Entity {
@@ -18,8 +18,8 @@ public class Entity {
     private StringProperty description = new SimpleStringProperty();
     private ObjectProperty<Image> flag = new SimpleObjectProperty<>();
     private ObservableList<Image> images = FXCollections.observableArrayList();
-    private ObjectProperty<Date> from = new SimpleObjectProperty<>();
-    private ObjectProperty<Date> to = new SimpleObjectProperty<>();
+    private ObjectProperty<LocalDate> from = new SimpleObjectProperty<>();
+    private ObjectProperty<LocalDate> to = new SimpleObjectProperty<>();
 
     private EntityGeometry geometry;
 
@@ -34,7 +34,7 @@ public class Entity {
         this.geometry = geometry;
     }
 
-    public Entity(String name, String description, Image flag, List<Image> images, EntityGeometry geometry, Date from, Date to) {
+    public Entity(String name, String description, Image flag, List<Image> images, EntityGeometry geometry, LocalDate from, LocalDate to) {
         this.name.setValue(name);
         this.description.setValue(description);
         this.flag.setValue(flag);
@@ -48,36 +48,36 @@ public class Entity {
         return name.get();
     }
 
-    public void setName(String name) {
-        this.name.set(name);
-    }
-
     public StringProperty nameProperty() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
     }
 
     public String getDescription() {
         return description.get();
     }
 
-    public void setDescription(String description) {
-        this.description.set(description);
-    }
-
     public StringProperty descriptionProperty() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description.set(description);
     }
 
     public Image getFlag() {
         return flag.get();
     }
 
-    public void setFlag(Image flag) {
-        this.flag.set(flag);
-    }
-
     public ObjectProperty<Image> flagProperty() {
         return flag;
+    }
+
+    public void setFlag(Image flag) {
+        this.flag.set(flag);
     }
 
     public ObservableList<Image> getImages() {
@@ -88,27 +88,27 @@ public class Entity {
         this.images = images;
     }
 
-    public Date getFrom() {
+    public LocalDate getFrom() {
         return from.get();
     }
 
-    public void setFrom(Date from) {
+    public void setFrom(LocalDate from) {
         this.from.set(from);
     }
 
-    public ObjectProperty<Date> fromProperty() {
+    public ObjectProperty<LocalDate> fromProperty() {
         return from;
     }
 
-    public Date getTo() {
+    public LocalDate getTo() {
         return to.get();
     }
 
-    public void setTo(Date to) {
+    public void setTo(LocalDate to) {
         this.to.set(to);
     }
 
-    public ObjectProperty<Date> toProperty() {
+    public ObjectProperty<LocalDate> toProperty() {
         return to;
     }
 
