@@ -1,8 +1,7 @@
 package cz.vutbr.fit.pdb.service;
 
 import cz.vutbr.fit.pdb.entity.Entity;
-
-import java.util.List;
+import javafx.collections.ObservableList;
 
 public class EntityService {
 
@@ -10,7 +9,7 @@ public class EntityService {
         DummyData.addEntity(entity);
     }
 
-    public List<Entity> getEntities() {
+    public ObservableList<Entity> getEntities() {
         return DummyData.getEntities();
     }
 }

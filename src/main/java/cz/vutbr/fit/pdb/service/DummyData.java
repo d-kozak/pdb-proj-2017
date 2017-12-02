@@ -8,11 +8,10 @@ import lombok.val;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.List;
 
 public class DummyData {
 
-    private static List<Entity> entities = FXCollections.observableArrayList();
+    private static ObservableList<Entity> entities = FXCollections.observableArrayList();
 
     static {
         entities.add(loadDummyEntity());
@@ -22,7 +21,7 @@ public class DummyData {
         entities.add(entity);
     }
 
-    public static List<Entity> getEntities() {
+    public static ObservableList<Entity> getEntities() {
         return entities;
     }
 
