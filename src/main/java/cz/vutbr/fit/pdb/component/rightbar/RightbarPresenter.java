@@ -134,7 +134,10 @@ public class RightbarPresenter implements Initializable {
         flagView.imageProperty()
                 .setValue(entity.getFlag());
         picturesView.setItems(entity.getImages());
-        picturesView.setCellFactory(param -> new ListViewCell(entity.getImages()));
+        picturesView.setCellFactory(param -> new ListViewCell(entity.getImages(), image -> {
+            flagView.imageProperty()
+                    .setValue(image);
+        }));
         fromDate.valueProperty()
                 .bindBidirectional(entity.fromProperty());
         toDate.valueProperty()

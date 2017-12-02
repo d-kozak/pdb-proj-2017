@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class ListItem {
     @FXML
@@ -18,7 +19,7 @@ public class ListItem {
     @FXML
     private HBox hbox;
 
-    public ListItem(Image image, ObservableList<Image> allImages) {
+    public ListItem(Image image, ObservableList<Image> allImages, Consumer<Image> setAsFlag) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("listitem.fxml"));
         fxmlLoader.setController(this);
         try {
@@ -29,12 +30,16 @@ public class ListItem {
         imageView.imageProperty()
                  .setValue(image);
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem deletePicture = new MenuItem("Delete picture");
-        deletePicture.setOnAction(event -> {
+        MenuItem deletePictureMenuItem = new MenuItem("Delete picture");
+        deletePictureMenuItem.setOnAction(event -> {
             allImages.remove(image);
         });
+        MenuItem setAsFlagMenuItem = new MenuItem("Set picture as flag");
+        setAsFlagMenuItem.setOnAction(event -> {
+            setAsFlag.accept(image);
+        });
         contextMenu.getItems()
-                   .add(deletePicture);
+                   .addAll(setAsFlagMenuItem, deletePictureMenuItem);
         hbox.setOnContextMenuRequested(event -> {
             contextMenu.show(getHbox(), event.getSceneX(), event.getSceneY());
         });
