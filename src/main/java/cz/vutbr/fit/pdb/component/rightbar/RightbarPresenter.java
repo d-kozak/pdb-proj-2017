@@ -4,6 +4,9 @@ import cz.vutbr.fit.pdb.component.rightbar.listViewItem.ListViewCell;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
+import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
+import cz.vutbr.fit.pdb.entity.geometry.Point;
+import cz.vutbr.fit.pdb.utils.StringNumConverter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -46,6 +49,33 @@ public class RightbarPresenter implements Initializable {
     @FXML
     private ListView<Image> picturesView;
 
+    @FXML
+    private TextField xField;
+
+    @FXML
+    private TextField yField;
+
+    @FXML
+    private TextField startXField;
+
+    @FXML
+    private TextField startYField;
+
+    @FXML
+    private TextField endXField;
+
+    @FXML
+    private TextField endYField;
+
+    @FXML
+    private TextField centerXField;
+
+    @FXML
+    private TextField centerYField;
+
+    @FXML
+    private TextField radiusField;
+
     @Inject
     private EntityService entityService;
 
@@ -71,6 +101,52 @@ public class RightbarPresenter implements Initializable {
                 .setValue(entity.getFlag());
         picturesView.setItems(entity.getImages());
         picturesView.setCellFactory(param -> new ListViewCell());
+        switch (entity.getGeometryType()) {
+            case POINT:
+                initForPoint(entity.getGeometry());
+                break;
+            case LINE:
+                initForLine(entity.getGeometry());
+                break;
+            case CIRCLE:
+                initForCircle(entity.getGeometry());
+                break;
+            case POLYGON:
+                initForPolygon(entity.getGeometry());
+                break;
+
+            default:
+                throw new RuntimeException();
+        }
+    }
+
+    private void initForPolygon(EntityGeometry geometry) {
+        selectGeometryTab(polygonTab);
+        throw new RuntimeException("Not impl yet");
+    }
+
+    private void initForCircle(EntityGeometry geometry) {
+        selectGeometryTab(circleTab);
+    }
+
+    private void initForLine(EntityGeometry geometry) {
+        selectGeometryTab(lineTab);
+    }
+
+    private void initForPoint(EntityGeometry geometry) {
+        selectGeometryTab(pointTab);
+        Point description = (Point) geometry.getDescription();
+        xField.textProperty()
+              .bindBidirectional(description.xProperty(), new StringNumConverter());
+        yField.textProperty()
+              .bindBidirectional(description.yProperty(), new StringNumConverter());
+    }
+
+    private void selectGeometryTab(Tab tab) {
+        geometryTabPane.getTabs()
+                       .clear();
+        geometryTabPane.getTabs()
+                       .add(tab);
     }
 
     @FXML

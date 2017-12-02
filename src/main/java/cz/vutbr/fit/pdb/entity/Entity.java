@@ -1,5 +1,7 @@
 package cz.vutbr.fit.pdb.entity;
 
+import cz.vutbr.fit.pdb.configuration.DrawingMode;
+import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,21 +21,25 @@ public class Entity {
     private ObjectProperty<Date> from = new SimpleObjectProperty<>();
     private ObjectProperty<Date> to = new SimpleObjectProperty<>();
 
+    private EntityGeometry geometry;
+
     public Entity() {
     }
 
-    public Entity(String name, String description, Image flag, List<Image> images) {
+    public Entity(String name, String description, Image flag, List<Image> images, EntityGeometry geometry) {
         this.name.setValue(name);
         this.description.setValue(description);
         this.flag.setValue(flag);
         this.images = FXCollections.observableArrayList(images);
+        this.geometry = geometry;
     }
 
-    public Entity(String name, String description, Image flag, List<Image> images, Date from, Date to) {
+    public Entity(String name, String description, Image flag, List<Image> images, EntityGeometry geometry, Date from, Date to) {
         this.name.setValue(name);
         this.description.setValue(description);
         this.flag.setValue(flag);
         this.images = FXCollections.observableArrayList(images);
+        this.geometry = geometry;
         this.from.setValue(from);
         this.to.setValue(to);
     }
@@ -104,5 +110,17 @@ public class Entity {
 
     public ObjectProperty<Date> toProperty() {
         return to;
+    }
+
+    public EntityGeometry getGeometry() {
+        return geometry;
+    }
+
+    public void setGeometry(EntityGeometry geometry) {
+        this.geometry = geometry;
+    }
+
+    public DrawingMode getGeometryType() {
+        return geometry.getType();
     }
 }

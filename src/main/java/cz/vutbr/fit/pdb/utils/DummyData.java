@@ -1,6 +1,8 @@
 package cz.vutbr.fit.pdb.utils;
 
 import cz.vutbr.fit.pdb.entity.Entity;
+import cz.vutbr.fit.pdb.entity.geometry.Point;
+import cz.vutbr.fit.pdb.entity.geometry.PointGeometry;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
@@ -29,6 +31,7 @@ public class DummyData {
         Entity entity = new Entity();
         entity.setName("Brno");
         entity.setDescription("The best town in the Czech Republic");
+        entity.setGeometry(new PointGeometry(new Point(42, 42)));
         try {
             val image = new Image(new FileInputStream("src/resources/brno.jpg"));
             entity.setFlag(image);

@@ -7,8 +7,8 @@ import javafx.beans.property.SimpleObjectProperty;
 
 public class Configuration {
     private IntegerProperty year = new SimpleIntegerProperty();
-    private ObjectProperty<DrawingMode> drawMode = new SimpleObjectProperty<>();
-    private ObjectProperty<AppMode> appMode = new SimpleObjectProperty<>();
+    private ObjectProperty<DrawingMode> drawMode = new SimpleObjectProperty<>(DrawingMode.POINT);
+    private ObjectProperty<AppMode> appMode = new SimpleObjectProperty<>(AppMode.EDIT);
 
     public DrawingMode getDrawMode() {
         return drawMode.get();
