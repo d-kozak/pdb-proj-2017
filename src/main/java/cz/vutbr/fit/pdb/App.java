@@ -27,7 +27,9 @@ public class App extends Application {
         val view = new MainView();
         val scene = new Scene(view.getView());
         initAfterBurner(mainStage);
+        mainStage.setTitle("MapMaker");
         mainStage.setScene(scene);
+        mainStage.setMaximized(true);
         mainStage.show();
     }
 
