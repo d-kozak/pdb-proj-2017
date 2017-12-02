@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.component.rightbar;
 
+import cz.vutbr.fit.pdb.component.rightbar.listViewItem.ListViewCell;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.service.EntityService;
 import cz.vutbr.fit.pdb.service.SelectedEntityService;
@@ -7,9 +8,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import lombok.val;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -38,10 +44,13 @@ public class RightbarPresenter implements Initializable {
     private Tab polygonTab;
 
     @FXML
-    private ListView picturesView;
+    private ListView<Image> picturesView;
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private Stage mainStage;
 
     @Inject
     private SelectedEntityService selectedEntityService;
@@ -61,10 +70,21 @@ public class RightbarPresenter implements Initializable {
         flagView.imageProperty()
                 .setValue(entity.getFlag());
         picturesView.setItems(entity.getImages());
+        picturesView.setCellFactory(param -> new ListViewCell());
     }
 
     @FXML
     private void onLoadNewPhoto(ActionEvent event) {
+        val fileChooser = new FileChooser();
+        fileChooser.setTitle("Select new picture");
+        File file = fileChooser.showOpenDialog(mainStage);
+        if (file != null) {
+            val image = new Image(file.toURI()
+                                      .toString());
+            selectedEntityService.getObjectProperty()
+                                 .getImages()
+                                 .add(image);
 
+        }
     }
 }

@@ -1,6 +1,6 @@
 package cz.vutbr.fit.pdb.component.bottombar;
 
-import cz.vutbr.fit.pdb.service.YearService;
+import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.utils.StringNumConverter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,7 +22,7 @@ public class BottombarPresenter implements Initializable {
     private TextField yearTextField;
 
     @Inject
-    private YearService yearService;
+    private Configuration configuration;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -35,7 +35,7 @@ public class BottombarPresenter implements Initializable {
                      .bindBidirectional(yearSlider.valueProperty(), new StringNumConverter());
 
 
-        yearService.yearProperty()
-                   .bindBidirectional(yearSlider.valueProperty());
+        configuration.yearProperty()
+                     .bindBidirectional(yearSlider.valueProperty());
     }
 }

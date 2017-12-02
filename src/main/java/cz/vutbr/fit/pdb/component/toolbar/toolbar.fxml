@@ -13,10 +13,13 @@
                 <Insets left="10.0"/>
             </HBox.margin>
         </Text>
-        <Button onAction="#onPoint" mnemonicParsing="false" text="Point"/>
-        <Button onAction="#onLine" mnemonicParsing="false" text="Line"/>
-        <Button onAction="#onCircle" mnemonicParsing="false" text="Circle"/>
-        <Button onAction="#onPolygon" mnemonicParsing="false" text="Polygon"/>
+
+        <HBox fx:id="drawingModeButtons">
+            <Button fx:id="pointBtn" onAction="#onPoint" mnemonicParsing="false" text="Point"/>
+            <Button fx:id="lineBtn" onAction="#onLine" mnemonicParsing="false" text="Line"/>
+            <Button fx:id="circleBtn" onAction="#onCircle" mnemonicParsing="false" text="Circle"/>
+            <Button fx:id="polygonBtn" onAction="#onPolygon" mnemonicParsing="false" text="Polygon"/>
+        </HBox>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mode:">
             <HBox.margin>
                 <Insets left="10.0"/>
