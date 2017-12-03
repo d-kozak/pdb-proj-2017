@@ -1,11 +1,18 @@
 package cz.vutbr.fit.pdb.component.menubar;
 
 import cz.vutbr.fit.pdb.DBConnection;
+import cz.vutbr.fit.pdb.entity.EntityService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+import javax.inject.Inject;
+
 public class MenubarPresenter {
+
+    @Inject
+    private EntityService entityService;
+
     @FXML
     private void onInitDB(ActionEvent event) {
         DBConnection dbConn = DBConnection.create();
@@ -52,5 +59,10 @@ public class MenubarPresenter {
     @FXML
     private void onShowAbout(ActionEvent event) {
 
+    }
+
+    @FXML
+    private void onLoadEntities(ActionEvent event) {
+        entityService.init();
     }
 }

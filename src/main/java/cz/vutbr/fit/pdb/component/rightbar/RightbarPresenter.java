@@ -109,7 +109,8 @@ public class RightbarPresenter implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.selectedEntity = selectedEntityService.getEntityProperty();
-        initViewForEntity(selectedEntity);
+        if (selectedEntity != null)
+            initViewForEntity(selectedEntity);
         selectedEntityService.entityPropertyProperty()
                              .addListener((observable, oldValue, newValue) -> {
                                  if (newValue != null) {

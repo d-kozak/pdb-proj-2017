@@ -51,7 +51,13 @@ public class MapPresenter implements Initializable, MapRenderer {
 
         this.painter = new Painter(canvas.getGraphicsContext2D(), entityService, configuration);
         this.canvas.setOnMouseClicked(this::onMouseClicked);
-        this.painter.paintAll(entityService.getEntities());
+
+        this.entityService.initDataLoadedProperty()
+                          .addListener((observable, oldValue, newValue) -> {
+                              if (newValue) {
+                                  this.painter.paintAll(entityService.getEntities());
+                              }
+                          });
 
         configuration.setMapRenderer(this);
 
