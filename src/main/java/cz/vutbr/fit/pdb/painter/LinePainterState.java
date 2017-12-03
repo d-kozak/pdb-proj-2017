@@ -9,12 +9,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lombok.extern.java.Log;
 
-import static java.lang.String.format;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log
 public class LinePainterState extends AbstractPainterState {
 
-    private Point start;
+    private List<Point> points = new ArrayList<>();
 
 
     public LinePainterState(GraphicsContext graphics, EntityService entityService, Configuration configuration) {
@@ -22,30 +23,36 @@ public class LinePainterState extends AbstractPainterState {
     }
 
     public static void drawLine(GraphicsContext graphics, Entity entity) {
-        graphics.setFill(entity.getColor());
-        graphics.setStroke(entity.getColor());
-        Point[] description = (Point[]) entity.getGeometry()
-                                              .getDescription();
-        graphics.strokeLine(description[0].getX(), description[0].getY(), description[1].getX(), description[1].getY());
+        drawLine(graphics, entity.getColor(), ((List<Point>) entity.getGeometry()
+                                                                   .getDescription()));
+    }
+
+    private static void drawLine(GraphicsContext graphics, Color drawingColor, List<Point> points) {
+        graphics.setFill(drawingColor);
+        graphics.setStroke(drawingColor);
+        for (int i = 1; i < points.size(); i++) {
+            Point start = points.get(i - 1);
+            Point end = points.get(i);
+            graphics.strokeLine(start.getX(), start.getY(), end.getX(), end.getY());
+        }
     }
 
     @Override
     public void clicked(double x, double y) {
-        if (start == null) {
-            log.info(format("Start the line at [%s,%s]", x, y));
-            start = new Point(x, y);
-        } else {
-            log.info(format("Drawing line from [%f,%f] to [%f,%f]", start.getX(), start.getY(), x, y));
-            Color drawingColor = getConfiguration().getDrawingColor();
-            getGraphics().setFill(drawingColor);
-            getGraphics().setStroke(drawingColor);
-            getGraphics().strokeLine(start.getX(), start.getY(), x, y);
-            Point end = new Point(x, y);
-            Entity entity = new Entity();
-            entity.setColor(drawingColor);
-            entity.setGeometry(new LineGeometry(start, end));
-            getEntityService().addEntity(entity);
-            start = null;
+        points.add(new Point(x, y));
+    }
+
+    @Override
+    public void drawingFinished() {
+        if (points.size() <= 1) {
+            log.warning("Cannot draw a line consisting of a single point or less...");
+            return;
         }
+
+        Entity entity = new Entity();
+        entity.setGeometry(new LineGeometry(points));
+        drawLine(getGraphics(), getConfiguration().getDrawingColor(), points);
+        getEntityService().addEntity(entity);
+        points.clear();
     }
 }

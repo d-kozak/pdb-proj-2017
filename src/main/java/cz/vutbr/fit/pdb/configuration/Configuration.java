@@ -1,9 +1,6 @@
 package cz.vutbr.fit.pdb.configuration;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
@@ -19,6 +16,8 @@ public class Configuration {
     private ObjectProperty<AppMode> appMode = new SimpleObjectProperty<>(AppMode.EDIT);
 
     private ObjectProperty<Color> drawingColor = new SimpleObjectProperty<>(Color.color(0, 0, 0));
+
+    private BooleanProperty drawingFinished = new SimpleBooleanProperty(false);
 
     public DrawingMode getDrawMode() {
         return drawMode.get();
@@ -66,5 +65,17 @@ public class Configuration {
 
     public ObjectProperty<Color> drawingColorProperty() {
         return drawingColor;
+    }
+
+    public boolean isDrawingFinished() {
+        return drawingFinished.get();
+    }
+
+    public void setDrawingFinished(boolean drawingFinished) {
+        this.drawingFinished.set(drawingFinished);
+    }
+
+    public BooleanProperty drawingFinishedProperty() {
+        return drawingFinished;
     }
 }

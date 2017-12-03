@@ -43,4 +43,9 @@ public class CirclePainterState extends AbstractPainterState {
             center = null;
         }
     }
+
+    @Override
+    public void drawingFinished() {
+        // nothing to do
+    }
 }

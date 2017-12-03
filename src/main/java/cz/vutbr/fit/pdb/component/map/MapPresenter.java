@@ -32,6 +32,14 @@ public class MapPresenter implements Initializable {
         this.painter = new Painter(canvas.getGraphicsContext2D(), entityService, configuration);
         this.canvas.setOnMouseClicked(this::onMouseClicked);
         this.painter.paintAll(entityService.getEntities());
+
+        configuration.drawingFinishedProperty()
+                     .addListener((observable, oldValue, drawingFinished) -> {
+                         if (drawingFinished) {
+                             painter.drawingFinished();
+                             configuration.setDrawingFinished(false);
+                         }
+                     });
     }
 
     private void onMouseClicked(MouseEvent mouseEvent) {

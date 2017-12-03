@@ -41,4 +41,9 @@ public class PointPainterState extends AbstractPainterState {
         entity.setColor(((Color) getGraphics().getFill()));
         getEntityService().addEntity(entity);
     }
+
+    @Override
+    public void drawingFinished() {
+        // nothing to do
+    }
 }

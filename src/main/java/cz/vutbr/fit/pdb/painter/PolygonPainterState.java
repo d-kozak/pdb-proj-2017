@@ -20,4 +20,9 @@ public class PolygonPainterState extends AbstractPainterState {
     public static void drawPolygon(GraphicsContext graphics, Entity entity) {
 
     }
+
+    @Override
+    public void drawingFinished() {
+
+    }
 }

@@ -2,19 +2,20 @@ package cz.vutbr.fit.pdb.entity.geometry;
 
 import cz.vutbr.fit.pdb.configuration.DrawingMode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LineGeometry implements EntityGeometry {
 
-    private Point start;
-    private Point end;
+    private List<Point> points;
 
-    public LineGeometry(Point start, Point end) {
-        this.start = start;
-        this.end = end;
+    public LineGeometry(List<Point> points) {
+        this.points = new ArrayList<>(points);
     }
 
     @Override
     public boolean containsPoint(double x, double y) {
-        return false;
+        throw new RuntimeException("Not impl yet");
     }
 
     @Override
@@ -24,6 +25,6 @@ public class LineGeometry implements EntityGeometry {
 
     @Override
     public Object getDescription() {
-        return new Point[]{start, end};
+        return points;
     }
 }

@@ -70,4 +70,8 @@ public class Painter {
     public void clicked(double x, double y) {
         this.painterState.clicked(x, y);
     }
+
+    public void drawingFinished() {
+        painterState.drawingFinished();
+    }
 }

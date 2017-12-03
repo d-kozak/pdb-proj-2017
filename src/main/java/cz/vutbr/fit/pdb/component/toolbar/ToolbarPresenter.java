@@ -3,9 +3,14 @@ package cz.vutbr.fit.pdb.component.toolbar;
 import cz.vutbr.fit.pdb.configuration.AppMode;
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.configuration.DrawingMode;
+import cz.vutbr.fit.pdb.entity.Entity;
+import cz.vutbr.fit.pdb.entity.EntityService;
+import cz.vutbr.fit.pdb.entity.SelectedEntityService;
+import cz.vutbr.fit.pdb.utils.StringEntityConverter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
@@ -17,8 +22,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ToolbarPresenter implements Initializable {
+
     @FXML
     private HBox drawingModeButtons;
+
+    @FXML
+    private ChoiceBox<Entity> entitiesChoiceBox;
 
     @FXML
     private ComboBox<String> colors;
@@ -26,8 +35,21 @@ public class ToolbarPresenter implements Initializable {
     @Inject
     private Configuration configuration;
 
+    @Inject
+    private EntityService entityService;
+
+    @Inject
+    private SelectedEntityService selectedEntityService;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        entitiesChoiceBox.setItems(entityService.getEntities());
+        entitiesChoiceBox.setConverter(StringEntityConverter.INSTANCE);
+        entitiesChoiceBox.getSelectionModel()
+                         .selectedItemProperty()
+                         .addListener((observable, oldValue, newValue) -> {
+                             selectedEntityService.setEntityProperty(newValue);
+                         });
         colors.setItems(Configuration.colors);
         colors.setCellFactory((list) -> new ColorRectCell());
         colors.getSelectionModel()
@@ -74,6 +96,10 @@ public class ToolbarPresenter implements Initializable {
 
     private void disableDrawingButtons() {
         drawingModeButtons.setDisable(true);
+    }
+
+    public void onFinishDrawing(ActionEvent event) {
+        configuration.setDrawingFinished(true);
     }
 
     static class ColorRectCell extends ListCell<String> {
