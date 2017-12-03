@@ -26,8 +26,10 @@ public class SelectedEntityService {
                          if (entity != null) {
                              LocalDate from = entity.getFrom();
                              LocalDate to = entity.getTo();
-                             if (newValue.intValue() < from.getYear() || newValue.intValue() > to.getYear()) {
-                                 entityProperty.set(null);
+                             if (from != null && to != null) {
+                                 if (newValue.intValue() < from.getYear() || newValue.intValue() > to.getYear()) {
+                                     entityProperty.set(null);
+                                 }
                              }
                          }
                      });
