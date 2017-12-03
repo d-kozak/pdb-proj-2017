@@ -21,6 +21,7 @@ public class EntityService {
     }
 
     public void addEntity(Entity entity) {
+        log.info(String.format("Adding new entity %s", entity));
         entities.add(entity);
     }
 

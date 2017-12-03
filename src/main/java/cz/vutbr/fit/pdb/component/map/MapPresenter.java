@@ -29,8 +29,9 @@ public class MapPresenter implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.painter = new Painter(canvas.getGraphicsContext2D(), configuration);
+        this.painter = new Painter(canvas.getGraphicsContext2D(), entityService, configuration);
         this.canvas.setOnMouseClicked(this::onMouseClicked);
+        this.painter.paintAll(entityService.getEntities());
     }
 
     private void onMouseClicked(MouseEvent mouseEvent) {

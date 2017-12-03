@@ -22,6 +22,6 @@ public class PointGeometry implements EntityGeometry {
 
     @Override
     public boolean containsPoint(double x, double y) {
-        return false;
+        return Math.sqrt(Math.pow(x - point.getX(), 2) + Math.pow(y - point.getY(), 2)) < 5;
     }
 }
