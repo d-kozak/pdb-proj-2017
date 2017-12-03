@@ -1,21 +1,23 @@
 package cz.vutbr.fit.pdb.entity.geometry;
 
 import cz.vutbr.fit.pdb.configuration.DrawingMode;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.java.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Log
 public class LineGeometry implements EntityGeometry {
 
-    private List<Point> points;
+    private ObservableList<Point> points;
 
-    public LineGeometry(List<Point> points) {
-        this.points = new ArrayList<>(points);
+    public LineGeometry(ObservableList<Point> points) {
+        this.points = FXCollections.observableArrayList(points);
     }
 
     @Override
     public boolean containsPoint(double x, double y) {
-        throw new RuntimeException("Not impl yet");
+        log.severe("Not impl yet");
+        return false;
     }
 
     @Override

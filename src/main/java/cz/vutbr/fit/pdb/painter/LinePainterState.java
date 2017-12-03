@@ -5,6 +5,7 @@ import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.geometry.LineGeometry;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
+import javafx.collections.FXCollections;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import lombok.extern.java.Log;
@@ -50,7 +51,7 @@ public class LinePainterState extends AbstractPainterState {
         }
 
         Entity entity = new Entity();
-        entity.setGeometry(new LineGeometry(points));
+        entity.setGeometry(new LineGeometry(FXCollections.observableArrayList(points)));
         drawLine(getGraphics(), getConfiguration().getDrawingColor(), points);
         getEntityService().addEntity(entity);
         points.clear();

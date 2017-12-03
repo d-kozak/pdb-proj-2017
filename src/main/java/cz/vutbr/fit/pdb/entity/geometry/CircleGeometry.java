@@ -3,7 +3,9 @@ package cz.vutbr.fit.pdb.entity.geometry;
 import cz.vutbr.fit.pdb.configuration.DrawingMode;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import lombok.extern.java.Log;
 
+@Log
 public class CircleGeometry implements EntityGeometry {
     private Point center;
     private DoubleProperty radius;
@@ -25,6 +27,7 @@ public class CircleGeometry implements EntityGeometry {
 
     @Override
     public boolean containsPoint(double x, double y) {
+        log.severe("Not impl yet");
         return false;
     }
 
