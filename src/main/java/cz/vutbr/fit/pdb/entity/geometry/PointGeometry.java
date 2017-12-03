@@ -1,7 +1,12 @@
 package cz.vutbr.fit.pdb.entity.geometry;
 
 import cz.vutbr.fit.pdb.configuration.DrawingMode;
+import lombok.extern.java.Log;
 
+import static cz.vutbr.fit.pdb.utils.MathUtils.distance;
+import static java.lang.String.format;
+
+@Log
 public class PointGeometry implements EntityGeometry {
 
     private Point point;
@@ -22,6 +27,8 @@ public class PointGeometry implements EntityGeometry {
 
     @Override
     public boolean containsPoint(double x, double y) {
-        return Math.sqrt(Math.pow(x - point.getX(), 2) + Math.pow(y - point.getY(), 2)) < 5;
+        double distance = distance(x, y, point.getX(), point.getY());
+        log.info(format("Distance between [%f,%f] and [%f,%f] is %f", x, y, point.getX(), point.getY(), distance));
+        return distance < 10;
     }
 }

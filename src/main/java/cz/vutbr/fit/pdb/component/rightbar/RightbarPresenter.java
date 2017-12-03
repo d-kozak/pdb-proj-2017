@@ -7,6 +7,7 @@ import cz.vutbr.fit.pdb.entity.SelectedEntityService;
 import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
 import cz.vutbr.fit.pdb.utils.StringNumConverter;
+import javafx.beans.property.DoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lombok.extern.java.Log;
 import lombok.val;
 
 import javax.inject.Inject;
@@ -23,6 +25,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Log
 public class RightbarPresenter implements Initializable {
     @FXML
     private Accordion accordion;
@@ -126,6 +129,7 @@ public class RightbarPresenter implements Initializable {
     }
 
     private void initViewForEntity(Entity entity) {
+        log.info("displaying entity: " + entity);
         unbindAll();
         nameField.textProperty()
                  .bindBidirectional(entity.nameProperty());
@@ -160,6 +164,7 @@ public class RightbarPresenter implements Initializable {
             default:
                 throw new RuntimeException();
         }
+        selectedEntity = entity;
     }
 
     private void unbindAll() {
@@ -177,7 +182,61 @@ public class RightbarPresenter implements Initializable {
         toDate.valueProperty()
               .unbindBidirectional(selectedEntity.toProperty());
 
-        // TODO finish unbiding for geometrical entities
+        switch (selectedEntity.getGeometryType()) {
+            case POINT:
+                unbindPoint(selectedEntity.getGeometry());
+                break;
+            case LINE:
+                unbindLine(selectedEntity.getGeometry());
+                break;
+            case CIRCLE:
+                unbindCircle(selectedEntity.getGeometry());
+                break;
+            case POLYGON:
+                unbindPolygon(selectedEntity.getGeometry());
+                break;
+
+            default:
+                throw new RuntimeException();
+        }
+    }
+
+    private void unbindPolygon(EntityGeometry geometry) {
+        throw new RuntimeException("Not impl yet");
+    }
+
+    private void unbindCircle(EntityGeometry geometry) {
+        Object[] description = ((Object[]) geometry.getDescription());
+        Point center = ((Point) description[0]);
+        DoubleProperty radius = ((DoubleProperty) description[1]);
+        centerXField.textProperty()
+                    .unbindBidirectional(center.xProperty());
+        centerYField.textProperty()
+                    .unbindBidirectional(center.yProperty());
+        radiusField.textProperty()
+                   .unbindBidirectional(radius);
+    }
+
+    private void unbindLine(EntityGeometry geometry) {
+        Point[] points = ((Point[]) geometry.getDescription());
+        Point start = points[0];
+        Point end = points[1];
+        startXField.textProperty()
+                   .unbindBidirectional(start.xProperty());
+        startYField.textProperty()
+                   .unbindBidirectional(start.yProperty());
+        endXField.textProperty()
+                 .unbindBidirectional(end.xProperty());
+        endYField.textProperty()
+                 .unbindBidirectional(end.yProperty());
+    }
+
+    private void unbindPoint(EntityGeometry geometry) {
+        Point description = ((Point) geometry.getDescription());
+        xField.textProperty()
+              .unbindBidirectional(description.xProperty());
+        yField.textProperty()
+              .unbindBidirectional(description.yProperty());
     }
 
     private void initForPolygon(EntityGeometry geometry) {
@@ -187,10 +246,30 @@ public class RightbarPresenter implements Initializable {
 
     private void initForCircle(EntityGeometry geometry) {
         selectGeometryTab(circleTab);
+        Object[] description = (Object[]) geometry.getDescription();
+        Point center = ((Point) description[0]);
+        DoubleProperty radius = ((DoubleProperty) description[1]);
+        centerXField.textProperty()
+                    .bindBidirectional(center.xProperty(), new StringNumConverter());
+        centerYField.textProperty()
+                    .bindBidirectional(center.yProperty(), new StringNumConverter());
+        radiusField.textProperty()
+                   .bindBidirectional(radius, new StringNumConverter());
     }
 
     private void initForLine(EntityGeometry geometry) {
         selectGeometryTab(lineTab);
+        Point[] points = (Point[]) geometry.getDescription();
+        Point start = points[0];
+        Point end = points[1];
+        startXField.textProperty()
+                   .bindBidirectional(start.xProperty(), new StringNumConverter());
+        startYField.textProperty()
+                   .bindBidirectional(start.yProperty(), new StringNumConverter());
+        endXField.textProperty()
+                 .bindBidirectional(end.xProperty(), new StringNumConverter());
+        endYField.textProperty()
+                 .bindBidirectional(end.yProperty(), new StringNumConverter());
     }
 
     private void initForPoint(EntityGeometry geometry) {

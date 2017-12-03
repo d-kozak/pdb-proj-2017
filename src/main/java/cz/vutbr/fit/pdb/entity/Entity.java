@@ -124,4 +124,45 @@ public class Entity {
     public DrawingMode getGeometryType() {
         return geometry.getType();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Entity entity = (Entity) o;
+
+        if (name != null ? !name.equals(entity.name) : entity.name != null) return false;
+        if (description != null ? !description.equals(entity.description) : entity.description != null) return false;
+        if (flag != null ? !flag.equals(entity.flag) : entity.flag != null) return false;
+        if (images != null ? !images.equals(entity.images) : entity.images != null) return false;
+        if (from != null ? !from.equals(entity.from) : entity.from != null) return false;
+        if (to != null ? !to.equals(entity.to) : entity.to != null) return false;
+        return geometry != null ? geometry.equals(entity.geometry) : entity.geometry == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (flag != null ? flag.hashCode() : 0);
+        result = 31 * result + (images != null ? images.hashCode() : 0);
+        result = 31 * result + (from != null ? from.hashCode() : 0);
+        result = 31 * result + (to != null ? to.hashCode() : 0);
+        result = 31 * result + (geometry != null ? geometry.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Entity{" +
+                "name=" + name +
+                ", description=" + description +
+                ", flag=" + flag +
+                ", images=" + images +
+                ", from=" + from +
+                ", to=" + to +
+                ", geometry=" + geometry +
+                '}';
+    }
 }
