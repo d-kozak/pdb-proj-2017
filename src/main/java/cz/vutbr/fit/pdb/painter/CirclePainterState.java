@@ -40,6 +40,7 @@ public class CirclePainterState extends AbstractPainterState {
             getGraphics().setFill(drawingColor);
             getGraphics().setStroke(drawingColor);
             getGraphics().fillOval(center.getX(), center.getY(), radius, radius);
+            getEntityService().addEntity(entity);
             center = null;
         }
     }
