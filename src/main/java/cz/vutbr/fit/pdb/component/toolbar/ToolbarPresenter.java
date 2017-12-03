@@ -60,12 +60,12 @@ public class ToolbarPresenter implements Initializable {
 
         colors.setItems(Configuration.colors);
         colors.setCellFactory((list) -> new ColorRectCell());
+        colors.setButtonCell(new ColorRectCell());
         colors.getSelectionModel()
               .selectedItemProperty()
               .addListener((observable, oldValue, newValue) -> {
                   configuration.setDrawingColor(Color.web(newValue));
               });
-
         colors.getSelectionModel()
               .select(0);
     }
