@@ -39,4 +39,8 @@ public class EntityService {
             selectedEntityService.setEntityProperty(entity);
         });
     }
+
+    public void removeEntity(Entity entity) {
+        entities.remove(entity);
+    }
 }

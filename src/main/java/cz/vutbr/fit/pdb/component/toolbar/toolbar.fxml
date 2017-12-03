@@ -25,7 +25,7 @@
                     </HBox.margin>
                 </Text>
                 <ComboBox fx:id="colors" prefHeight="25.0" prefWidth="125.0"/>
-                <Button mnemonicParsing="false" onAction="#onFinishDrawing" text="Finish Drawing"/>
+                <Button mnemonicParsing="false" onAction="#onFinishDrawing" text="Complete current entity"/>
             </children>
         </HBox>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mode:">
@@ -38,5 +38,6 @@
         <Button mnemonicParsing="false" onAction="#onModeBlindMap" text="BlindMap"/>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select entity:"/>
         <ChoiceBox fx:id="entitiesChoiceBox" prefWidth="150.0"/>
+        <Button mnemonicParsing="false" onAction="#onDeleteSelected" text="Delete selected"/>
     </children>
 </HBox>

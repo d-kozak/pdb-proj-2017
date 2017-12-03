@@ -102,6 +102,14 @@ public class ToolbarPresenter implements Initializable {
         configuration.setDrawingFinished(true);
     }
 
+    public void onDeleteSelected(ActionEvent event) {
+        Entity selectedEntity = selectedEntityService.getEntityProperty();
+        entityService.removeEntity(selectedEntity);
+        selectedEntityService.setEntityProperty(null);
+        configuration.getMapRenderer()
+                     .redraw();
+    }
+
     static class ColorRectCell extends ListCell<String> {
         @Override
         public void updateItem(String item, boolean empty) {
