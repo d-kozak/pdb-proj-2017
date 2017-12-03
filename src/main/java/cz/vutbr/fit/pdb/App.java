@@ -42,5 +42,17 @@ public class App extends Application {
         // add objects for DI if needed
 
         Injector.setConfigurationSource(toInject::get);
+
+        DBConnection dbConnection = DBConnection.create();
+        boolean succeeded = dbConnection.connect(
+            "gort.fit.vutbr.cz",
+            "1521",
+            "gort.fit.vutbr.cz",
+                System.getProperty("username"),
+                System.getProperty("password")
+        );
+        if (!succeeded) {
+            log.severe("Connection failed!");
+        }
     }
 }
