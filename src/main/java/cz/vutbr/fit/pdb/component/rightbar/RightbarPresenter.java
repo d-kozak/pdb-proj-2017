@@ -142,6 +142,10 @@ public class RightbarPresenter implements Initializable {
         unbindAll();
         nameField.textProperty()
                  .bindBidirectional(entity.nameProperty());
+        nameField.textProperty()
+                 .addListener((observable, oldValue, newValue) -> {
+                     entityService.forceRefreshEntityList();
+                 });
         descriptionField.textProperty()
                         .bindBidirectional(entity.descriptionProperty());
         flagView.imageProperty()

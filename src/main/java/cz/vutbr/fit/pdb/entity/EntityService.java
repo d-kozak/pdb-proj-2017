@@ -40,6 +40,15 @@ public class EntityService {
         });
     }
 
+    public void forceRefreshEntityList() {
+        ObservableList<Entity> entities = getEntities();
+        if (!entities.isEmpty()) {
+            Entity entity = entities.get(0);
+            entities.remove(0);
+            entities.add(0, entity);
+        }
+    }
+
     public void removeEntity(Entity entity) {
         entities.remove(entity);
     }

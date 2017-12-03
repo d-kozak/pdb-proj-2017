@@ -24,7 +24,7 @@
                         <Insets top="5.0"/>
                     </HBox.margin>
                 </Text>
-                <ComboBox fx:id="colors" prefHeight="25.0" prefWidth="125.0"/>
+                <ComboBox fx:id="colors" prefHeight="25.0" prefWidth="25.0"/>
                 <Button mnemonicParsing="false" onAction="#onFinishDrawing" text="Complete current entity"/>
             </children>
         </HBox>

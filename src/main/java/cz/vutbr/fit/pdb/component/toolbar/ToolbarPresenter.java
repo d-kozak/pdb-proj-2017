@@ -7,6 +7,7 @@ import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
 import cz.vutbr.fit.pdb.utils.StringEntityConverter;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,7 +16,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Circle;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -43,13 +44,20 @@ public class ToolbarPresenter implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        entitiesChoiceBox.setItems(entityService.getEntities());
+        ObservableList<Entity> entities = entityService.getEntities();
+        entitiesChoiceBox.setItems(entities);
         entitiesChoiceBox.setConverter(StringEntityConverter.INSTANCE);
         entitiesChoiceBox.getSelectionModel()
                          .selectedItemProperty()
                          .addListener((observable, oldValue, newValue) -> {
                              selectedEntityService.setEntityProperty(newValue);
                          });
+
+        if (!entities.isEmpty()) {
+            entitiesChoiceBox.getSelectionModel()
+                             .select(0);
+        }
+
         colors.setItems(Configuration.colors);
         colors.setCellFactory((list) -> new ColorRectCell());
         colors.getSelectionModel()
@@ -57,6 +65,9 @@ public class ToolbarPresenter implements Initializable {
               .addListener((observable, oldValue, newValue) -> {
                   configuration.setDrawingColor(Color.web(newValue));
               });
+
+        colors.getSelectionModel()
+              .select(0);
     }
 
     public void onPoint(ActionEvent event) {
@@ -114,10 +125,10 @@ public class ToolbarPresenter implements Initializable {
         @Override
         public void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
-            Rectangle rect = new Rectangle(100, 20);
+            Circle circle = new Circle(0, 0, 10);
             if (item != null) {
-                rect.setFill(Color.web(item));
-                setGraphic(rect);
+                circle.setFill(Color.web(item));
+                setGraphic(circle);
             }
         }
     }
