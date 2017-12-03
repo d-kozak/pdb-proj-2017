@@ -1,6 +1,7 @@
 package cz.vutbr.fit.pdb;
 
 import com.airhacks.afterburner.injection.Injector;
+import com.aquafx_project.AquaFx;
 import cz.vutbr.fit.pdb.component.main.MainView;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -27,6 +28,7 @@ public class App extends Application {
         val view = new MainView();
         val scene = new Scene(view.getView());
         initAfterBurner(mainStage);
+        AquaFx.style();
         mainStage.setTitle("MapMaker");
         mainStage.setScene(scene);
         mainStage.setMaximized(true);

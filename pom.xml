@@ -109,6 +109,12 @@
             <version>8.40.14</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.aquafx-project</groupId>
+            <artifactId>aquafx</artifactId>
+            <version>0.1</version>
+        </dependency>
+
     </dependencies>
     <build>
         <!-- commented out to skip for the unset scm configuration -->
