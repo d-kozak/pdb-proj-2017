@@ -19,4 +19,9 @@ public class PointGeometry implements EntityGeometry {
     public Object getDescription() {
         return point;
     }
+
+    @Override
+    public boolean containsPoint(double x, double y) {
+        return false;
+    }
 }

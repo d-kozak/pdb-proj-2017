@@ -12,16 +12,10 @@ public class SelectedEntityService {
     private ObjectProperty<Entity> entityProperty = new SimpleObjectProperty<>();
 
     @Inject
-    private EntityService entityService;
-
-    @Inject
     private Configuration configuration;
 
     @PostConstruct
     public void init() {
-        entityProperty.setValue(entityService.getEntities()
-                                             .get(0));
-
         configuration.yearProperty()
                      .addListener((observable, oldValue, newValue) -> {
                          Entity entity = entityProperty.get();

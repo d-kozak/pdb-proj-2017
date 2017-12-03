@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.web.WebView?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity"
             minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0"
             xmlns="http://javafx.com/javafx/8" fx:controller="cz.vutbr.fit.pdb.component.main.MainPresenter">
     <center>
-        <WebView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER"/>
+        <Canvas fx:id="canvas" height="500.0" width="500.0" BorderPane.alignment="CENTER"/>
     </center>
 </BorderPane>

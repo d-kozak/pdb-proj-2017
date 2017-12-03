@@ -6,4 +6,6 @@ public interface EntityGeometry {
     DrawingMode getType();
 
     Object getDescription();
+
+    boolean containsPoint(double x, double y);
 }

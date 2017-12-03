@@ -13,6 +13,11 @@ public class LineGeometry implements EntityGeometry {
     }
 
     @Override
+    public boolean containsPoint(double x, double y) {
+        return false;
+    }
+
+    @Override
     public DrawingMode getType() {
         return DrawingMode.LINE;
     }

@@ -22,6 +22,11 @@ public class CircleGeometry implements EntityGeometry {
         return new Object[]{center, radius};
     }
 
+    @Override
+    public boolean containsPoint(double x, double y) {
+        return false;
+    }
+
     public Point getCenter() {
         return center;
     }
