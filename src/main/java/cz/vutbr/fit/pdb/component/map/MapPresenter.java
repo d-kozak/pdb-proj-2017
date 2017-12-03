@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 @Log
-public class MapPresenter implements Initializable {
+public class MapPresenter implements Initializable, MapRenderer {
     @FXML
     private Canvas canvas;
 
@@ -28,10 +28,19 @@ public class MapPresenter implements Initializable {
     private Painter painter;
 
     @Override
+    public void redraw() {
+        canvas.getGraphicsContext2D()
+              .clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        painter.paintAll(entityService.getEntities());
+    }
+
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.painter = new Painter(canvas.getGraphicsContext2D(), entityService, configuration);
         this.canvas.setOnMouseClicked(this::onMouseClicked);
         this.painter.paintAll(entityService.getEntities());
+
+        configuration.setMapRenderer(this);
 
         configuration.drawingFinishedProperty()
                      .addListener((observable, oldValue, drawingFinished) -> {

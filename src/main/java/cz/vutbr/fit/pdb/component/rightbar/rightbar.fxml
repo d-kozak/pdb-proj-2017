@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
@@ -74,7 +74,33 @@
                         </Tab>
                         <Tab fx:id="lineTab" text="Line">
                             <content>
-                                <ListView fx:id="lineListView" prefHeight="200.0" prefWidth="200.0"/>
+                                <VBox>
+                                    <children>
+                                        <ListView fx:id="lineListView" prefHeight="200.0" prefWidth="200.0"/>
+                                        <HBox>
+                                            <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="X:">
+                                                    <HBox.margin>
+                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                                    </HBox.margin>
+                                                </Text>
+                                                <TextField fx:id="lineXField" prefWidth="40.0"/>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Y:">
+                                                    <HBox.margin>
+                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                                    </HBox.margin>
+                                                </Text>
+                                                <TextField fx:id="lineYField" prefWidth="40.0">
+                                                    <HBox.margin>
+                                                        <Insets right="10.0"/>
+                                                    </HBox.margin>
+                                                </TextField>
+                                                <Button onAction="#addLinePoint" mnemonicParsing="false"
+                                                        text="Add new"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
                             </content>
                         </Tab>
 
@@ -107,7 +133,33 @@
 
                         <Tab fx:id="polygonTab" text="Polygon">
                             <content>
-                                <ListView fx:id="polygonListView" prefHeight="200.0" prefWidth="200.0"/>
+                                <VBox>
+                                    <children>
+                                        <ListView fx:id="polygonListView" prefHeight="200.0" prefWidth="200.0"/>
+                                        <HBox>
+                                            <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="X:">
+                                                    <HBox.margin>
+                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                                    </HBox.margin>
+                                                </Text>
+                                                <TextField fx:id="polygonXField" prefWidth="40.0"/>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Y:">
+                                                    <HBox.margin>
+                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                                    </HBox.margin>
+                                                </Text>
+                                                <TextField fx:id="polygonYField" prefWidth="40.0">
+                                                    <HBox.margin>
+                                                        <Insets right="10.0"/>
+                                                    </HBox.margin>
+                                                </TextField>
+                                                <Button onAction="#addPolygonPoint" mnemonicParsing="false"
+                                                        text="Add new"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
                             </content>
                         </Tab>
                     </tabs>

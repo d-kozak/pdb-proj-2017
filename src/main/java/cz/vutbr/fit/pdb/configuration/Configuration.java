@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.configuration;
 
+import cz.vutbr.fit.pdb.component.map.MapRenderer;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +19,8 @@ public class Configuration {
     private ObjectProperty<Color> drawingColor = new SimpleObjectProperty<>(Color.color(0, 0, 0));
 
     private BooleanProperty drawingFinished = new SimpleBooleanProperty(false);
+
+    private MapRenderer mapRenderer;
 
     public DrawingMode getDrawMode() {
         return drawMode.get();
@@ -77,5 +80,13 @@ public class Configuration {
 
     public BooleanProperty drawingFinishedProperty() {
         return drawingFinished;
+    }
+
+    public MapRenderer getMapRenderer() {
+        return mapRenderer;
+    }
+
+    public void setMapRenderer(MapRenderer mapRenderer) {
+        this.mapRenderer = mapRenderer;
     }
 }

@@ -2,6 +2,7 @@ package cz.vutbr.fit.pdb.component.rightbar;
 
 import cz.vutbr.fit.pdb.component.rightbar.picturelistitem.PictureListViewCell;
 import cz.vutbr.fit.pdb.component.rightbar.pointlistitem.PointListViewCell;
+import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
@@ -30,6 +31,14 @@ import java.util.ResourceBundle;
 @Log
 public class RightbarPresenter implements Initializable {
 
+    @FXML
+    private TextField lineXField;
+    @FXML
+    private TextField lineYField;
+    @FXML
+    private TextField polygonXField;
+    @FXML
+    private TextField polygonYField;
     @FXML
     private Accordion accordion;
 
@@ -91,6 +100,9 @@ public class RightbarPresenter implements Initializable {
 
     @Inject
     private SelectedEntityService selectedEntityService;
+
+    @Inject
+    private Configuration configuration;
 
     private Entity selectedEntity;
 
@@ -232,7 +244,10 @@ public class RightbarPresenter implements Initializable {
         selectGeometryTab(polygonTab);
         ObservableList<Point> points = (ObservableList<Point>) geometry.getDescription();
         polygonListView.setItems(points);
-        polygonListView.setCellFactory(param -> new PointListViewCell());
+        polygonListView.setCellFactory(param -> new PointListViewCell(configuration, point -> {
+            points.remove(point);
+            polygonListView.refresh();
+        }));
     }
 
     private void initForCircle(EntityGeometry geometry) {
@@ -242,17 +257,36 @@ public class RightbarPresenter implements Initializable {
         DoubleProperty radius = ((DoubleProperty) description[1]);
         centerXField.textProperty()
                     .bindBidirectional(center.xProperty(), new StringNumConverter());
+        centerXField.textProperty()
+                    .addListener((observable, oldValue, newValue) -> {
+                        configuration.getMapRenderer()
+                                     .redraw();
+                    });
+
         centerYField.textProperty()
                     .bindBidirectional(center.yProperty(), new StringNumConverter());
+        centerYField.textProperty()
+                    .addListener((observable, oldValue, newValue) -> {
+                        configuration.getMapRenderer()
+                                     .redraw();
+                    });
         radiusField.textProperty()
                    .bindBidirectional(radius, new StringNumConverter());
+        radiusField.textProperty()
+                   .addListener((observable, oldValue, newValue) -> {
+                       configuration.getMapRenderer()
+                                    .redraw();
+                   });
     }
 
     private void initForLine(EntityGeometry geometry) {
         selectGeometryTab(lineTab);
         ObservableList<Point> points = (ObservableList<Point>) geometry.getDescription();
         lineListView.setItems(points);
-        lineListView.setCellFactory(param -> new PointListViewCell());
+        lineListView.setCellFactory(param -> new PointListViewCell(configuration, point -> {
+            points.remove(point);
+            lineListView.refresh();
+        }));
     }
 
     private void initForPoint(EntityGeometry geometry) {
@@ -260,8 +294,18 @@ public class RightbarPresenter implements Initializable {
         Point description = (Point) geometry.getDescription();
         xField.textProperty()
               .bindBidirectional(description.xProperty(), new StringNumConverter());
+        xField.textProperty()
+              .addListener((observable, oldValue, newValue) -> {
+                  configuration.getMapRenderer()
+                               .redraw();
+              });
         yField.textProperty()
               .bindBidirectional(description.yProperty(), new StringNumConverter());
+        yField.textProperty()
+              .addListener((observable, oldValue, newValue) -> {
+                  configuration.getMapRenderer()
+                               .redraw();
+              });
     }
 
     private void selectGeometryTab(Tab tab) {
@@ -284,5 +328,38 @@ public class RightbarPresenter implements Initializable {
                                  .add(image);
 
         }
+    }
+
+    public void addLinePoint(ActionEvent event) {
+        addPointToEntityFromFields(lineXField, lineYField);
+    }
+
+    public void addPolygonPoint(ActionEvent event) {
+        addPointToEntityFromFields(polygonXField, polygonXField);
+    }
+
+    private void addPointToEntityFromFields(TextField field1, TextField field2) {
+
+        try {
+            Point point = parsePointFromFields(field1, field2);
+            ((ObservableList<Point>) selectedEntity.getGeometry()
+                                                   .getDescription()).add(point);
+            configuration.getMapRenderer()
+                         .redraw();
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private Point parsePointFromFields(TextField field1, TextField field2) {
+        String text = field1.getText();
+        double x = Double.parseDouble(text);
+        text = field2.getText();
+        double y = Double.parseDouble(text);
+
+        lineXField.setText("");
+        lineYField.setText("");
+
+        return new Point(x, y);
     }
 }
