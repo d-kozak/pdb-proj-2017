@@ -1,14 +1,15 @@
 package cz.vutbr.fit.pdb.painter;
 
+import cz.vutbr.fit.pdb.configuration.Configuration;
+import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityService;
-import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
 import javafx.scene.canvas.GraphicsContext;
 
 public class PolygonPainterState extends AbstractPainterState {
 
 
-    public PolygonPainterState(GraphicsContext graphics, EntityService entityService) {
-        super(graphics, entityService);
+    public PolygonPainterState(GraphicsContext graphics, EntityService entityService, Configuration configuration) {
+        super(graphics, entityService, configuration);
     }
 
     @Override
@@ -16,7 +17,7 @@ public class PolygonPainterState extends AbstractPainterState {
 
     }
 
-    public static void drawPolygon(GraphicsContext graphics, EntityGeometry geometry) {
+    public static void drawPolygon(GraphicsContext graphics, Entity entity) {
 
     }
 }

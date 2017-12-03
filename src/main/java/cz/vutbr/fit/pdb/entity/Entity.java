@@ -9,6 +9,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,6 +24,7 @@ public class Entity {
     private ObjectProperty<LocalDate> to = new SimpleObjectProperty<>();
 
     private EntityGeometry geometry;
+    private ObjectProperty<Color> color = new SimpleObjectProperty<>();
 
     public Entity() {
     }
@@ -123,6 +125,18 @@ public class Entity {
 
     public DrawingMode getGeometryType() {
         return geometry.getType();
+    }
+
+    public Color getColor() {
+        return color.get();
+    }
+
+    public void setColor(Color color) {
+        this.color.set(color);
+    }
+
+    public ObjectProperty<Color> colorProperty() {
+        return color;
     }
 
     @Override

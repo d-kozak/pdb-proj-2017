@@ -4,11 +4,21 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.paint.Color;
 
 public class Configuration {
+    public static final ObservableList<String> colors = FXCollections.unmodifiableObservableList(FXCollections.observableArrayList("chocolate", "salmon", "gold", "coral", "darkorchid",
+            "darkgoldenrod", "lightsalmon", "black", "rosybrown", "blue",
+            "blueviolet", "brown"));
+
+
     private IntegerProperty year = new SimpleIntegerProperty();
     private ObjectProperty<DrawingMode> drawMode = new SimpleObjectProperty<>(DrawingMode.POINT);
     private ObjectProperty<AppMode> appMode = new SimpleObjectProperty<>(AppMode.EDIT);
+
+    private ObjectProperty<Color> drawingColor = new SimpleObjectProperty<>(Color.color(0, 0, 0));
 
     public DrawingMode getDrawMode() {
         return drawMode.get();
@@ -44,5 +54,17 @@ public class Configuration {
 
     public IntegerProperty yearProperty() {
         return year;
+    }
+
+    public Color getDrawingColor() {
+        return drawingColor.get();
+    }
+
+    public void setDrawingColor(Color drawingColor) {
+        this.drawingColor.set(drawingColor);
+    }
+
+    public ObjectProperty<Color> drawingColorProperty() {
+        return drawingColor;
     }
 }

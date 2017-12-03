@@ -45,9 +45,9 @@ public class App extends Application {
 
         DBConnection dbConnection = DBConnection.create();
         boolean succeeded = dbConnection.connect(
-            "gort.fit.vutbr.cz",
-            "1521",
-            "gort.fit.vutbr.cz",
+                "gort.fit.vutbr.cz",
+                "1521",
+                "gort.fit.vutbr.cz",
                 System.getProperty("username"),
                 System.getProperty("password")
         );

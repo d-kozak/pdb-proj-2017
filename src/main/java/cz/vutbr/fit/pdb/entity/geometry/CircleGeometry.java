@@ -2,14 +2,15 @@ package cz.vutbr.fit.pdb.entity.geometry;
 
 import cz.vutbr.fit.pdb.configuration.DrawingMode;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
 public class CircleGeometry implements EntityGeometry {
     private Point center;
     private DoubleProperty radius;
 
-    public CircleGeometry(Point center, DoubleProperty radius) {
+    public CircleGeometry(Point center, double radius) {
         this.center = center;
-        this.radius = radius;
+        this.radius = new SimpleDoubleProperty(radius);
     }
 
     @Override

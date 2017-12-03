@@ -2,11 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-<HBox xmlns:fx="http://javafx.com/fxml"
-      xmlns="http://javafx.com/javafx"
-      fx:controller="cz.vutbr.fit.pdb.component.toolbar.ToolbarPresenter" alignment="CENTER_LEFT">
+<HBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER_LEFT" xmlns="http://javafx.com/javafx/8"
+      fx:controller="cz.vutbr.fit.pdb.component.toolbar.ToolbarPresenter">
     <children>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Elements: ">
             <HBox.margin>
@@ -15,18 +14,26 @@
         </Text>
 
         <HBox fx:id="drawingModeButtons">
-            <Button fx:id="pointBtn" onAction="#onPoint" mnemonicParsing="false" text="Point"/>
-            <Button fx:id="lineBtn" onAction="#onLine" mnemonicParsing="false" text="Line"/>
-            <Button fx:id="circleBtn" onAction="#onCircle" mnemonicParsing="false" text="Circle"/>
-            <Button fx:id="polygonBtn" onAction="#onPolygon" mnemonicParsing="false" text="Polygon"/>
+            <children>
+                <Button fx:id="pointBtn" mnemonicParsing="false" onAction="#onPoint" text="Point"/>
+                <Button fx:id="lineBtn" mnemonicParsing="false" onAction="#onLine" text="Line"/>
+                <Button fx:id="circleBtn" mnemonicParsing="false" onAction="#onCircle" text="Circle"/>
+                <Button fx:id="polygonBtn" mnemonicParsing="false" onAction="#onPolygon" text="Polygon"/>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color:">
+                    <HBox.margin>
+                        <Insets top="5.0"/>
+                    </HBox.margin>
+                </Text>
+                <ComboBox fx:id="colors" prefHeight="25.0" prefWidth="125.0"/>
+            </children>
         </HBox>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mode:">
             <HBox.margin>
                 <Insets left="10.0"/>
             </HBox.margin>
         </Text>
-        <Button onAction="#onModeView" mnemonicParsing="false" text="View"/>
-        <Button onAction="#onModeEdit" mnemonicParsing="false" text="Edit"/>
-        <Button onAction="#onModeBlindMap" mnemonicParsing="false" text="BlindMap"/>
+        <Button mnemonicParsing="false" onAction="#onModeView" text="View"/>
+        <Button mnemonicParsing="false" onAction="#onModeEdit" text="Edit"/>
+        <Button mnemonicParsing="false" onAction="#onModeBlindMap" text="BlindMap"/>
     </children>
 </HBox>
