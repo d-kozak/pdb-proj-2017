@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import lombok.extern.java.Log;
 
 import javax.inject.Inject;
@@ -16,6 +17,10 @@ import java.util.ResourceBundle;
 
 @Log
 public class MapPresenter implements Initializable, MapRenderer {
+
+    @FXML
+    private VBox vbox;
+
     @FXML
     private Canvas canvas;
 
@@ -36,6 +41,14 @@ public class MapPresenter implements Initializable, MapRenderer {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.canvas = new ResizableCanvas();
+        vbox.getChildren()
+            .add(canvas);
+        canvas.widthProperty()
+              .bind(vbox.widthProperty());
+        canvas.heightProperty()
+              .bind(vbox.heightProperty());
+
         this.painter = new Painter(canvas.getGraphicsContext2D(), entityService, configuration);
         this.canvas.setOnMouseClicked(this::onMouseClicked);
         this.painter.paintAll(entityService.getEntities());

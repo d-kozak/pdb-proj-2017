@@ -7,7 +7,6 @@ import cz.vutbr.fit.pdb.component.rightbar.RightbarView;
 import cz.vutbr.fit.pdb.component.toolbar.ToolbarView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -23,9 +22,6 @@ public class MainPresenter implements Initializable {
 
     @Inject
     private Stage mainStage;
-
-    @FXML
-    private Canvas canvas;
 
     @FXML
     private BorderPane borderPane;
