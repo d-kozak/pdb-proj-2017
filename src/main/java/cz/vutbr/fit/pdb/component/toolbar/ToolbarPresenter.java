@@ -125,7 +125,7 @@ public class ToolbarPresenter implements Initializable {
         @Override
         public void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
-            Circle circle = new Circle(0, 0, 10);
+            Circle circle = new Circle(0, 0, 7);
             if (item != null) {
                 circle.setFill(Color.web(item));
                 setGraphic(circle);

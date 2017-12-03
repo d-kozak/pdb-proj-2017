@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
@@ -15,29 +15,65 @@
 
         <HBox fx:id="drawingModeButtons">
             <children>
-                <Button fx:id="pointBtn" mnemonicParsing="false" onAction="#onPoint" text="Point"/>
-                <Button fx:id="lineBtn" mnemonicParsing="false" onAction="#onLine" text="Line"/>
-                <Button fx:id="circleBtn" mnemonicParsing="false" onAction="#onCircle" text="Circle"/>
-                <Button fx:id="polygonBtn" mnemonicParsing="false" onAction="#onPolygon" text="Polygon"/>
+                <Button fx:id="pointBtn" mnemonicParsing="false" onAction="#onPoint" text="Point">
+                    <HBox.margin>
+                        <Insets bottom="5.0" top="5.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button fx:id="lineBtn" mnemonicParsing="false" onAction="#onLine" text="Line">
+                    <HBox.margin>
+                        <Insets bottom="5.0" top="5.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button fx:id="circleBtn" mnemonicParsing="false" onAction="#onCircle" text="Circle">
+                    <HBox.margin>
+                        <Insets bottom="5.0" top="5.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button fx:id="polygonBtn" mnemonicParsing="false" onAction="#onPolygon" text="Polygon">
+                    <HBox.margin>
+                        <Insets bottom="5.0" top="5.0"/>
+                    </HBox.margin>
+                </Button>
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color:">
                     <HBox.margin>
-                        <Insets top="5.0"/>
+                        <Insets left="5.0" right="5.0" top="10.0"/>
                     </HBox.margin>
                 </Text>
-                <ComboBox fx:id="colors" prefHeight="25.0" prefWidth="25.0"/>
-                <Button mnemonicParsing="false" onAction="#onFinishDrawing" text="Complete current entity"/>
+                <ComboBox fx:id="colors" maxHeight="20.0" maxWidth="20.0" prefHeight="20.0" prefWidth="20.0">
+                    <HBox.margin>
+                        <Insets bottom="5.0" top="5.0"/>
+                    </HBox.margin>
+                </ComboBox>
+                <Button mnemonicParsing="false" onAction="#onFinishDrawing" text="Complete current entity">
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" top="5.0"/>
+                    </HBox.margin>
+                </Button>
             </children>
         </HBox>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mode:">
             <HBox.margin>
-                <Insets left="10.0"/>
+                <Insets left="5.0" right="5.0"/>
             </HBox.margin>
         </Text>
         <Button mnemonicParsing="false" onAction="#onModeView" text="View"/>
         <Button mnemonicParsing="false" onAction="#onModeEdit" text="Edit"/>
         <Button mnemonicParsing="false" onAction="#onModeBlindMap" text="BlindMap"/>
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select entity:"/>
-        <ChoiceBox fx:id="entitiesChoiceBox" prefWidth="150.0"/>
-        <Button mnemonicParsing="false" onAction="#onDeleteSelected" text="Delete selected"/>
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Select entity:">
+            <HBox.margin>
+                <Insets left="5.0" right="5.0"/>
+            </HBox.margin>
+        </Text>
+        <ChoiceBox fx:id="entitiesChoiceBox" prefWidth="150.0">
+            <HBox.margin>
+                <Insets bottom="5.0" top="5.0"/>
+            </HBox.margin>
+        </ChoiceBox>
+        <Button mnemonicParsing="false" onAction="#onDeleteSelected" text="Delete selected">
+            <HBox.margin>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </HBox.margin>
+        </Button>
     </children>
 </HBox>
