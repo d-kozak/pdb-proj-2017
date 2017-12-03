@@ -1,12 +1,13 @@
 package cz.vutbr.fit.pdb.component.menubar;
 
 import cz.vutbr.fit.pdb.DBConnection;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 public class MenubarPresenter {
     @FXML
-    private void onInitDB(ActionEvent event){
+    private void onInitDB(ActionEvent event) {
         DBConnection dbConn = DBConnection.create();
         dbConn.initDB("init_db.sql");
     }
@@ -18,7 +19,9 @@ public class MenubarPresenter {
 
     @FXML
     private void onClose(ActionEvent event) {
-
+        DBConnection dbConnection = DBConnection.create();
+        dbConnection.disconnect();
+        Platform.exit();
     }
 
 
