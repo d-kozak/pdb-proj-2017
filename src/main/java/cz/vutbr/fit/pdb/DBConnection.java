@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.extern.java.Log;
 import oracle.jdbc.pool.OracleDataSource;
 
 /*
@@ -17,6 +18,7 @@ import oracle.jdbc.pool.OracleDataSource;
  *
  * This class implements singleton design pattern.
  */
+@Log
 public class DBConnection {
     private static DBConnection dbConnection = null;
     private boolean isConnected = false;
@@ -63,7 +65,7 @@ public class DBConnection {
 
                 isConnected = true;
             } catch (Exception ex) {
-                System.err.println("Exception: " + ex.getMessage());
+                log.severe("Connection to: " + url + " failed: " + ex);
                 isConnected = false;
                 return false;
             }
@@ -80,7 +82,7 @@ public class DBConnection {
             try {
                 connection.close();
             } catch (SQLException ex) {
-                System.err.println("SQLException: " + ex.getMessage());
+                log.severe("SQLException: " + ex);
                 return false;
             }
         }
@@ -96,29 +98,30 @@ public class DBConnection {
         String script;
 
         try {
-            script = new String(Files.readAllBytes(Paths.get("readMe.txt")));
+            script = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException ex) {
-            System.err.println("Cannot read file: " + filePath + ": " + ex.getMessage());
+            log.severe("SQLException: " + ex);
             return;
         }
 
         queries = Arrays.asList(script.split(";"));
 
-        queries.forEach((query) -> {
+        queries.forEach((String query) -> {
             try {
                 try (Statement stmt = connection.createStatement()) {
                     try {
                         stmt.executeQuery(query);
                     }
                     catch (SQLException ex) {
-                        System.err.println("SQLException: " + ex.getMessage());
+                        log.severe("SQLException: " + ex);
                     }
 
                 }
             }
-            catch (SQLException ex) {
-                System.err.println("SQLException: " + ex.getMessage());
+            catch (Exception ex) {
+                log.severe("Exception: " + ex);
             }
         });
+        log.info("DB successfully initialized");
     }
 }
