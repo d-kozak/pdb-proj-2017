@@ -74,32 +74,7 @@
                         </Tab>
                         <Tab fx:id="lineTab" text="Line">
                             <content>
-                                <GridPane>
-                                    <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                                    </columnConstraints>
-                                    <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                    </rowConstraints>
-                                    <children>
-                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="StartX"
-                                              GridPane.halignment="CENTER"/>
-                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="StartY"
-                                              GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
-                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="EndX"
-                                              GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
-                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="EndY"
-                                              GridPane.halignment="CENTER" GridPane.rowIndex="3"/>
-                                        <TextField fx:id="startXField" GridPane.columnIndex="1"/>
-                                        <TextField fx:id="startYField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                                        <TextField fx:id="endXField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                                        <TextField fx:id="endYField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                                    </children>
-                                </GridPane>
+                                <ListView fx:id="lineListView" prefHeight="200.0" prefWidth="200.0"/>
                             </content>
                         </Tab>
 
@@ -132,7 +107,7 @@
 
                         <Tab fx:id="polygonTab" text="Polygon">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                                <ListView fx:id="polygonListView" prefHeight="200.0" prefWidth="200.0"/>
                             </content>
                         </Tab>
                     </tabs>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+<HBox xmlns:fx="http://javafx.com/fxml/1" fx:id="hbox" xmlns="http://javafx.com/javafx/8">
+    <children>
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="X:">
+            <HBox.margin>
+                <Insets top="5.0"/>
+            </HBox.margin>
+        </Text>
+        <TextField prefHeight="25.0" prefWidth="40.0" fx:id="xField"/>
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Y: ">
+            <HBox.margin>
+                <Insets top="5.0"/>
+            </HBox.margin>
+        </Text>
+        <TextField fx:id="yField" prefHeight="25.0" prefWidth="40.0"/>
+    </children>
+</HBox>

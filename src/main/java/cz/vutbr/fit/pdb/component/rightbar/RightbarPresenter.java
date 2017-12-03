@@ -1,6 +1,7 @@
 package cz.vutbr.fit.pdb.component.rightbar;
 
-import cz.vutbr.fit.pdb.component.rightbar.listViewItem.ListViewCell;
+import cz.vutbr.fit.pdb.component.rightbar.picturelistitem.PictureListViewCell;
+import cz.vutbr.fit.pdb.component.rightbar.pointlistitem.PointListViewCell;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
@@ -9,6 +10,7 @@ import cz.vutbr.fit.pdb.entity.geometry.Point;
 import cz.vutbr.fit.pdb.utils.StringNumConverter;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,6 +29,7 @@ import java.util.ResourceBundle;
 
 @Log
 public class RightbarPresenter implements Initializable {
+
     @FXML
     private Accordion accordion;
 
@@ -66,16 +69,7 @@ public class RightbarPresenter implements Initializable {
     private TextField yField;
 
     @FXML
-    private TextField startXField;
-
-    @FXML
-    private TextField startYField;
-
-    @FXML
-    private TextField endXField;
-
-    @FXML
-    private TextField endYField;
+    private ListView<Point> lineListView;
 
     @FXML
     private TextField centerXField;
@@ -85,6 +79,9 @@ public class RightbarPresenter implements Initializable {
 
     @FXML
     private TextField radiusField;
+
+    @FXML
+    private ListView<Point> polygonListView;
 
     @Inject
     private EntityService entityService;
@@ -138,7 +135,7 @@ public class RightbarPresenter implements Initializable {
         flagView.imageProperty()
                 .setValue(entity.getFlag());
         picturesView.setItems(entity.getImages());
-        picturesView.setCellFactory(param -> new ListViewCell(entity.getImages(), image -> {
+        picturesView.setCellFactory(param -> new PictureListViewCell(entity.getImages(), image -> {
             flagView.imageProperty()
                     .setValue(image);
             entity.flagProperty()
@@ -204,7 +201,7 @@ public class RightbarPresenter implements Initializable {
     }
 
     private void unbindPolygon(EntityGeometry geometry) {
-        throw new RuntimeException("Not impl yet");
+        // it should happen automatically when new polygon is selected
     }
 
     private void unbindCircle(EntityGeometry geometry) {
@@ -220,17 +217,7 @@ public class RightbarPresenter implements Initializable {
     }
 
     private void unbindLine(EntityGeometry geometry) {
-        Point[] points = ((Point[]) geometry.getDescription());
-        Point start = points[0];
-        Point end = points[1];
-        startXField.textProperty()
-                   .unbindBidirectional(start.xProperty());
-        startYField.textProperty()
-                   .unbindBidirectional(start.yProperty());
-        endXField.textProperty()
-                 .unbindBidirectional(end.xProperty());
-        endYField.textProperty()
-                 .unbindBidirectional(end.yProperty());
+        // it should happen automatically when new line is selected
     }
 
     private void unbindPoint(EntityGeometry geometry) {
@@ -243,7 +230,9 @@ public class RightbarPresenter implements Initializable {
 
     private void initForPolygon(EntityGeometry geometry) {
         selectGeometryTab(polygonTab);
-        throw new RuntimeException("Not impl yet");
+        ObservableList<Point> points = (ObservableList<Point>) geometry.getDescription();
+        polygonListView.setItems(points);
+        polygonListView.setCellFactory(param -> new PointListViewCell());
     }
 
     private void initForCircle(EntityGeometry geometry) {
@@ -261,17 +250,9 @@ public class RightbarPresenter implements Initializable {
 
     private void initForLine(EntityGeometry geometry) {
         selectGeometryTab(lineTab);
-        Point[] points = (Point[]) geometry.getDescription();
-        Point start = points[0];
-        Point end = points[1];
-        startXField.textProperty()
-                   .bindBidirectional(start.xProperty(), new StringNumConverter());
-        startYField.textProperty()
-                   .bindBidirectional(start.yProperty(), new StringNumConverter());
-        endXField.textProperty()
-                 .bindBidirectional(end.xProperty(), new StringNumConverter());
-        endYField.textProperty()
-                 .bindBidirectional(end.yProperty(), new StringNumConverter());
+        ObservableList<Point> points = (ObservableList<Point>) geometry.getDescription();
+        lineListView.setItems(points);
+        lineListView.setCellFactory(param -> new PointListViewCell());
     }
 
     private void initForPoint(EntityGeometry geometry) {

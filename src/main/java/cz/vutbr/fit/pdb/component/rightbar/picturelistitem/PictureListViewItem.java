@@ -1,4 +1,4 @@
-package cz.vutbr.fit.pdb.component.rightbar.listViewItem;
+package cz.vutbr.fit.pdb.component.rightbar.picturelistitem;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,15 +12,15 @@ import javafx.scene.layout.HBox;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-public class ListItem {
+public class PictureListViewItem {
     @FXML
     private ImageView imageView;
 
     @FXML
     private HBox hbox;
 
-    public ListItem(Image image, ObservableList<Image> allImages, Consumer<Image> setAsFlag) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("listitem.fxml"));
+    public PictureListViewItem(Image image, ObservableList<Image> allImages, Consumer<Image> setAsFlag) {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("picturelistitem.fxml"));
         fxmlLoader.setController(this);
         try {
             fxmlLoader.load();
@@ -41,11 +41,11 @@ public class ListItem {
         contextMenu.getItems()
                    .addAll(setAsFlagMenuItem, deletePictureMenuItem);
         hbox.setOnContextMenuRequested(event -> {
-            contextMenu.show(getHbox(), event.getSceneX(), event.getSceneY());
+            contextMenu.show(getView(), event.getSceneX(), event.getSceneY());
         });
     }
 
-    public HBox getHbox() {
+    public HBox getView() {
         return hbox;
     }
 }
