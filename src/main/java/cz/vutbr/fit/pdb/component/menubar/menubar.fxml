@@ -11,6 +11,7 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
+                        <MenuItem onAction="#onInitDB" mnemonicParsing="false" text="Initialize database"/>
                         <MenuItem onAction="#onSettings" mnemonicParsing="false" text="Settings"/>
                         <MenuItem onAction="#onClose" mnemonicParsing="false" text="Close"/>
                     </items>

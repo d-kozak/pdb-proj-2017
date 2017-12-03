@@ -1,9 +1,16 @@
 package cz.vutbr.fit.pdb.component.menubar;
 
+import cz.vutbr.fit.pdb.DBConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 public class MenubarPresenter {
+    @FXML
+    private void onInitDB(ActionEvent event){
+        DBConnection dbConn = DBConnection.create();
+        dbConn.initDB("init_db.sql");
+    }
+
     @FXML
     private void onSettings(ActionEvent event) {
 
