@@ -70,6 +70,7 @@ public class DBConnection {
                 return false;
             }
         }
+        log.info("DB successfully connnected.");
         return true;
     }
 
