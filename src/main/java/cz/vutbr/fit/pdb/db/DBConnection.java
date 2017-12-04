@@ -94,6 +94,11 @@ public class DBConnection {
     }
 
     public void initDB(String filePath) {
+        if (!isConnected) {
+            log.severe("Cannot initialize database without connection.");
+            return;
+        }
+
         List<String> queries;
         String script;
 
@@ -113,13 +118,13 @@ public class DBConnection {
                         stmt.executeQuery(query);
                     }
                     catch (SQLException ex) {
-                        log.severe("SQLException: " + ex);
+                        log.severe("Execute SQL query exception: " + ex);
                     }
 
                 }
             }
             catch (Exception ex) {
-                log.severe("Exception: " + ex);
+                log.severe("Create SQL statement exception: " + ex);
             }
         });
         log.info("DB successfully initialized");
