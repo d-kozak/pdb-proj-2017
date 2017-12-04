@@ -1,6 +1,7 @@
 package cz.vutbr.fit.pdb.component.menubar;
 
 import cz.vutbr.fit.pdb.db.DBConnection;
+import cz.vutbr.fit.pdb.db.MapMakerDB;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -15,8 +16,8 @@ public class MenubarPresenter {
 
     @FXML
     private void onInitDB(ActionEvent event) {
-        DBConnection dbConn = DBConnection.create();
-        dbConn.initDB("init_db.sql");
+        MapMakerDB db = MapMakerDB.create();
+        db.initDB("init_db.sql");
     }
 
     @FXML

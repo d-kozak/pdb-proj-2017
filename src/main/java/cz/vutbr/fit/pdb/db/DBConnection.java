@@ -1,13 +1,9 @@
 package cz.vutbr.fit.pdb.db;
 
-import java.io.IOException;
 import java.lang.Exception;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.List;
 
 import lombok.extern.java.Log;
@@ -94,42 +90,51 @@ public class DBConnection {
         return connection;
     }
 
-    public void initDB(String filePath) {
+
+    /**
+     * Executes the given queries.
+     * @param queries
+     */
+    public void execute(List<String> queries) {
         if (!isConnected) {
-            log.severe("Cannot initialize database without connection.");
+            log.severe("Cannot execute queries on DB without connection.");
             return;
         }
-
-        List<String> queries;
-        String script;
-
-        try {
-            script = new String(Files.readAllBytes(Paths.get(filePath)));
-        } catch (IOException ex) {
-            log.severe("Reading of initialization script failed: " + ex);
-            return;
-        }
-
-        queries = Arrays.asList(script.split(";"));
 
         queries.forEach((String query) -> {
             try {
-                try (Statement stmt = connection.createStatement()) {
-                    try {
-                        stmt.executeQuery(query);
-                    }
-                    catch (SQLException ex) {
-                        log.severe("DB initialization failed: Execute SQL query exception: " + ex);
-                        return;
-                    }
-
-                }
-            }
-            catch (Exception ex) {
-                log.severe("DB initialization failed: Create SQL statement exception: " + ex);
+                execute(query);
+            } catch (Exception ex) {
                 return;
             }
         });
-        log.info("DB successfully initialized");
+    }
+
+    /**
+     * Executes the given query.
+     * @param query
+     */
+    public void execute(String query) {
+        if (!isConnected) {
+            log.severe("Cannot execute query on DB without connection.");
+            return;
+        }
+
+        try {
+            try (Statement stmt = connection.createStatement()) {
+                try {
+                    stmt.executeQuery(query);
+                }
+                catch (SQLException ex) {
+                    log.severe("DB query failed: Execute SQL query exception: " + ex);
+                    throw ex;
+                }
+
+            }
+        }
+        catch (SQLException ex) {
+            log.severe("DB query failed: Create SQL statement exception: " + ex);
+            throw ex;
+        }
     }
 }
