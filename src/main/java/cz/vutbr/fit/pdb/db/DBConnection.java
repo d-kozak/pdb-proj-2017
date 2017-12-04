@@ -1,4 +1,4 @@
-package cz.vutbr.fit.pdb;
+package cz.vutbr.fit.pdb.db;
 
 import java.io.IOException;
 import java.lang.Exception;
@@ -14,7 +14,7 @@ import lombok.extern.java.Log;
 import oracle.jdbc.pool.OracleDataSource;
 
 /*
- * Connection to the database.
+ * Wrapper over database connection.
  *
  * This class implements singleton design pattern.
  */

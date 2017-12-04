@@ -3,6 +3,7 @@ package cz.vutbr.fit.pdb;
 import com.airhacks.afterburner.injection.Injector;
 import com.aquafx_project.AquaFx;
 import cz.vutbr.fit.pdb.component.main.MainView;
+import cz.vutbr.fit.pdb.db.DBConnection;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -1,6 +1,6 @@
 package cz.vutbr.fit.pdb.component.menubar;
 
-import cz.vutbr.fit.pdb.DBConnection;
+import cz.vutbr.fit.pdb.db.DBConnection;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
