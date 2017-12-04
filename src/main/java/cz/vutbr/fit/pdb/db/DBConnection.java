@@ -106,7 +106,7 @@ public class DBConnection {
         try {
             script = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException ex) {
-            log.severe("SQLException: " + ex);
+            log.severe("Reading of initialization script failed: " + ex);
             return;
         }
 
@@ -119,13 +119,15 @@ public class DBConnection {
                         stmt.executeQuery(query);
                     }
                     catch (SQLException ex) {
-                        log.severe("Execute SQL query exception: " + ex);
+                        log.severe("DB initialization failed: Execute SQL query exception: " + ex);
+                        return;
                     }
 
                 }
             }
             catch (Exception ex) {
-                log.severe("Create SQL statement exception: " + ex);
+                log.severe("DB initialization failed: Create SQL statement exception: " + ex);
+                return;
             }
         });
         log.info("DB successfully initialized");
