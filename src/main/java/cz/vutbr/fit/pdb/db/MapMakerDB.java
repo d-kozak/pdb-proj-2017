@@ -195,7 +195,7 @@ public class MapMakerDB {
      * Runs SQL script on the given filePath.
      * @param filePath Path to the initialization script.
      */
-    public void initDB(String filePath) {
+    public boolean initDB(String filePath) {
         List<String> queries;
         String script;
 
@@ -203,7 +203,7 @@ public class MapMakerDB {
             script = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException ex) {
             log.severe("Reading of initialization script failed: " + ex);
-            return;
+            return false;
         }
 
         queries = Arrays.asList(script.trim().split(";"));
@@ -212,14 +212,15 @@ public class MapMakerDB {
             dbConnection.execute(queries);
         } catch (Exception ex) {
             log.severe("Init DB failed: " + ex);
-            return;
+            return false;
         }
 
         if (!initPictures()) {
             log.severe("DB pictures initialization failed!");
-            return;
+            return false;
         }
         log.info("DB successfully initialized");
+        return true;
     }
 
     private boolean initPictures() {

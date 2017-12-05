@@ -22,6 +22,8 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
+
 @Log
 public class MenubarPresenter {
 
@@ -37,7 +39,11 @@ public class MenubarPresenter {
     @FXML
     private void onInitDB(ActionEvent event) {
         MapMakerDB db = MapMakerDB.create();
-        db.initDB("init_db.sql");
+        if(db.initDB("init_db.sql")) {
+            showInfo("Success", "Database initiazlized successfully.");
+        } else {
+            showInfo("Failure", "Database initiazlization FAILED!");
+        }
     }
 
     @FXML
