@@ -114,7 +114,7 @@ public class DBConnection {
      * Executes the given query.
      * @param query
      */
-    public void execute(String query) {
+    public void execute(String query) throws SQLException {
         if (!isConnected) {
             log.severe("Cannot execute query on DB without connection.");
             return;
