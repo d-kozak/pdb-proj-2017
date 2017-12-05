@@ -65,11 +65,11 @@
                 <Insets left="5.0" right="5.0"/>
             </HBox.margin>
         </Text>
-        <ChoiceBox fx:id="entitiesChoiceBox" prefWidth="150.0">
+        <ComboBox fx:id="entitiesComboBox">
             <HBox.margin>
                 <Insets bottom="5.0" top="5.0"/>
             </HBox.margin>
-        </ChoiceBox>
+        </ComboBox>
         <Button mnemonicParsing="false" onAction="#onDeleteSelected" text="Delete selected">
             <HBox.margin>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>

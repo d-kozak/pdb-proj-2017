@@ -11,7 +11,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
@@ -24,11 +23,12 @@ import java.util.ResourceBundle;
 
 public class ToolbarPresenter implements Initializable {
 
+
     @FXML
     private HBox drawingModeButtons;
 
     @FXML
-    private ChoiceBox<Entity> entitiesChoiceBox;
+    private ComboBox<Entity> entitiesComboBox;
 
     @FXML
     private ComboBox<String> colors;
@@ -45,17 +45,17 @@ public class ToolbarPresenter implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ObservableList<Entity> entities = entityService.getEntities();
-        entitiesChoiceBox.setItems(entities);
-        entitiesChoiceBox.setConverter(StringEntityConverter.INSTANCE);
-        entitiesChoiceBox.getSelectionModel()
-                         .selectedItemProperty()
-                         .addListener((observable, oldValue, newValue) -> {
-                             selectedEntityService.setEntityProperty(newValue);
-                         });
+        entitiesComboBox.setItems(entities);
+        entitiesComboBox.setConverter(StringEntityConverter.INSTANCE);
+        entitiesComboBox.getSelectionModel()
+                        .selectedItemProperty()
+                        .addListener((observable, oldValue, newValue) -> {
+                            selectedEntityService.setEntityProperty(newValue);
+                        });
 
         if (!entities.isEmpty()) {
-            entitiesChoiceBox.getSelectionModel()
-                             .select(0);
+            entitiesComboBox.getSelectionModel()
+                            .select(0);
         }
 
         colors.setItems(Configuration.colors);
