@@ -3,6 +3,8 @@ package cz.vutbr.fit.pdb.entity.geometry;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
+import java.util.Optional;
+
 public class Point {
     private final DoubleProperty x = new SimpleDoubleProperty();
     private final DoubleProperty y = new SimpleDoubleProperty();
@@ -14,6 +16,17 @@ public class Point {
     public Point(double x, double y) {
         this.x.setValue(x);
         this.y.setValue(y);
+    }
+
+    public static Optional<Point> of(String x, String y) {
+        try {
+            double xDouble = Double.parseDouble(x);
+            double yDouble = Double.parseDouble(y);
+            return Optional.of(new Point(xDouble, yDouble));
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     public double getX() {

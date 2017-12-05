@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import lombok.extern.java.Log;
 import lombok.val;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
 @Log
 public class App extends Application {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         DBConnection dbConnection = DBConnection.create();
         boolean succeeded = dbConnection.connect(
                 "gort.fit.vutbr.cz",

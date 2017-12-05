@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<TabPane xmlns:fx="http://javafx.com/fxml/1" fx:id="geometryTabPane" tabClosingPolicy="UNAVAILABLE"
+         fx:controller="cz.vutbr.fit.pdb.component.rightbar.geometry.pointinfo.PointInfoPresenter">
+    <tabs>
+        <Tab fx:id="pointTab" text="Point">
+            <content>
+                <GridPane>
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    </rowConstraints>
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="X"
+                              GridPane.halignment="CENTER"/>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Y"
+                              GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
+                        <TextField GridPane.columnIndex="1" fx:id="xField"/>
+                        <TextField fx:id="yField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    </children>
+                </GridPane>
+            </content>
+        </Tab>
+    </tabs>
+</TabPane>

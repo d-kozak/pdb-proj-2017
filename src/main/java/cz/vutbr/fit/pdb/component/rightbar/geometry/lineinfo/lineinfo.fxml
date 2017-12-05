@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<TabPane xmlns:fx="http://javafx.com/fxml/1" fx:id="geometryTabPane" tabClosingPolicy="UNAVAILABLE"
+         fx:controller="cz.vutbr.fit.pdb.component.rightbar.geometry.lineinfo.LineInfoPresenter">
+    <tabs>
+        <Tab fx:id="lineTab" text="Line">
+            <content>
+                <VBox>
+                    <children>
+                        <ListView fx:id="lineListView" prefHeight="200.0" prefWidth="200.0"/>
+                        <HBox>
+                            <children>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="X:">
+                                    <HBox.margin>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                    </HBox.margin>
+                                </Text>
+                                <TextField fx:id="lineXField" prefWidth="40.0"/>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Y:">
+                                    <HBox.margin>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                    </HBox.margin>
+                                </Text>
+                                <TextField fx:id="lineYField" prefWidth="40.0">
+                                    <HBox.margin>
+                                        <Insets right="10.0"/>
+                                    </HBox.margin>
+                                </TextField>
+                                <Button onAction="#addLinePoint" mnemonicParsing="false"
+                                        text="Add new"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </content>
+        </Tab>
+    </tabs>
+</TabPane>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<TabPane xmlns:fx="http://javafx.com/fxml/1" fx:id="geometryTabPane" tabClosingPolicy="UNAVAILABLE"
+         fx:controller="cz.vutbr.fit.pdb.component.rightbar.geometry.polygoninfo.PolygonInfoPresenter">
+    <tabs>
+        <Tab fx:id="polygonTab" text="Polygon">
+            <content>
+                <VBox>
+                    <children>
+                        <ListView fx:id="polygonListView" prefHeight="200.0" prefWidth="200.0"/>
+                        <HBox>
+                            <children>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="X:">
+                                    <HBox.margin>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                    </HBox.margin>
+                                </Text>
+                                <TextField fx:id="polygonXField" prefWidth="40.0"/>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Y:">
+                                    <HBox.margin>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                    </HBox.margin>
+                                </Text>
+                                <TextField fx:id="polygonYField" prefWidth="40.0">
+                                    <HBox.margin>
+                                        <Insets right="10.0"/>
+                                    </HBox.margin>
+                                </TextField>
+                                <Button onAction="#addPolygonPoint" mnemonicParsing="false"
+                                        text="Add new"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </content>
+        </Tab>
+    </tabs>
+</TabPane>
