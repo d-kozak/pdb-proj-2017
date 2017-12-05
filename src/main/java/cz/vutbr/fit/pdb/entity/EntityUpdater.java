@@ -3,7 +3,6 @@ package cz.vutbr.fit.pdb.entity;
 import cz.vutbr.fit.pdb.entity.concurent.AddEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.RemoveEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.UpdateEntityTask;
-import cz.vutbr.fit.pdb.utils.ReflectionUtils;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import lombok.extern.java.Log;
@@ -59,7 +58,7 @@ public class EntityUpdater {
         });
         updateEntityTask.setOnFailed(event -> {
             log.severe("failed, reverting the update");
-            ReflectionUtils.setField(entity, changedField, oldValue);
+            //ReflectionUtils.setField(entity, changedField, oldValue);
         });
 
         THREAD_POOL.submit(updateEntityTask);
@@ -74,8 +73,8 @@ public class EntityUpdater {
         });
         addEntityTask.setOnFailed(event -> {
             log.severe("failed, removing new entity");
-            entityService.getEntities()
-                         .remove(entity);
+//            entityService.getEntities()
+//                         .remove(entity);
         });
         THREAD_POOL.submit(addEntityTask);
     }
@@ -89,8 +88,8 @@ public class EntityUpdater {
         });
         removeEntityTask.setOnFailed(event -> {
             log.severe("failed, adding entity back");
-            entityService.getEntities()
-                         .add(entity);
+//            entityService.getEntities()
+//                         .add(entity);
         });
         THREAD_POOL.submit(removeEntityTask);
     }

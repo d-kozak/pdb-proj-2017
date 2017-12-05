@@ -52,7 +52,7 @@ public class App extends Application {
 
     private void initAfterBurner(Stage mainStage) {
         Logger logger = Logger.getLogger(Injector.class.getName());
-        Injector.setLogger(logger::info);
+        //Injector.setLogger(logger::info);
         Map<Object, Object> toInject = new HashMap<>();
 
         toInject.put("mainStage", mainStage);
