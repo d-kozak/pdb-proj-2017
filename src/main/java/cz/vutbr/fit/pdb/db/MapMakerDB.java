@@ -47,7 +47,7 @@ public class MapMakerDB {
             return;
         }
 
-        queries = Arrays.asList(script.split(";"));
+        queries = Arrays.asList(script.trim().split(";"));
 
         try {
             dbConnection.execute(queries);
