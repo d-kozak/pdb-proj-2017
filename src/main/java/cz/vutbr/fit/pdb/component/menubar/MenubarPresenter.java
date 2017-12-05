@@ -64,6 +64,8 @@ public class MenubarPresenter {
         log.info("Deleting all entities");
         entityService.getEntities()
                      .clear();
+        configuration.getMapRenderer()
+                     .redraw();
     }
 
 
