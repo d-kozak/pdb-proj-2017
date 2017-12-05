@@ -64,3 +64,25 @@ INSERT INTO USER_SDO_GEOM_METADATA VALUES (
 CREATE INDEX SP_INDEX_SpatialEntitiesGeometry ON SpatialEntity (geometry) indextype is MDSYS.SPATIAL_INDEX ;
 
 COMMIT;
+
+INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES (
+    1,
+    'Brno',
+    SDO_GEOMETRY(2001, NULL,
+	    SDO_POINT_TYPE(142, 142, NULL),
+		NULL, NULL
+	),
+	TO_DATE('27-10-1500', 'dd-mm-yyyy'),
+    TO_DATE('27-10-2200', 'dd-mm-yyyy'),
+    'place'
+);
+
+INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VALUES (
+    1,
+    'The best city on Pandora!',
+    TO_DATE('11-11-1500', 'dd-mm-yyyy'),
+    TO_DATE('11-11-2200', 'dd-mm-yyyy'),
+    1
+);
+
+COMMIT;
