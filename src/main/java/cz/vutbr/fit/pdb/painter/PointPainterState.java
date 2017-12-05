@@ -39,6 +39,7 @@ public class PointPainterState extends AbstractPainterState {
         Entity entity = new Entity();
         entity.setGeometry(new PointGeometry(new Point(x, y)));
         entity.setColor(((Color) getGraphics().getFill()));
+        entity.setName("New point");
         getEntityService().addEntity(entity);
     }
 

@@ -52,6 +52,7 @@ public class LinePainterState extends AbstractPainterState {
 
         Entity entity = new Entity();
         entity.setGeometry(new LineGeometry(FXCollections.observableArrayList(points)));
+        entity.setName("New line");
         drawLine(getGraphics(), getConfiguration().getDrawingColor(), points);
         getEntityService().addEntity(entity);
         points.clear();

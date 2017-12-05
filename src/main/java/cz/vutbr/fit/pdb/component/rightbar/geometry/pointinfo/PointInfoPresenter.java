@@ -1,7 +1,9 @@
 package cz.vutbr.fit.pdb.component.rightbar.geometry.pointinfo;
 
+import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
+import cz.vutbr.fit.pdb.utils.Listeners;
 import cz.vutbr.fit.pdb.utils.StringNumConverter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +23,9 @@ public class PointInfoPresenter implements Initializable {
     @Inject
     private SelectedEntityService selectedEntityService;
 
+    @Inject
+    private Configuration configuration;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Point point = (Point) selectedEntityService.getEntityProperty()
@@ -30,5 +35,7 @@ public class PointInfoPresenter implements Initializable {
               .bindBidirectional(point.xProperty(), new StringNumConverter());
         yField.textProperty()
               .bindBidirectional(point.yProperty(), new StringNumConverter());
+
+        Listeners.addRedrawListener(configuration.getMapRenderer(), xField.textProperty(), yField.textProperty());
     }
 }

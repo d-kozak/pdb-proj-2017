@@ -4,6 +4,8 @@ import cz.vutbr.fit.pdb.component.rightbar.pointlistitem.PointListViewCell;
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
+import cz.vutbr.fit.pdb.utils.Listeners;
+import cz.vutbr.fit.pdb.utils.MathUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,10 +45,11 @@ public class LineInfoPresenter implements Initializable {
         lineListView.setItems(points);
         lineListView.setCellFactory(item -> new PointListViewCell(configuration, points::remove));
 
+        Listeners.addRedrawListener(configuration.getMapRenderer(), points);
     }
 
     public void addLinePoint(ActionEvent event) {
         Optional<Point> point = Point.of(lineXField.getText(), lineYField.getText());
-        point.ifPresent(points::add);
+        point.ifPresent(p -> MathUtils.addNewPointFromFields(p, lineXField, lineYField, points, configuration));
     }
 }

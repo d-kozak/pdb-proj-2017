@@ -50,7 +50,7 @@ public class PolygonPainterState extends AbstractPainterState {
         Color drawingColor = getConfiguration().getDrawingColor();
         entity.setColor(drawingColor);
         entity.setGeometry(new PolygonGeometry(FXCollections.observableArrayList(points)));
-
+        entity.setName("New polygon");
         drawPolygon(getGraphics(), drawingColor, points);
         getEntityService().addEntity(entity);
         points.clear();

@@ -37,6 +37,7 @@ public class CirclePainterState extends AbstractPainterState {
             Color drawingColor = getConfiguration().getDrawingColor();
             entity.setGeometry(new CircleGeometry(center, radius));
             entity.setColor(drawingColor);
+            entity.setName("New circle");
             getGraphics().setFill(drawingColor);
             getGraphics().setStroke(drawingColor);
             getGraphics().fillOval(center.getX(), center.getY(), radius, radius);
