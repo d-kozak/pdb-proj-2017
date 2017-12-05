@@ -24,6 +24,7 @@ CREATE TABLE Picture (
   createdAt DATE,
   spatialEntityId NUMBER,
   img ORDSYS.ORDIMAGE,
+  img_si ORDSYS.SI_STILLIMAGE,
   img_ac ORDSYS.SI_AVERAGECOLOR,
   img_ch ORDSYS.SI_COLORHISTOGRAM,
   img_pc ORDSYS.SI_POSITIONALCOLOR,
@@ -83,6 +84,26 @@ INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VA
     TO_DATE('11-11-1500', 'dd-mm-yyyy'),
     TO_DATE('11-11-2200', 'dd-mm-yyyy'),
     1
+);
+
+INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES (
+    2,
+    'Praha',
+    SDO_GEOMETRY(2001, NULL,
+	    SDO_POINT_TYPE(242, 142, NULL),
+		NULL, NULL
+	),
+	TO_DATE('27-10-1100', 'dd-mm-yyyy'),
+    TO_DATE('27-10-2300', 'dd-mm-yyyy'),
+    'place'
+);
+
+INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VALUES (
+    2,
+    'Unknow village beyond the horizont.',
+    TO_DATE('11-11-1500', 'dd-mm-yyyy'),
+    TO_DATE('11-11-2200', 'dd-mm-yyyy'),
+    2
 );
 
 COMMIT;

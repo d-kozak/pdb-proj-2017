@@ -2,6 +2,7 @@ package cz.vutbr.fit.pdb.db;
 
 import java.lang.Exception;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -113,11 +114,12 @@ public class DBConnection {
     /**
      * Executes the given query.
      * @param query
+     * @return Result of the query.
+     * @throws SQLException
      */
     public void execute(String query) throws SQLException {
         if (!isConnected) {
             log.severe("Cannot execute query on DB without connection.");
-            return;
         }
 
         try {
@@ -126,14 +128,14 @@ public class DBConnection {
                     stmt.executeQuery(query);
                 }
                 catch (SQLException ex) {
-                    log.severe("DB query failed: Execute SQL query exception: " + ex);
+                    log.severe("DB query failed: Execute SQL query exception: " + ex + " : " +query);
                     throw ex;
                 }
 
             }
         }
         catch (SQLException ex) {
-            log.severe("DB query failed: Create SQL statement exception: " + ex);
+            log.severe("DB query failed: Create SQL statement exception: " + ex + " : " + query);
             throw ex;
         }
     }
