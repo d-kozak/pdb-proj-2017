@@ -91,7 +91,7 @@ public class EntityUpdater {
 
         removeEntityTask.setOnSucceeded(event -> {
             log.info("success");
-            showInfo("Success", "Entities " + entity.getName() + " deleted successfully");
+            showInfo("Success", "Entity " + entity.getName() + " deleted successfully");
         });
         removeEntityTask.setOnFailed(event -> {
             log.severe("failed, adding entity back");
