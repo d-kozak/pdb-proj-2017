@@ -2,6 +2,7 @@ package cz.vutbr.fit.pdb.db;
 
 import java.lang.Exception;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -113,11 +114,12 @@ public class DBConnection {
     /**
      * Executes the given query.
      * @param query
+     * @return Result of the query.
+     * @throws SQLException
      */
     public void execute(String query) throws SQLException {
         if (!isConnected) {
             log.severe("Cannot execute query on DB without connection.");
-            return;
         }
 
         try {

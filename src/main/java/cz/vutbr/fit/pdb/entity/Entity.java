@@ -2,10 +2,7 @@ package cz.vutbr.fit.pdb.entity;
 
 import cz.vutbr.fit.pdb.configuration.DrawingMode;
 import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
@@ -15,7 +12,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class Entity {
-    public static final Entity NULL = new Entity("", "", null, FXCollections.observableArrayList(), null);
+    public static final Entity NULL = new Entity(0, "", "", null, FXCollections.observableArrayList(), null);
+    private IntegerProperty id = new SimpleIntegerProperty();
     private StringProperty name = new SimpleStringProperty();
     private StringProperty description = new SimpleStringProperty();
     private ObjectProperty<Image> flag = new SimpleObjectProperty<>();
@@ -29,7 +27,8 @@ public class Entity {
     public Entity() {
     }
 
-    public Entity(String name, String description, Image flag, List<Image> images, EntityGeometry geometry) {
+    public Entity(Integer id, String name, String description, Image flag, List<Image> images, EntityGeometry geometry) {
+        this.id.setValue(id);
         this.name.setValue(name);
         this.description.setValue(description);
         this.flag.setValue(flag);
@@ -37,7 +36,8 @@ public class Entity {
         this.geometry = geometry;
     }
 
-    public Entity(String name, String description, Image flag, List<Image> images, EntityGeometry geometry, LocalDate from, LocalDate to) {
+    public Entity(Integer id, String name, String description, Image flag, List<Image> images, EntityGeometry geometry, LocalDate from, LocalDate to) {
+        this.id.setValue(id);
         this.name.setValue(name);
         this.description.setValue(description);
         this.flag.setValue(flag);
@@ -45,6 +45,16 @@ public class Entity {
         this.geometry = geometry;
         this.from.setValue(from);
         this.to.setValue(to);
+    }
+
+    public Integer getId() { return id.get(); }
+
+    public IntegerProperty idProperty() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id.set(id);
     }
 
     public String getName() {
@@ -146,37 +156,26 @@ public class Entity {
 
         Entity entity = (Entity) o;
 
-        if (name != null ? !name.equals(entity.name) : entity.name != null) return false;
-        if (description != null ? !description.equals(entity.description) : entity.description != null) return false;
-        if (flag != null ? !flag.equals(entity.flag) : entity.flag != null) return false;
-        if (images != null ? !images.equals(entity.images) : entity.images != null) return false;
-        if (from != null ? !from.equals(entity.from) : entity.from != null) return false;
-        if (to != null ? !to.equals(entity.to) : entity.to != null) return false;
-        return geometry != null ? geometry.equals(entity.geometry) : entity.geometry == null;
+        return id.equals(entity.id);
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (flag != null ? flag.hashCode() : 0);
-        result = 31 * result + (images != null ? images.hashCode() : 0);
-        result = 31 * result + (from != null ? from.hashCode() : 0);
-        result = 31 * result + (to != null ? to.hashCode() : 0);
-        result = 31 * result + (geometry != null ? geometry.hashCode() : 0);
-        return result;
+        return id.hashCode();
     }
 
     @Override
     public String toString() {
         return "Entity{" +
-                "name=" + name +
+                "id=" + id +
+                ", name=" + name +
                 ", description=" + description +
                 ", flag=" + flag +
                 ", images=" + images +
                 ", from=" + from +
                 ", to=" + to +
                 ", geometry=" + geometry +
+                ", color=" + color +
                 '}';
     }
 }
