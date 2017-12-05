@@ -12,7 +12,7 @@ import lombok.extern.java.Log;
 
 @Log
 public class PointPainterState extends AbstractPainterState {
-    private static final int radius = 5;
+    public static final int POINT_RADIUS = 5;
 
     public PointPainterState(GraphicsContext graphics, EntityService entityService, Configuration configuration) {
         super(graphics, entityService, configuration);
@@ -29,13 +29,13 @@ public class PointPainterState extends AbstractPainterState {
         double x = description.getX();
         double y = description.getY();
         log.info(String.format("Drawing point at [%f,%f]", x, y));
-        graphics.fillOval(x, y, radius, radius);
+        graphics.fillOval(x, y, POINT_RADIUS, POINT_RADIUS);
     }
 
     @Override
     public void clicked(double x, double y) {
         log.info(String.format("Drawing point at [%f,%f]", x, y));
-        getGraphics().fillOval(x, y, radius, radius);
+        getGraphics().fillOval(x, y, POINT_RADIUS, POINT_RADIUS);
         Entity entity = new Entity();
         entity.setGeometry(new PointGeometry(new Point(x, y)));
         entity.setColor(((Color) getGraphics().getFill()));

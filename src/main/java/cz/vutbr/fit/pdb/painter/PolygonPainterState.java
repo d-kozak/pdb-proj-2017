@@ -42,6 +42,15 @@ public class PolygonPainterState extends AbstractPainterState {
     @Override
     public void clicked(double x, double y) {
         points.add(new Point(x, y));
+        Color drawingColor = getConfiguration().getDrawingColor();
+        GraphicsContext graphics = getGraphics();
+        graphics.setFill(drawingColor);
+        graphics.setStroke(drawingColor);
+        if (points.size() > 1) {
+            Point start = points.get(points.size() - 2);
+            Point end = points.get(points.size() - 1);
+            graphics.strokeLine(start.getX(), start.getY(), end.getX(), end.getY());
+        }
     }
 
     @Override
