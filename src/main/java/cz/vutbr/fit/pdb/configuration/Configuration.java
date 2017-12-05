@@ -4,6 +4,7 @@ import cz.vutbr.fit.pdb.component.map.MapRenderer;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 
 import java.util.concurrent.ExecutorService;
@@ -31,6 +32,11 @@ public class Configuration {
     private ObjectProperty<Color> drawingColor = new SimpleObjectProperty<>(Color.color(0, 0, 0));
 
     private BooleanProperty drawingFinished = new SimpleBooleanProperty(false);
+
+    private IntegerProperty canvasWidth = new SimpleIntegerProperty();
+    private IntegerProperty canvasHeight = new SimpleIntegerProperty();
+
+    private ObjectProperty<Canvas> canvas = new SimpleObjectProperty<>();
 
     private MapRenderer mapRenderer;
 
@@ -112,5 +118,41 @@ public class Configuration {
 
     public ObjectProperty<DBConfiguration> dbConfigurationProperty() {
         return dbConfiguration;
+    }
+
+    public int getCanvasWidth() {
+        return canvasWidth.get();
+    }
+
+    public void setCanvasWidth(int canvasWidth) {
+        this.canvasWidth.set(canvasWidth);
+    }
+
+    public IntegerProperty canvasWidthProperty() {
+        return canvasWidth;
+    }
+
+    public int getCanvasHeight() {
+        return canvasHeight.get();
+    }
+
+    public void setCanvasHeight(int canvasHeight) {
+        this.canvasHeight.set(canvasHeight);
+    }
+
+    public IntegerProperty canvasHeightProperty() {
+        return canvasHeight;
+    }
+
+    public Canvas getCanvas() {
+        return canvas.get();
+    }
+
+    public void setCanvas(Canvas canvas) {
+        this.canvas.set(canvas);
+    }
+
+    public ObjectProperty<Canvas> canvasProperty() {
+        return canvas;
     }
 }

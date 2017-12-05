@@ -68,6 +68,13 @@ public class MapPresenter implements Initializable, MapRenderer {
                              configuration.setDrawingFinished(false);
                          }
                      });
+
+        configuration.canvasWidthProperty()
+                     .bindBidirectional(canvas.widthProperty());
+        configuration.canvasHeightProperty()
+                     .bindBidirectional(canvas.heightProperty());
+
+        configuration.setCanvas(canvas);
     }
 
     private void onMouseClicked(MouseEvent mouseEvent) {
