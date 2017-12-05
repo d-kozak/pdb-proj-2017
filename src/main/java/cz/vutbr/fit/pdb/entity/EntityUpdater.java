@@ -10,6 +10,8 @@ import lombok.extern.java.Log;
 import java.util.List;
 
 import static cz.vutbr.fit.pdb.configuration.Configuration.THREAD_POOL;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
 
 @Log
 public class EntityUpdater {
@@ -54,10 +56,12 @@ public class EntityUpdater {
         updateEntityTask.setField(changedField);
 
         updateEntityTask.setOnSucceeded(event -> {
+            showInfo("Success", "Entity " + entity.getName() + " updated successfully");
             log.info("success");
         });
         updateEntityTask.setOnFailed(event -> {
             log.severe("failed, reverting the update");
+            showError("Database error", "Could not update entity " + entity.getName());
             //ReflectionUtils.setField(entity, changedField, oldValue);
         });
 
@@ -70,9 +74,11 @@ public class EntityUpdater {
 
         addEntityTask.setOnSucceeded(event -> {
             log.info("success");
+            showInfo("Success", "Entity " + entity.getName() + " added successfully");
         });
         addEntityTask.setOnFailed(event -> {
             log.severe("failed, removing new entity");
+            showError("Database error", "Could not add entity" + entity.getName());
 //            entityService.getEntities()
 //                         .remove(entity);
         });
@@ -85,9 +91,11 @@ public class EntityUpdater {
 
         removeEntityTask.setOnSucceeded(event -> {
             log.info("success");
+            showInfo("Success", "Entities " + entity.getName() + " deleted successfully");
         });
         removeEntityTask.setOnFailed(event -> {
             log.severe("failed, adding entity back");
+            showError("Database error", "Could not remove entity" + entity.getName());
 //            entityService.getEntities()
 //                         .add(entity);
         });

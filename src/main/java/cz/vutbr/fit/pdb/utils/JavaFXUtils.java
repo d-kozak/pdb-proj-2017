@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.control.Notifications;
 
 public class JavaFXUtils {
     public static void openModalDialog(Stage primaryStage, String title, FXMLView fxmlView) {
@@ -24,5 +25,21 @@ public class JavaFXUtils {
         ((Node) event.getSource()).getScene()
                                   .getWindow()
                                   .hide();
+    }
+
+    public static void showError(String title, String text) {
+        Notifications.create()
+                     .title(title)
+                     .text(text)
+                     .darkStyle()
+                     .showError();
+    }
+
+    public static void showInfo(String title, String text) {
+        Notifications.create()
+                     .title(title)
+                     .text(text)
+                     .darkStyle()
+                     .showInformation();
     }
 }

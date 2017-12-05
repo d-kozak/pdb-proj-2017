@@ -1,6 +1,7 @@
 package cz.vutbr.fit.pdb.entity;
 
 import cz.vutbr.fit.pdb.entity.concurent.LoadAllEntitiesTask;
+import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -14,13 +15,16 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static cz.vutbr.fit.pdb.configuration.Configuration.THREAD_POOL;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
 
 @Log
 public class EntityService {
 
     @Inject
     private SelectedEntityService selectedEntityService;
-    private ObservableList<Entity> entities = FXCollections.observableArrayList();
+
+    private ObservableList<Entity> entities = FXCollections.observableArrayList(entity -> new Observable[]{entity.nameProperty()});
 
     private BooleanProperty initDataLoaded = new SimpleBooleanProperty(false);
 
@@ -39,12 +43,14 @@ public class EntityService {
                 initDataLoaded.set(true);
                 entityUpdater.addListeners(entities);
 
+                showInfo("Success", "Entities loaded successfully");
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
         });
         loadAllEntitiesTask.setOnFailed(event -> {
             log.severe("Couldn't load entities");
+            showError("Database error", "Could not load entities");
         });
         THREAD_POOL.submit(loadAllEntitiesTask);
     }
@@ -67,15 +73,6 @@ public class EntityService {
             log.info(String.format("Changing entity from %s to %s", selectedEntityService.getEntityProperty(), entity));
             selectedEntityService.setEntityProperty(entity);
         });
-    }
-
-    public void forceRefreshEntityList() {
-        ObservableList<Entity> entities = getEntities();
-        if (!entities.isEmpty()) {
-            Entity entity = entities.get(0);
-            entities.remove(0);
-            entities.add(0, entity);
-        }
     }
 
     public void removeEntity(Entity entity) {
