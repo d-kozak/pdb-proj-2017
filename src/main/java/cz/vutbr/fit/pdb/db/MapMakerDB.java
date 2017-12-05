@@ -253,6 +253,13 @@ public class MapMakerDB {
                 2,
                 "src/resources/praha-flag.jpg"
         );
+        res |= initPicture(
+                "Praha bridge",
+                "normal",
+                Date.valueOf(LocalDate.now()),
+                2,
+                "src/resources/praha-bridge.jpg"
+        );
         return res;
     }
 
