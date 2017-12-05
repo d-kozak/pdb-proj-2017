@@ -34,7 +34,7 @@ public class DummyData {
         entity.setDescription("The best town in the Czech Republic");
         entity.setGeometry(new PointGeometry(new Point(42, 42)));
         try {
-            val image = new Image(new FileInputStream("src/resources/brno.jpg"));
+            val image = new Image(new FileInputStream("src/resources/brno-flag.jpg"));
             entity.setFlag(image);
 
             ObservableList<Image> images = FXCollections.observableArrayList();
