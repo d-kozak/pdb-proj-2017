@@ -22,6 +22,7 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
 
 @Log
@@ -42,7 +43,7 @@ public class MenubarPresenter {
         if(db.initDB("init_db.sql")) {
             showInfo("Success", "Database initiazlized successfully.");
         } else {
-            showInfo("Failure", "Database initiazlization FAILED!");
+            showError("Failure", "Database initiazlization FAILED!");
         }
     }
 
