@@ -36,7 +36,7 @@ public class MapPresenter implements Initializable, MapRenderer {
     public void redraw() {
         canvas.getGraphicsContext2D()
               .clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        painter.paintAll(entityService.getEntities());
+        painter.paintAll(entityService.getEntities(configuration.getYear()));
     }
 
     @Override
@@ -75,6 +75,11 @@ public class MapPresenter implements Initializable, MapRenderer {
                      .bindBidirectional(canvas.heightProperty());
 
         configuration.setCanvas(canvas);
+
+        configuration.yearProperty()
+                     .addListener((observable, oldValue, newValue) -> {
+                         redraw();
+                     });
     }
 
     private void onMouseClicked(MouseEvent mouseEvent) {

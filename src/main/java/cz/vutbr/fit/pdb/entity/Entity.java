@@ -179,4 +179,13 @@ public class Entity {
                 ", geometry=" + geometry +
                 '}';
     }
+
+    public boolean existsInYear(int selectedYear) {
+        LocalDate from = this.from.getValue();
+        LocalDate to = this.to.getValue();
+        if (from == null || to == null)
+            return true;
+
+        return from.getYear() <= selectedYear && selectedYear <= to.getYear();
+    }
 }

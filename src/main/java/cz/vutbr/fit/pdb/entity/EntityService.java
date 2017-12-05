@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import lombok.extern.java.Log;
 
 import javax.annotation.PostConstruct;
@@ -91,5 +92,13 @@ public class EntityService {
 
     public BooleanProperty initDataLoadedProperty() {
         return initDataLoaded;
+    }
+
+    public ObservableList<Entity> getEntities(int selectedYear) {
+        log.info("All entities :" + entities);
+        log.info("Selecting year " + selectedYear);
+        FilteredList<Entity> selected = entities.filtered(entity -> entity.existsInYear(selectedYear));
+        log.info("Selected entities :" + selected);
+        return selected;
     }
 }
