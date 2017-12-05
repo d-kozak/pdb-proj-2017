@@ -126,14 +126,14 @@ public class DBConnection {
                     stmt.executeQuery(query);
                 }
                 catch (SQLException ex) {
-                    log.severe("DB query failed: Execute SQL query exception: " + ex);
+                    log.severe("DB query failed: Execute SQL query exception: " + ex + " : " +query);
                     throw ex;
                 }
 
             }
         }
         catch (SQLException ex) {
-            log.severe("DB query failed: Create SQL statement exception: " + ex);
+            log.severe("DB query failed: Create SQL statement exception: " + ex + " : " + query);
             throw ex;
         }
     }
