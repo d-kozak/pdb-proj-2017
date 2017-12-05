@@ -22,6 +22,8 @@ public class Configuration {
             "blueviolet", "brown"));
 
 
+    private ObjectProperty<DBConfiguration> dbConfiguration = new SimpleObjectProperty<>(new DBConfiguration());
+
     private IntegerProperty year = new SimpleIntegerProperty();
     private ObjectProperty<DrawingMode> drawMode = new SimpleObjectProperty<>(DrawingMode.POINT);
     private ObjectProperty<AppMode> appMode = new SimpleObjectProperty<>(AppMode.EDIT);
@@ -98,5 +100,17 @@ public class Configuration {
 
     public void setMapRenderer(MapRenderer mapRenderer) {
         this.mapRenderer = mapRenderer;
+    }
+
+    public DBConfiguration getDbConfiguration() {
+        return dbConfiguration.get();
+    }
+
+    public void setDbConfiguration(DBConfiguration dbConfiguration) {
+        this.dbConfiguration.set(dbConfiguration);
+    }
+
+    public ObjectProperty<DBConfiguration> dbConfigurationProperty() {
+        return dbConfiguration;
     }
 }
