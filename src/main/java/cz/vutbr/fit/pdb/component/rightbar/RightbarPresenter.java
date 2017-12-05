@@ -74,6 +74,7 @@ public class RightbarPresenter implements Initializable {
         selectedEntityService.entityPropertyProperty()
                              .addListener((observable, oldValue, newValue) -> {
                                  if (newValue != null) {
+                                     clearView();
                                      initViewForEntity(newValue);
                                  } else {
                                      clearView();
@@ -91,16 +92,18 @@ public class RightbarPresenter implements Initializable {
                         .setValue("");
         flagView.imageProperty()
                 .setValue(null);
+        picturesView.setItems(FXCollections.observableArrayList());
         fromDate.getEditor()
                 .clear();
         toDate.getEditor()
               .clear();
+        geometryTitledPane.setContent(null);
         selectedEntity = null;
     }
 
     private void initViewForEntity(Entity entity) {
         log.info("displaying entity: " + entity);
-        unbindAll();
+        this.selectedEntity = entity;
         nameField.textProperty()
                  .bindBidirectional(entity.nameProperty());
         nameField.textProperty()
@@ -140,19 +143,19 @@ public class RightbarPresenter implements Initializable {
             default:
                 throw new RuntimeException();
         }
-        selectedEntity = entity;
     }
 
     private void unbindAll() {
-        if (selectedEntity == null)
+        if (selectedEntity == null) {
+            log.severe("Selected entity is null, cannot unbind");
             return;
+        }
         nameField.textProperty()
                  .unbindBidirectional(selectedEntity.nameProperty());
         descriptionField.textProperty()
                         .unbindBidirectional(selectedEntity.descriptionProperty());
         flagView.imageProperty()
                 .unbindBidirectional(selectedEntity.flagProperty());
-        picturesView.setItems(FXCollections.observableArrayList());
         fromDate.valueProperty()
                 .unbindBidirectional(selectedEntity.fromProperty());
         toDate.valueProperty()
@@ -186,7 +189,7 @@ public class RightbarPresenter implements Initializable {
             selectedEntityService.getEntityProperty()
                                  .getImages()
                                  .add(image);
-
+            log.info("Image " + file.getName() + " loaded successfully");
         }
     }
 }
