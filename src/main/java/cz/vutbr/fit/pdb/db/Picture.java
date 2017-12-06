@@ -51,7 +51,7 @@ public class Picture {
 
     private static void deletePicture(Integer id, String type){
         dbConnection.execute("DELETE FROM Picture " +
-                "id = " + id + " and type = " + type
+                "id = " + id + " and pictureType = " + type
         );
     }
 
@@ -91,8 +91,7 @@ public class Picture {
                     return false;
                 }
             }
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
             return false;
         }
@@ -112,8 +111,7 @@ public class Picture {
                     return false;
                 }
             }
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
             return false;
         }
@@ -140,8 +138,7 @@ public class Picture {
                     return false;
                 }
             }
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
             return false;
         }
@@ -167,9 +164,165 @@ public class Picture {
                     return false;
                 }
             }
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
+            return false;
+        }
+
+        try {
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException ex) {
+            log.info("Cannot commit: " + ex);
+        }
+        return true;
+    }
+
+    public static boolean makeImageMonochrome(Integer id) {
+        return modifyPicture("contentFormat=monochrome fileformat=png", id);
+    }
+
+    private static boolean modifyPicture(String modification, Integer srcId) {
+        Integer dstId = dbConnection.getMaxId("Picture") + 1;
+
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException ex) {
+            log.info("Cannot disable autocommit: " + ex);
+        }
+
+        // retrieve ORDImage object of a source image
+        OrdImage srcImageProxy = null;
+        String description;
+        String type;
+        Date createdAt;
+        Integer spatialEntityId;
+
+        try {
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "SELECT description, pictureType, createdAt, spatialEntityId, img FROM Picture WHERE id = ?"
+            )) {
+                stmt.setInt(1, srcId);
+                try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()){
+                    rset.next();
+                    srcImageProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
+                    description = "BLABLA";// rset.getString("description");
+                    type = rset.getString("pictureType");
+                    createdAt = rset.getDate("createdAt");
+                    spatialEntityId = rset.getInt("spatialEntityId");
+                }
+                catch (SQLException ex) {
+                    log.severe("Load picture failed: Execute SQL query exception: " + ex);
+                    return false;
+                }
+            }
+        } catch (SQLException ex) {
+            log.severe("Load picture failed: Create SQL statement exception: " + ex);
+            return false;
+        }
+
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException ex) {
+            log.info("Cannot disable autocommit: " + ex);
+        }
+
+        // insert a new record with an empty ORDImage object
+        try {
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "INSERT INTO Picture(id, description, pictureType, createdAt, spatialEntityId, img) " +
+                            "VALUES(?, ?, ?, ?, ?, ORDSYS.ORDIMAGE.init())"
+            )) {
+                stmt.setInt(1, dstId);
+                stmt.setString(2, description);
+                stmt.setString(3, type);
+                stmt.setDate(4, createdAt);
+                stmt.setInt(5, spatialEntityId);
+                try {
+                    stmt.executeUpdate();
+                }
+                catch (SQLException ex) {
+                    log.severe("Insert picture failed: Execute SQL query exception: " + ex);
+                    return false;
+                }
+            }
+        } catch (SQLException ex) {
+            log.severe("Insert picture failed: Create SQL statement exception: " + ex);
+            return false;
+        }
+
+        // retrieve the previously created ORDImage object for updating
+        OrdImage dstImgProxy = null;
+        try {
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "SELECT img from Picture WHERE id = ? FOR UPDATE"
+            )) {
+                stmt.setInt(1, dstId);
+                try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()){
+                    rset.next();
+                    dstImgProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
+                }
+                catch (SQLException ex) {
+                    log.severe("Select picture failed: Execute SQL query exception: " + ex);
+                    return false;
+                }
+            }
+        } catch (SQLException ex) {
+            log.severe("Select picture failed: Create SQL statement exception: " + ex);
+            return false;
+        }
+
+        // perform conversion (processing occurs on the Oracle Database)
+        try {
+            srcImageProxy.processCopy(modification, dstImgProxy);
+        } catch (SQLException ex) {
+            log.severe("Img processing failed: " + ex);
+        }
+
+        // save the target image
+        try {
+            try (OraclePreparedStatement stmt = (OraclePreparedStatement) connection.prepareStatement(
+                    "UPDATE Picture SET img = ? WHERE id = ? "
+            )) {
+                stmt.setORAData(1, dstImgProxy);
+                stmt.setInt(2, dstId);
+                try {
+                    stmt.executeUpdate();
+                }
+                catch (SQLException ex) {
+                    log.severe("Save picture failed: Execute SQL query exception: " + ex);
+                    return false;
+                }
+            }
+        } catch (SQLException ex) {
+            log.severe("Save picture failed: Create SQL statement exception: " + ex);
+            return false;
+        }
+
+        // update the target image with StillImage object and features
+        try {
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "UPDATE Picture p SET p.img_si = SI_STILLIMAGE(p.img.getContent()) " +
+                            "WHERE p.id = ?"
+            )) {
+                stmt.setInt(1, dstId);
+                try {
+                    stmt.executeUpdate();
+                    String updateSql2 = "UPDATE Picture SET " +
+                            "img_ac = SI_AVERAGECOLOR(img_si), " +
+                            "img_ch = SI_COLORHISTOGRAM(img_si), " +
+                            "img_pc = SI_POSITIONALCOLOR(img_si), " +
+                            "img_tx = SI_TEXTURE(img_si) " +
+                            "WHERE id = " + dstId;
+                    stmt.executeUpdate(updateSql2);
+                }
+                catch (SQLException ex) {
+                    log.severe("Update picture failed: Execute SQL query exception: " + ex);
+                    return false;
+                }
+            }
+        } catch (SQLException ex) {
+            log.severe("update picture failed: Create SQL statement exception: " + ex);
             return false;
         }
 

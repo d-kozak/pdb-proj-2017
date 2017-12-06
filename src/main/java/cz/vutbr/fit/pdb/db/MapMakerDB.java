@@ -212,6 +212,7 @@ public class MapMakerDB {
                 2,
                 "src/resources/praha-bridge.jpg"
         );
+        Picture.makeImageMonochrome(2);
         return res;
     }
 
