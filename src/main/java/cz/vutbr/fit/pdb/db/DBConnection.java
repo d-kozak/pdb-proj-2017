@@ -99,13 +99,31 @@ public class DBConnection {
             return;
         }
 
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException ex) {
+            log.info("Cannot disable autocommit: " + ex);
+        }
+
         queries.forEach((String query) -> {
             try {
                 execute(query);
             } catch (Exception ex) {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException sqlEx) {
+                    log.info("Cannot enable autocommit: " + sqlEx);
+                }
                 return;
             }
         });
+
+        try {
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException ex) {
+            log.info("Cannot commit: " + ex);
+        }
     }
 
     /**
