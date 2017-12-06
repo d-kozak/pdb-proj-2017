@@ -93,7 +93,7 @@ public class MapMakerDB {
                             for (Integer i = 0; i < countryCoordsCount * 2; i += 2) {
                                 countryPoints.add(new Point(countryCoords[i], countryCoords[i + 1]));
                             }
-                            entity.setGeometry(new LineGeometry(countryPoints));
+                            entity.setGeometry(new PolygonGeometry(countryPoints));
 							break;
 						case "river":
 						    byte[] riverData = rset.getBytes("geometry");
