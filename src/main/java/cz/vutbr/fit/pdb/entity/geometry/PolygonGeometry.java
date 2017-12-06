@@ -42,4 +42,15 @@ public class PolygonGeometry implements EntityGeometry {
     public ObservableList<Point> getPoints() {
         return points;
     }
+
+    public double[] getPtArr() {
+        double[] array = new double[points.size()*2];
+        int i = 0;
+        for (Point pt: points) {
+            array[i] = pt.getX();
+            array[i+1] = pt.getY();
+            i += 2;
+        }
+        return array;
+    }
 }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet Quick Start Guide Example</title>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="leaflet.css" />
+    <link rel="stylesheet" href="leaflet.draw.css" />
+    <script src="js.js"></script>
+    <script src="leaflet.js"></script>
+    <script src="leaflet.draw.js"></script>
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        #map {
+            min-height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+
+<script>
+    var map = new L.Map('map', { center: new L.LatLng(49.2, 16.6333000), zoom: 6 }),
+            geoEntities = L.featureGroup().addTo(map);
+    L.tileLayer('https://mapserver.mapy.cz/zemepis-m/{z}-{x}-{y}', {
+        attribution: "<img src=\"http://mapy.cz/img/logo-small.svg\" style=\"height: 10px\" /> © <a href=\"//www.seznam.cz\" target=\"_blank\">Seznam.cz, a.s.</a>, © <a href=\"//www.openstreetmap.org/copyright\" target=\"_blank\">OpenStreetMap</a>"
+    }).addTo(map);
+    map.addControl(new L.Control.Draw({
+        edit: {
+            featureGroup: geoEntities,
+            poly: {
+                allowIntersection: false
+            }
+        },
+        draw: {
+            polygon: {
+                allowIntersection: false,
+                showArea: true
+            }
+        }
+    }));
+
+    map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
+
+        geoEntities.addLayer(layer);
+    });
+	
+	//L.marker([51.5, -0.09]).addTo(map)
+
+</script>
+
+<script type="text/javascript" src="bck2brwsr.js"></script>
+<script>
+    var vm = bck2brwsr('l4jdemo.js');
+    var main = vm.loadClass('org.apidesign.html.leaflet.demo.Main');
+    main.invoke('onPageLoad');
+</script>
+</body>
+</html>
