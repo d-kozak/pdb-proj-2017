@@ -57,14 +57,40 @@ public class Picture {
     /**
      * Inserts a new image to the database.
      * @param description Description of the image.
+     * @param createdAt Date of creation.
+     * @param spatialEntityId Id of referenced entity.
+     * @param imgPath Path to the image.
+     * @return Boolean value.
+     */
+    public static boolean insertFlag(String description, Date createdAt,
+                                      Integer spatialEntityId, String imgPath) {
+        return insertPicture(description, "flag", createdAt, spatialEntityId, imgPath);
+    }
+
+    /**
+     * Inserts a new image to the database.
+     * @param description Description of the image.
+     * @param createdAt Date of creation.
+     * @param spatialEntityId Id of referenced entity.
+     * @param imgPath Path to the image.
+     * @return Boolean value.
+     */
+    public static boolean insertImage(String description, Date createdAt,
+                                      Integer spatialEntityId, String imgPath) {
+        return insertPicture(description, "normal", createdAt, spatialEntityId, imgPath);
+    }
+
+    /**
+     * Inserts a new image to the database.
+     * @param description Description of the image.
      * @param type Type - 'flag' or 'normal'.
      * @param createdAt Date of creation.
      * @param spatialEntityId Id of referenced entity.
      * @param imgPath Path to the image.
      * @return Boolean value.
      */
-    public static boolean insertPicture(String description, String type,
-                                 Date createdAt, Integer spatialEntityId, String imgPath) {
+    private static boolean insertPicture(String description, String type, Date createdAt,
+                                         Integer spatialEntityId, String imgPath) {
         Integer id = dbConnection.getMaxId("Picture") + 1;
         try {
             connection.setAutoCommit(false);

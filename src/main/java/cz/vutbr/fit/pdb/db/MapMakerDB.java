@@ -177,37 +177,32 @@ public class MapMakerDB {
 
     private boolean initPictures() {
         boolean res = false;
-        res |= Picture.insertPicture(
+        res |= Picture.insertFlag(
           "Brno flag",
-          "flag",
           Date.valueOf(LocalDate.now()),
           1,
           "src/resources/brno-flag.jpg"
         );
-        res |= Picture.insertPicture(
+        res |= Picture.insertImage(
                 "Brno Petrov",
-                "normal",
                 Date.valueOf(LocalDate.now()),
                 1,
                 "src/resources/brno-petrov.jpg"
         );
-        res |= Picture.insertPicture(
+        res |= Picture.insertImage(
                 "Brno square",
-                "normal",
                 Date.valueOf(LocalDate.now()),
                 1,
                 "src/resources/brno-square.jpg"
         );
-        res |= Picture.insertPicture(
+        res |= Picture.insertFlag(
                 "Praha flag",
-                "flag",
                 Date.valueOf(LocalDate.now()),
                 2,
                 "src/resources/praha-flag.jpg"
         );
-        res |= Picture.insertPicture(
+        res |= Picture.insertImage(
                 "Praha bridge",
-                "normal",
                 Date.valueOf(LocalDate.now()),
                 2,
                 "src/resources/praha-bridge.jpg"
