@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import cz.vutbr.fit.pdb.entity.Entity;
+import cz.vutbr.fit.pdb.entity.geometry.LineGeometry;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
 import cz.vutbr.fit.pdb.entity.geometry.PointGeometry;
 import cz.vutbr.fit.pdb.entity.geometry.PolygonGeometry;
@@ -94,16 +95,22 @@ public class MapMakerDB {
 							entity.setGeometry(new PolygonGeometry(points));
 							break;
 						case "river":
-							ObservableList<Point> river_points = FXCollections.observableArrayList();
-							river_points.addAll(new Point(10, 10), new Point(20, 10), new Point(10, 20));
-							entity.setGeometry(new PolygonGeometry(river_points));
+						    byte[] riverData = rset.getBytes("geometry");
+						    JGeometry jGeometryRiver = JGeometry.load(riverData);
+						    double[] riverCoords = jGeometryRiver.getOrdinatesArray();
+						    Integer riverCoordsCount = jGeometryRiver.getNumPoints();
+							ObservableList<Point> riverPoints = FXCollections.observableArrayList();
+							for (Integer i = 0; i < riverCoordsCount * 2; i += 2) {
+                                riverPoints.add(new Point(riverCoords[i], riverCoords[i + 1]));
+                            }
+							entity.setGeometry(new LineGeometry(riverPoints));
 							break;
 						case "place":
-							byte[] data = rset.getBytes("geometry");
-							JGeometry jGeometry = JGeometry.load(data);
-							double[] point_coords = jGeometry.getPoint();
+							byte[] placeData = rset.getBytes("geometry");
+							JGeometry jGeometry = JGeometry.load(placeData);
+							double[] pointCoords = jGeometry.getPoint();
 							entity.setGeometry(
-								new PointGeometry(new Point(point_coords[0], point_coords[1]))
+								new PointGeometry(new Point(pointCoords[0], pointCoords[1]))
 							);
 							break;
 						default:
