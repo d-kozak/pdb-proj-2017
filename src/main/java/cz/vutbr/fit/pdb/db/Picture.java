@@ -182,6 +182,41 @@ public class Picture {
         return true;
     }
 
+    public ObservableList<Image> findSmiliar(Integer id)
+    {
+        ObservableList<Image> images = FXCollections.observableArrayList();
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "SELECT dest.*, SI_ScoreByFtrList(" +
+                        "new SI_FeatureList(src.img_ac, 0.3, src.img_ch,0.3, src.img_pc, 0.1, src.img_tx, 0.3), dest.img_si) " +
+                        "AS similarity FROM Picture src, Picture dest " +
+                        "WHERE (src.id <> dest.id) AND src.id = ? " +
+                        "ORDER BY similarity ASC"
+        )) {
+            stmt.setInt(1, id);
+            try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()) {
+                while (rset.next()) {
+                    OrdImage imgProxy = null;
+                    imgProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
+                    if (imgProxy != null) {
+                        try {
+                            if (imgProxy.getDataInByteArray() != null) {
+                                BufferedImage bufferedImg = ImageIO.read(new ByteArrayInputStream(imgProxy.getDataInByteArray()));
+                                images.add(SwingFXUtils.toFXImage(bufferedImg, null));
+                            }
+                        } catch (IOException ex) {
+                            log.severe("Loading similar picture failed: " + ex);
+                        }
+                    }
+                }
+            } catch (SQLException ex) {
+                log.severe("Find similar picture failed: Execute SQL statement exception: " + ex);
+            }
+        } catch (SQLException ex) {
+            log.severe("Find similar picture failed: Create SQL statement exception: " + ex);
+        }
+        return images;
+    }
+
 
     private static ObservableList<Image> loadPicturesFor(Integer entityId, String type) {
         ObservableList<Image> images = FXCollections.observableArrayList();
