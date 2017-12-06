@@ -3,8 +3,6 @@ package cz.vutbr.fit.pdb.db;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -28,14 +26,11 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import lombok.extern.java.Log;
-import lombok.val;
 import oracle.jdbc.OracleResultSet;
 import oracle.ord.im.OrdImage;
 import oracle.spatial.geometry.JGeometry;
 
 import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleResultSet;
-import oracle.ord.im.OrdImage;
 
 import javax.imageio.ImageIO;
 
