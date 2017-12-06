@@ -81,7 +81,7 @@ public class Picture {
                 stmt.setInt(1, id);
                 stmt.setString(2, description);
                 stmt.setString(3, type);
-                stmt.setDate(4, Date.valueOf(LocalDate.now()));
+                stmt.setDate(4, createdAt);
                 stmt.setInt(5, spatialEntityId);
                 try {
                     stmt.executeUpdate();
