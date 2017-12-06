@@ -126,4 +126,24 @@ INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VA
     3
 );
 
+INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES (
+	4,
+	'Czech Republic',
+	SDO_GEOMETRY(2003, NULL, NULL,
+		SDO_ELEM_INFO_ARRAY(1, 1003, 1),
+		SDO_ORDINATE_ARRAY(10, 10, 20, 100, 150, 150, 250, 170, 350, 120, 250, 50, 10, 10)
+	),
+	TO_DATE('1-1-1993', 'dd-mm-yyyy'),
+	TO_DATE('1-1-3000', 'dd-mm-yyyy'),
+	'country'
+);
+
+INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VALUES (
+    4,
+    'Some republic',
+    TO_DATE('11-11-1700', 'dd-mm-yyyy'),
+    TO_DATE('11-11-2200', 'dd-mm-yyyy'),
+    4
+);
+
 COMMIT;

@@ -90,9 +90,15 @@ public class MapMakerDB {
 					String entityType = rset.getString("entityType");
 					switch (entityType) {
 						case "country":
-							ObservableList<Point> points = FXCollections.observableArrayList();
-							points.addAll(new Point(10, 10), new Point(20, 10), new Point(10, 20));
-							entity.setGeometry(new PolygonGeometry(points));
+                            byte[] countryData = rset.getBytes("geometry");
+                            JGeometry jGeometryCountry = JGeometry.load(countryData);
+                            double[] countryCoords = jGeometryCountry.getOrdinatesArray();
+                            Integer countryCoordsCount = jGeometryCountry.getNumPoints();
+                            ObservableList<Point> countryPoints = FXCollections.observableArrayList();
+                            for (Integer i = 0; i < countryCoordsCount * 2; i += 2) {
+                                countryPoints.add(new Point(countryCoords[i], countryCoords[i + 1]));
+                            }
+                            entity.setGeometry(new LineGeometry(countryPoints));
 							break;
 						case "river":
 						    byte[] riverData = rset.getBytes("geometry");
