@@ -5,6 +5,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.extern.java.Log;
 
+import static cz.vutbr.fit.pdb.utils.MathUtils.distance;
+import static java.lang.String.format;
+
 @Log
 public class PolygonGeometry implements EntityGeometry {
     private ObservableList<Point> points;
@@ -25,7 +28,14 @@ public class PolygonGeometry implements EntityGeometry {
 
     @Override
     public boolean containsPoint(double x, double y) {
-        log.severe("Not implemented yet");
+        log.severe("Hacked, distance from corner points only!");
+        for (Point point : points) {
+            double distance = distance(x, y, point.getX(), point.getY());
+            if (distance < 10) {
+                log.info(format("Distance between [%f,%f] and [%f,%f] is %f", x, y, point.getX(), point.getY(), distance));
+                return true;
+            }
+        }
         return false;
     }
 }
