@@ -233,35 +233,35 @@ public class MapMakerDB {
 
     private boolean initPictures() {
         boolean res = false;
-        res |= initPicture(
+        res |= insertPicture(
           "Brno flag",
           "flag",
           Date.valueOf(LocalDate.now()),
           1,
           "src/resources/brno-flag.jpg"
         );
-        res |= initPicture(
+        res |= insertPicture(
                 "Brno Petrov",
                 "normal",
                 Date.valueOf(LocalDate.now()),
                 1,
                 "src/resources/brno-petrov.jpg"
         );
-        res |= initPicture(
+        res |= insertPicture(
                 "Brno square",
                 "normal",
                 Date.valueOf(LocalDate.now()),
                 1,
                 "src/resources/brno-square.jpg"
         );
-        res |= initPicture(
+        res |= insertPicture(
                 "Praha flag",
                 "flag",
                 Date.valueOf(LocalDate.now()),
                 2,
                 "src/resources/praha-flag.jpg"
         );
-        res |= initPicture(
+        res |= insertPicture(
                 "Praha bridge",
                 "normal",
                 Date.valueOf(LocalDate.now()),
@@ -280,9 +280,9 @@ public class MapMakerDB {
      * @param imgPath Path to the image.
      * @return Boolean value.
      */
-    private boolean initPicture(String description, String type,
-                                Date createdAt, Integer spatialEntityId, String imgPath) {
-        Integer id = getMaxId("Picture") + 1;
+    public boolean insertPicture(String description, String type,
+                                 Date createdAt, Integer spatialEntityId, String imgPath) {
+        Integer id = dbConnection.getMaxId("Picture") + 1;
         try {
             connection.setAutoCommit(false);
         } catch (SQLException ex) {
@@ -398,23 +398,4 @@ public class MapMakerDB {
         return true;
     }
 
-    private static Integer getMaxId(String table){
-        try (PreparedStatement stmt = connection.prepareStatement(
-                "SELECT max(id) AS max FROM " + table
-        )) {
-            try (ResultSet rset = stmt.executeQuery()) {
-                if (rset.next()) {
-                    return rset.getInt("max");
-                }
-            } catch (SQLException ex) {
-                log.severe("Execute SQL query exception: " + ex + stmt.toString());
-                return 0;
-            }
-        }
-        catch (SQLException ex) {
-            log.severe("Create SQL statement exception: " + ex);
-            return 0;
-        }
-        return 0;
-    }
 }

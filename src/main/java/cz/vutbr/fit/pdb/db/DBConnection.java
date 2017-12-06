@@ -1,10 +1,7 @@
 package cz.vutbr.fit.pdb.db;
 
 import java.lang.Exception;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 import lombok.extern.java.Log;
@@ -138,5 +135,25 @@ public class DBConnection {
             log.severe("DB query failed: Create SQL statement exception: " + ex + " : " + query);
             throw ex;
         }
+    }
+
+    public Integer getMaxId(String table){
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "SELECT max(id) AS max FROM " + table
+        )) {
+            try (ResultSet rset = stmt.executeQuery()) {
+                if (rset.next()) {
+                    return rset.getInt("max");
+                }
+            } catch (SQLException ex) {
+                log.severe("Execute SQL query exception: " + ex + stmt.toString());
+                return 0;
+            }
+        }
+        catch (SQLException ex) {
+            log.severe("Create SQL statement exception: " + ex);
+            return 0;
+        }
+        return 0;
     }
 }
