@@ -11,6 +11,14 @@ public class PointGeometry implements EntityGeometry {
 
     private Point point;
 
+    public double getX() {
+        return point.getX();
+    }
+
+    public double getY() {
+        return point.getY();
+    }
+
     public PointGeometry(Point point) {
         this.point = point;
     }

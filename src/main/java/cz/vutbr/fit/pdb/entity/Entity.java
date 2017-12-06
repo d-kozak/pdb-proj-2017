@@ -16,6 +16,7 @@ public class Entity {
     private IntegerProperty id = new SimpleIntegerProperty();
     private StringProperty name = new SimpleStringProperty();
     private StringProperty description = new SimpleStringProperty();
+    private StringProperty type = new SimpleStringProperty();
     private ObjectProperty<Image> flag = new SimpleObjectProperty<>();
     private ObservableList<Image> images = FXCollections.observableArrayList();
     private ObjectProperty<LocalDate> from = new SimpleObjectProperty<>();

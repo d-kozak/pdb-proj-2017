@@ -38,4 +38,8 @@ public class PolygonGeometry implements EntityGeometry {
         }
         return false;
     }
+
+    public ObservableList<Point> getPoints() {
+        return points;
+    }
 }

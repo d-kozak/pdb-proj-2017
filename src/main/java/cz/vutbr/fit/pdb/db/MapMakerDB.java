@@ -11,16 +11,17 @@ import java.sql.PreparedStatement;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.sql.Statement;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
 import cz.vutbr.fit.pdb.entity.Entity;
-import cz.vutbr.fit.pdb.entity.geometry.LineGeometry;
-import cz.vutbr.fit.pdb.entity.geometry.Point;
-import cz.vutbr.fit.pdb.entity.geometry.PointGeometry;
-import cz.vutbr.fit.pdb.entity.geometry.PolygonGeometry;
+import cz.vutbr.fit.pdb.entity.geometry.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import lombok.extern.java.Log;
 import oracle.spatial.geometry.JGeometry;
 
@@ -32,6 +33,9 @@ import oracle.spatial.geometry.JGeometry;
  */
 @Log
 public class MapMakerDB {
+    private static final int SRID = 0;
+    private static final int DIMENSION = 2;
+
     private static MapMakerDB mapMakerDB = null;
     private static DBConnection dbConnection = DBConnection.getInstance();
     private static Connection connection = dbConnection.getConnection();
@@ -91,7 +95,7 @@ public class MapMakerDB {
 						    double[] riverCoords = jGeometryRiver.getOrdinatesArray();
 						    Integer riverCoordsCount = jGeometryRiver.getNumPoints();
 							ObservableList<Point> riverPoints = FXCollections.observableArrayList();
-							for (Integer i = 0; i < riverCoordsCount * 2; i += 2) {
+							for (Integer i = 0; i < riverCoordsCount * DIMENSION; i += DIMENSION) {
                                 riverPoints.add(new Point(riverCoords[i], riverCoords[i + 1]));
                             }
 							entity.setGeometry(new LineGeometry(riverPoints));
@@ -141,6 +145,33 @@ public class MapMakerDB {
             log.severe("Load description: Create SQL statement exception: " + ex);
         }
         return "Description.";
+    }
+
+    /**
+     * Inserts the given entity to the database and sets correct ID.
+     * Only description, dates and geometry is inserted. Images and flag are NOT inserted!
+     * @param entity
+     */
+    private static void insertEntity(Entity entity) {
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES( " +
+                        "?, ?, ?, ?, ?, ?)"
+        )) {
+            entity.setId(dbConnection.getMaxId("spatialEntity") + 1);
+            stmt.setInt(1, entity.getId());
+            stmt.setString(2, entity.getName());
+            try {
+                stmt.setObject(3, JGeometry.storeJS(connection, geometryToJGeometry(entity.getGeometry())));
+            } catch (Exception ex) {
+                log.severe("Insert entity: Conversion to JGeometry: " + ex);
+                return;
+            }
+            stmt.setDate(4, Date.valueOf(entity.getFrom()));
+            stmt.setDate(5, Date.valueOf(entity.getTo()));
+            stmt.setString(6, geometryToType(entity.getGeometry()));
+        } catch (SQLException ex) {
+            log.severe("Insert entity: Create SQL statement exception: " + ex);
+        }
     }
 
     /**
@@ -211,5 +242,68 @@ public class MapMakerDB {
         return res;
     }
 
+    private static String geometryToType(EntityGeometry geometry) {
+        if (geometry instanceof PointGeometry) {
+            return "place";
+        } else if (geometry instanceof CircleGeometry) {
+            return "place";
+        } else if (geometry instanceof PolygonGeometry) {
+            return "country";
+        } else if (geometry instanceof LineGeometry) {
+            return "river";
+        }
+        log.severe("Unknwon geometry.");
+        return "unknown";
+    }
 
+    private static JGeometry geometryToJGeometry(EntityGeometry geometry){
+        if (geometry instanceof PointGeometry) {
+            return new JGeometry(
+                    ((PointGeometry) geometry).getX(),
+                    ((PointGeometry) geometry).getY(),
+                    SRID
+            );
+        } else if (geometry instanceof CircleGeometry) {
+            CircleGeometry cGeometry = (CircleGeometry) geometry;
+            double radius = cGeometry.getRadius();
+            return new JGeometry(
+                    3,
+                    SRID,
+                    new int[]{1, 1003, 4},
+                    new double[]{
+                            cGeometry.getCenter().getX(), cGeometry.getCenter().getY() - radius,
+                            cGeometry.getCenter().getX() + radius, cGeometry.getCenter().getY(),
+                            cGeometry.getCenter().getX(), cGeometry.getCenter().getY() + radius,
+                    }
+            );
+        } else if (geometry instanceof PolygonGeometry){
+            ObservableList<Point> points = ((PolygonGeometry) geometry).getPoints();
+            double coords[] = new double[points.size()];
+            for ( int i = 0; i < points.size(); i++) {
+                coords[i * DIMENSION] = points.get(i).getX();
+                coords[i * DIMENSION + 1] = points.get(i).getY();
+            };
+            return new JGeometry(
+                    3,
+                    SRID,
+                    new int[]{1, 1003, 1}, // exterior polygon
+                    coords
+            );
+        } else if (geometry instanceof LineGeometry) {
+            ObservableList<Point> points = ((LineGeometry) geometry).getPoints();
+            double coords[] = new double[points.size() * DIMENSION];
+            for ( int i = 0; i < points.size(); i++) {
+                coords[i * DIMENSION] = points.get(i).getX();
+                coords[i * DIMENSION + 1] = points.get(i).getY();
+            };
+            return new JGeometry(
+                    2,
+                    SRID,
+                    new int[]{1, 2, 1},
+                    coords
+            );
+        }
+        log.severe("Unknown geometry: " + geometry.getClass());
+        return null;
+    }
 }

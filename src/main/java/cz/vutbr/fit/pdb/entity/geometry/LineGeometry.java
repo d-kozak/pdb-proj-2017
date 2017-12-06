@@ -39,4 +39,8 @@ public class LineGeometry implements EntityGeometry {
     public Object getDescription() {
         return points;
     }
+
+    public ObservableList<Point> getPoints() {
+        return points;
+    }
 }
