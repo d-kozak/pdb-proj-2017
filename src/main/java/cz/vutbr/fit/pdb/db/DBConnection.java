@@ -30,7 +30,7 @@ public class DBConnection {
      *
      * @return DBConnection
      */
-    public static DBConnection create() {
+    public static DBConnection getInstance() {
         if (dbConnection == null){
             dbConnection = new DBConnection();
         }

@@ -16,13 +16,12 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDate;
 
 import lombok.extern.java.Log;
 
 @Log
 public class Picture {
-    private static DBConnection dbConnection = DBConnection.create();
+    private static DBConnection dbConnection = DBConnection.getInstance();
     private static Connection connection = dbConnection.getConnection();
 
     private Picture() {

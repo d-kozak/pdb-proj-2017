@@ -39,7 +39,7 @@ public class MenubarPresenter {
 
     @FXML
     private void onInitDB(ActionEvent event) {
-        MapMakerDB db = MapMakerDB.create();
+        MapMakerDB db = MapMakerDB.getInstance();
         if(db.initDB("init_db.sql")) {
             showInfo("Success", "Database initiazlized successfully.");
         } else {
@@ -54,7 +54,7 @@ public class MenubarPresenter {
 
     @FXML
     private void onClose(ActionEvent event) {
-        DBConnection dbConnection = DBConnection.create();
+        DBConnection dbConnection = DBConnection.getInstance();
         dbConnection.disconnect();
         Platform.exit();
     }

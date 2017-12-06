@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 public class App extends Application {
 
     public static void main(String[] args) throws SQLException {
-        DBConnection dbConnection = DBConnection.create();
+        DBConnection dbConnection = DBConnection.getInstance();
         boolean succeeded = dbConnection.connect(
                 "gort.fit.vutbr.cz",
                 "1521",

@@ -33,14 +33,14 @@ import oracle.spatial.geometry.JGeometry;
 @Log
 public class MapMakerDB {
     private static MapMakerDB mapMakerDB = null;
-    private static DBConnection dbConnection = DBConnection.create();
+    private static DBConnection dbConnection = DBConnection.getInstance();
     private static Connection connection = dbConnection.getConnection();
 
     private MapMakerDB() {
 
     }
 
-    public static MapMakerDB create() {
+    public static MapMakerDB getInstance() {
         if (mapMakerDB == null) {
             mapMakerDB = new MapMakerDB();
         }
