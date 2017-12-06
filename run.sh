@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec mvn exec:java -Dexec.mainClass="cz.vutbr.fit.pdb.App" -Dexec.args="$*"
+java -Dusername=xkozak15 -Dpassword=m6kwhryq -jar target/fit-pdb17-epsilon-1.0-SNAPSHOT.jar
