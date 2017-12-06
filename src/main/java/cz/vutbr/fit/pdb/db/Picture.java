@@ -41,6 +41,20 @@ public class Picture {
         return null;
     }
 
+    public static void deleteImage(Integer id) {
+        deletePicture(id, "normal");
+    }
+
+    public static void deleteFlag(Integer id) {
+        deletePicture(id, "flag");
+    }
+
+    private static void deletePicture(Integer id, String type){
+        dbConnection.execute("DELETE FROM Picture " +
+                "id = " + id + " and type = " + type
+        );
+    }
+
     /**
      * Inserts a new image to the database.
      * @param description Description of the image.

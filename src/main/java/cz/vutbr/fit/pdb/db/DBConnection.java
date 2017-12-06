@@ -132,7 +132,7 @@ public class DBConnection {
      * @return Result of the query.
      * @throws SQLException
      */
-    public void execute(String query) throws SQLException {
+    public void execute(String query) {
         if (!isConnected) {
             log.severe("Cannot execute query on DB without connection.");
         }
@@ -144,14 +144,12 @@ public class DBConnection {
                 }
                 catch (SQLException ex) {
                     log.severe("DB query failed: Execute SQL query exception: " + ex + " : " +query);
-                    throw ex;
                 }
 
             }
         }
         catch (SQLException ex) {
             log.severe("DB query failed: Create SQL statement exception: " + ex + " : " + query);
-            throw ex;
         }
     }
 
