@@ -106,4 +106,24 @@ INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VA
     2
 );
 
+INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES (
+	3,
+	'Some river',
+	SDO_GEOMETRY(2002, NULL, NULL,
+		SDO_ELEM_INFO_ARRAY(1, 2, 1),
+		SDO_ORDINATE_ARRAY(0, 40, 50, 70, 120, 150)
+	),
+	TO_DATE('3-11-1120', 'dd-mm-yyyy'),
+	TO_DATE('3-11-2116', 'dd-mm-yyyy'),
+	'river'
+);
+
+INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VALUES (
+    3,
+    'Large river from somewhere to nowhere',
+    TO_DATE('11-11-1700', 'dd-mm-yyyy'),
+    TO_DATE('11-11-2200', 'dd-mm-yyyy'),
+    3
+);
+
 COMMIT;
