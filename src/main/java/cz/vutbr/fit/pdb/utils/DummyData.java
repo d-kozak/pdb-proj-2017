@@ -1,6 +1,7 @@
 package cz.vutbr.fit.pdb.utils;
 
 import cz.vutbr.fit.pdb.entity.Entity;
+import cz.vutbr.fit.pdb.entity.EntityImage;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
 import cz.vutbr.fit.pdb.entity.geometry.PointGeometry;
 import javafx.collections.FXCollections;
@@ -35,11 +36,17 @@ public class DummyData {
         entity.setGeometry(new PointGeometry(new Point(42, 42)));
         try {
             val image = new Image(new FileInputStream("src/resources/brno-flag.jpg"));
-            entity.setFlag(image);
+            val entityImage = new EntityImage();
+            entityImage.setImage(image);
+            entityImage.setDescription("dummy description");
+            entity.setFlag(entityImage);
 
-            ObservableList<Image> images = FXCollections.observableArrayList();
+            ObservableList<EntityImage> images = FXCollections.observableArrayList();
             for (int i = 0; i < 3; i++) {
-                images.add(image);
+                EntityImage entityImage1 = new EntityImage();
+                entityImage1.setImage(image);
+                entityImage1.setDescription("dummy description" + i);
+                images.add(entityImage1);
             }
             entity.setImages(images);
         } catch (FileNotFoundException e) {

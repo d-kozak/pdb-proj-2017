@@ -9,6 +9,7 @@ import cz.vutbr.fit.pdb.component.rightbar.geometry.polygoninfo.PolygonInfoView;
 import cz.vutbr.fit.pdb.component.rightbar.picturelistitem.PictureListViewCell;
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.Entity;
+import cz.vutbr.fit.pdb.entity.EntityImage;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
 import javafx.collections.FXCollections;
@@ -17,7 +18,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -25,6 +25,7 @@ import lombok.extern.java.Log;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 @Log
@@ -51,7 +52,7 @@ public class RightbarPresenter implements Initializable {
     private DatePicker toDate;
 
     @FXML
-    private ListView<Image> picturesView;
+    private ListView<EntityImage> picturesView;
 
     @Inject
     private EntityService entityService;
@@ -109,12 +110,23 @@ public class RightbarPresenter implements Initializable {
                  .bindBidirectional(entity.nameProperty());
         descriptionField.textProperty()
                         .bindBidirectional(entity.descriptionProperty());
-        flagView.imageProperty()
-                .setValue(entity.getFlag());
+        Optional<EntityImage> flagOptional = Optional.ofNullable(entity.getFlag());
+        flagOptional.ifPresent(flag -> {
+            flagView.imageProperty()
+                    .setValue(flag
+                            .getImage());
+            Tooltip.install(flagView, new Tooltip(flag
+                    .getDescription()));
+        });
+        if (!flagOptional.isPresent()) {
+            flagView.setImage(null);
+        }
+
         picturesView.setItems(entity.getImages());
         picturesView.setCellFactory(param -> new PictureListViewCell(entity.getImages(), image -> {
             flagView.imageProperty()
-                    .setValue(image);
+                    .setValue(image.getImage());
+            Tooltip.install(flagView, new Tooltip(image.getDescription()));
             entity.flagProperty()
                   .setValue(image);
         }));
@@ -151,8 +163,13 @@ public class RightbarPresenter implements Initializable {
                  .unbindBidirectional(selectedEntity.nameProperty());
         descriptionField.textProperty()
                         .unbindBidirectional(selectedEntity.descriptionProperty());
-        flagView.imageProperty()
-                .unbindBidirectional(selectedEntity.flagProperty());
+        Optional<EntityImage> entityImage = Optional.ofNullable(selectedEntity.flagProperty()
+                                                                              .get());
+        entityImage.ifPresent(image -> {
+            flagView.imageProperty()
+                    .unbindBidirectional(image
+                            .imageProperty());
+        });
         fromDate.valueProperty()
                 .unbindBidirectional(selectedEntity.fromProperty());
         toDate.valueProperty()
@@ -194,7 +211,7 @@ public class RightbarPresenter implements Initializable {
         presenter.getResult()
                  .ifPresent(result -> {
                      picturesView.getItems()
-                                 .add(result.getImage());
+                                 .add(result);
                  });
 
     }
