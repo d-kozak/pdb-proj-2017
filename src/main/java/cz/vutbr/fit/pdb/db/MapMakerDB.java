@@ -302,8 +302,8 @@ public class MapMakerDB {
                     new int[]{1, 1003, 4},
                     new double[]{
                             cGeometry.getCenter().getX(), cGeometry.getCenter().getY() - radius,
-                            cGeometry.getCenter().getX() + radius, cGeometry.getCenter().getY(),
                             cGeometry.getCenter().getX(), cGeometry.getCenter().getY() + radius,
+                            cGeometry.getCenter().getX() + radius, cGeometry.getCenter().getY()
                     }
             );
         } else if (geometry instanceof PolygonGeometry){
