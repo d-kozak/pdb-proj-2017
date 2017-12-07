@@ -49,7 +49,7 @@ public class EntityService {
             }
         });
         loadAllEntitiesTask.setOnFailed(event -> {
-            log.severe("Couldn't load entities");
+            printException(loadAllEntitiesTask.getException());
             showError("Database error", "Could not load entities");
         });
         THREAD_POOL.submit(loadAllEntitiesTask);
@@ -64,7 +64,10 @@ public class EntityService {
             entities.add(entity);
             selectedEntityService.setEntityProperty(entity);
         });
-        addEntityTask.setOnFailed(event -> onFailed.run());
+        addEntityTask.setOnFailed(event -> {
+            printException(addEntityTask.getException());
+            onFailed.run();
+        });
 
         Configuration.THREAD_POOL.submit(addEntityTask);
         return addEntityTask;
@@ -93,6 +96,7 @@ public class EntityService {
             entities.remove(entity);
         });
         removeEntityTask.setOnFailed(event -> {
+            printException(removeEntityTask.getException());
             onFailed.run();
         });
         Configuration.THREAD_POOL.submit(removeEntityTask);
@@ -104,7 +108,10 @@ public class EntityService {
         updateEntityTask.setEntity(entity);
         updateEntityTask.setFieldName(fieldName);
         updateEntityTask.setOnSucceeded(event -> onSucceeded.run());
-        updateEntityTask.setOnFailed(event -> onFailed.run());
+        updateEntityTask.setOnFailed(event -> {
+            printException(updateEntityTask.getException());
+            onFailed.run();
+        });
 
         Configuration.THREAD_POOL.submit(updateEntityTask);
         return updateEntityTask;
@@ -128,5 +135,10 @@ public class EntityService {
         FilteredList<Entity> selected = entities.filtered(entity -> entity.existsInYear(selectedYear));
         log.info("Selected entities :" + selected);
         return selected;
+    }
+
+    public void printException(Throwable exception) {
+        log.severe("Task failed with exception:" + exception);
+        exception.printStackTrace();
     }
 }
