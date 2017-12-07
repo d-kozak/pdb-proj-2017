@@ -4,6 +4,7 @@ import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.concurent.AddEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.LoadAllEntitiesTask;
 import cz.vutbr.fit.pdb.entity.concurent.RemoveEntityTask;
+import cz.vutbr.fit.pdb.entity.concurent.UpdateEntityTask;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -98,6 +99,17 @@ public class EntityService {
         });
         Configuration.THREAD_POOL.submit(removeEntityTask);
         return removeEntityTask;
+    }
+
+    public <T> Task<Void> updateEntity(Entity entity, String fieldName, Runnable onSucceeded, Runnable onFailed) {
+        UpdateEntityTask updateEntityTask = new UpdateEntityTask();
+        updateEntityTask.setEntity(entity);
+        updateEntityTask.setFieldName(fieldName);
+        updateEntityTask.setOnSucceeded(event -> onSucceeded.run());
+        updateEntityTask.setOnFailed(event -> onFailed.run());
+
+        Configuration.THREAD_POOL.submit(updateEntityTask);
+        return updateEntityTask;
     }
 
     public boolean isInitDataLoaded() {

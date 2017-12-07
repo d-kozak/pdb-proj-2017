@@ -14,7 +14,7 @@ public class UpdateEntityTask extends Task<Void> {
         this.entity = entity;
     }
 
-    public void setField(String field) {
+    public void setFieldName(String field) {
         this.field = field;
     }
 

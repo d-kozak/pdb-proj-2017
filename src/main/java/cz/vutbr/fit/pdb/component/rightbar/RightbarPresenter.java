@@ -31,6 +31,9 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
+
 @Log
 public class RightbarPresenter implements Initializable {
 
@@ -113,13 +116,31 @@ public class RightbarPresenter implements Initializable {
         this.selectedEntity = entity;
         nameField.setText(entity.getName());
         nameField.setOnAction(event -> {
-            entity.setName(nameField.getText());
+            entityService.updateEntity(entity, "name",
+                    () -> {
+                        showInfo("Entity updated", "Entity updated successfully");
+                        entity.setName(nameField.getText());
+                    },
+                    () -> {
+                        showError("Database error", "Could not update entity");
+                        nameField.setText(entity.getName());
+                    });
+
         });
         descriptionField.setText(entity.getDescription());
         descriptionField.setOnKeyReleased(keyEvent -> {
             if (keyEvent.getCode()
-                        .equals(KeyCode.ENTER))
-                entity.setDescription(descriptionField.getText());
+                        .equals(KeyCode.ENTER)) {
+                entityService.updateEntity(entity, "description",
+                        () -> {
+                            showInfo("Entity updated", "Entity updated successfully");
+                            entity.setDescription(descriptionField.getText());
+                        },
+                        () -> {
+                            showError("Database error", "Could not update entity");
+                            descriptionField.setText(entity.getDescription());
+                        });
+            }
         });
 
         Optional<EntityImage> flagOptional = Optional.ofNullable(entity.getFlag());
@@ -137,22 +158,50 @@ public class RightbarPresenter implements Initializable {
         picturesView.setItems(entity.getImages());
         picturesView.setCellFactory(param -> new PictureListViewCell(
                 image -> {
-                    entity.getImages()
-                          .remove(image);
+                    entityService.updateEntity(entity, "images",
+                            () -> {
+                                showInfo("Entity updated", "Entity updated successfully");
+                                entity.getImages()
+                                      .remove(image);
+                            },
+                            () -> {
+                                showError("Database error", "Could not update entity");
+                            });
                 }, image -> {
-            flagView.imageProperty()
-                    .setValue(image.getImage());
-            Tooltip.install(flagView, new Tooltip(image.getDescription()));
-            entity.flagProperty()
-                  .setValue(image);
+            entityService.updateEntity(entity, "flag", () -> {
+                        showInfo("Entity updated", "Entity updated successfully");
+                        flagView.setImage(image.getImage());
+                        Tooltip.install(flagView, new Tooltip(image.getDescription()));
+                        entity.setFlag(image);
+                    },
+                    () -> {
+                        showError("Database error", "Could not update entity");
+                    });
         }));
         fromDateChangeListener = (observable, oldValue, newValue) -> {
-            entity.setFrom(fromDate.getValue());
+            entityService.updateEntity(entity, "from",
+                    () -> {
+                        showInfo("Entity updated", "Entity updated successfully");
+                        entity.setFrom(fromDate.getValue());
+                    },
+                    () -> {
+                        showError("Database error", "Could not update entity");
+                        fromDate.setValue(entity.getFrom());
+                    });
+
         };
         fromDate.valueProperty()
                 .addListener(fromDateChangeListener);
         toDateChangeListener = (observable, oldValue, newValue) -> {
-            entity.setTo(toDate.getValue());
+            entityService.updateEntity(entity, "to",
+                    () -> {
+                        showInfo("Entity updated", "Entity updated successfully");
+                        entity.setTo(toDate.getValue());
+                    },
+                    () -> {
+                        showError("Database error", "Could not update entity");
+                        toDate.setValue(entity.getTo());
+                    });
         };
         toDate.valueProperty()
               .addListener(toDateChangeListener);
@@ -232,8 +281,17 @@ public class RightbarPresenter implements Initializable {
 
         presenter.getResult()
                  .ifPresent(result -> {
-                     picturesView.getItems()
-                                 .add(result);
+                     entityService.updateEntity(selectedEntity, "pictures",
+                             () -> {
+                                 showInfo("Entity updated", "Entity updated successfully");
+                                 picturesView.getItems()
+                                             .add(result);
+                             },
+                             () -> {
+                                 showError("Database error", "Could not update entity");
+                             });
+
+
                  });
 
     }
