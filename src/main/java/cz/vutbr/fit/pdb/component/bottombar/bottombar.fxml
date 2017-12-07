@@ -18,7 +18,7 @@
                     </HBox.margin>
                 </Text>
                 <TextField fx:id="yearTextField"/>
-                <Slider min="-1000" value="1000" max="2000" fx:id="yearSlider" prefHeight="16.0" prefWidth="542.0">
+                <Slider fx:id="yearSlider" prefHeight="16.0" prefWidth="542.0">
                     <HBox.margin>
                         <Insets left="5.0" right="5.0"/>
                     </HBox.margin>

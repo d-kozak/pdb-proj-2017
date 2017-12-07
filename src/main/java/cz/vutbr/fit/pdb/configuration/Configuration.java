@@ -22,7 +22,7 @@ public class Configuration {
 
     private ObjectProperty<DBConfiguration> dbConfiguration = new SimpleObjectProperty<>(new DBConfiguration());
 
-    private IntegerProperty year = new SimpleIntegerProperty();
+    private IntegerProperty year = new SimpleIntegerProperty(2000);
     private ObjectProperty<DrawingMode> drawMode = new SimpleObjectProperty<>(DrawingMode.POINT);
     private ObjectProperty<AppMode> appMode = new SimpleObjectProperty<>(AppMode.VIEW);
 
@@ -32,6 +32,9 @@ public class Configuration {
 
     private IntegerProperty canvasWidth = new SimpleIntegerProperty();
     private IntegerProperty canvasHeight = new SimpleIntegerProperty();
+
+    private IntegerProperty mininumYear = new SimpleIntegerProperty(-1000);
+    private IntegerProperty maximumYear = new SimpleIntegerProperty(3000);
 
     private ObjectProperty<Canvas> canvas = new SimpleObjectProperty<>();
 
@@ -151,5 +154,29 @@ public class Configuration {
 
     public ObjectProperty<Canvas> canvasProperty() {
         return canvas;
+    }
+
+    public int getMininumYear() {
+        return mininumYear.get();
+    }
+
+    public void setMininumYear(int mininumYear) {
+        this.mininumYear.set(mininumYear);
+    }
+
+    public IntegerProperty mininumYearProperty() {
+        return mininumYear;
+    }
+
+    public int getMaximumYear() {
+        return maximumYear.get();
+    }
+
+    public void setMaximumYear(int maximumYear) {
+        this.maximumYear.set(maximumYear);
+    }
+
+    public IntegerProperty maximumYearProperty() {
+        return maximumYear;
     }
 }
