@@ -19,6 +19,7 @@ import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.geometry.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
@@ -72,6 +73,7 @@ public class MapMakerDB {
 					Entity entity = new Entity();
 					entity.setId(rset.getInt("id"));
 					entity.setName(rset.getString("name"));
+					entity.setColor(Color.web(rset.getString("color")));
 
 					entity.setFrom(rset.getDate("validFrom").toLocalDate());
 					entity.setTo(rset.getDate("validTo").toLocalDate());
@@ -168,8 +170,8 @@ public class MapMakerDB {
      */
     private static void insertEntity(Entity entity) {
         try (PreparedStatement stmt = connection.prepareStatement(
-                "INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES( " +
-                        "?, ?, ?, ?, ?, ?)"
+                "INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType, color) VALUES( " +
+                        "?, ?, ?, ?, ?, ?, ?)"
         )) {
             entity.setId(dbConnection.getMaxId("spatialEntity") + 1);
             stmt.setInt(1, entity.getId());
@@ -183,6 +185,7 @@ public class MapMakerDB {
             stmt.setDate(4, Date.valueOf(entity.getFrom()));
             stmt.setDate(5, Date.valueOf(entity.getTo()));
             stmt.setString(6, geometryToType(entity.getGeometry()));
+            stmt.setString(7, entity.getColor().toString());
         } catch (SQLException ex) {
             log.severe("Insert entity: Create SQL statement exception: " + ex);
         }
