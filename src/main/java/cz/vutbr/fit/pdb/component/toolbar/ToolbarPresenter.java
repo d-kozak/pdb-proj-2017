@@ -55,6 +55,13 @@ public class ToolbarPresenter implements Initializable {
                         .addListener((observable, oldValue, newValue) -> {
                             selectedEntityService.setEntityProperty(newValue);
                         });
+        selectedEntityService.entityPropertyProperty()
+                             .addListener((observable, oldValue, newValue) -> {
+                                 if (newValue != null) {
+                                     entitiesComboBox.getSelectionModel()
+                                                     .select(newValue);
+                                 }
+                             });
 
         if (!entities.isEmpty()) {
             entitiesComboBox.getSelectionModel()

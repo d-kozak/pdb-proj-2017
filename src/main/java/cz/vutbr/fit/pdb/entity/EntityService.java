@@ -62,6 +62,7 @@ public class EntityService {
         addEntityTask.setOnSucceeded(event -> {
             onSucceeded.run();
             entities.add(entity);
+            selectedEntityService.setEntityProperty(entity);
         });
         addEntityTask.setOnFailed(event -> onFailed.run());
 
