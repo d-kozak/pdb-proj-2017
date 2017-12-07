@@ -1,5 +1,7 @@
 package cz.vutbr.fit.pdb.component.rightbar;
 
+import cz.vutbr.fit.pdb.component.loadpicture.LoadPicturePresenter;
+import cz.vutbr.fit.pdb.component.loadpicture.LoadPictureView;
 import cz.vutbr.fit.pdb.component.rightbar.geometry.circleinfo.CircleInfoView;
 import cz.vutbr.fit.pdb.component.rightbar.geometry.lineinfo.LineInfoView;
 import cz.vutbr.fit.pdb.component.rightbar.geometry.pointinfo.PointInfoView;
@@ -13,16 +15,15 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.java.Log;
-import lombok.val;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -176,16 +177,25 @@ public class RightbarPresenter implements Initializable {
 
     @FXML
     private void onLoadNewPhoto(ActionEvent event) {
-        val fileChooser = new FileChooser();
-        fileChooser.setTitle("Select new picture");
-        File file = fileChooser.showOpenDialog(mainStage);
-        if (file != null) {
-            val image = new Image(file.toURI()
-                                      .toString());
-            selectedEntityService.getEntityProperty()
-                                 .getImages()
-                                 .add(image);
-            log.info("Image " + file.getName() + " loaded successfully");
-        }
+        LoadPictureView loadPictureView = new LoadPictureView();
+        Stage stage = new Stage();
+        Scene scene = new Scene(loadPictureView.getView());
+        stage.setTitle("Load new picture");
+        stage.setScene(scene);
+
+        LoadPicturePresenter presenter = (LoadPicturePresenter) loadPictureView.getPresenter();
+        presenter.setStage(stage);
+
+        // make the dialog modal
+        stage.initOwner(mainStage.getOwner());
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
+
+        presenter.getResult()
+                 .ifPresent(result -> {
+                     picturesView.getItems()
+                                 .add(result.getImage());
+                 });
+
     }
 }
