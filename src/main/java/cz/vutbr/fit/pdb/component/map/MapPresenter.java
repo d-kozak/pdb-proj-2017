@@ -55,7 +55,7 @@ public class MapPresenter implements Initializable, MapRenderer {
         this.entityService.initDataLoadedProperty()
                           .addListener((observable, oldValue, newValue) -> {
                               if (newValue) {
-                                  this.painter.paintAll(entityService.getEntities());
+                                  this.painter.paintAll(entityService.getEntities(configuration.getYear()));
                               }
                           });
 
