@@ -7,11 +7,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import lombok.extern.java.Log;
 
 import javax.inject.Inject;
+import javax.swing.*;
 import java.time.LocalDate;
 import java.util.List;
 
+@Log
 public class Entity {
     public static final Entity NULL = new Entity(0, "", "", null, FXCollections.observableArrayList(), null);
     private IntegerProperty id = new SimpleIntegerProperty();
@@ -190,10 +193,15 @@ public class Entity {
         return from.getYear() <= selectedYear && selectedYear <= to.getYear();
     }
 
-
-    @Inject
-    private SelectedEntityService selectedEntityService;
+    public SelectedEntityService selectedEntityService;
     public void select() {
-        selectedEntityService.setEntityProperty(this);
+        log.severe("trytosel");
+        // selectedEntityService.setEntityProperty(this);
+        selectedEntityService.setEntityProperty(null);
+        //JOptionPane.showMessageDialog(null, "ohnoes!", "ohnoes!", JOptionPane.ERROR_MESSAGE);
+        if(selectedEntityService.getEntityProperty() == null)
+            log.severe("nothing selected");
+        else
+            log.severe("something selected");
     };
 }

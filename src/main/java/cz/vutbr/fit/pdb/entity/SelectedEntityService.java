@@ -47,4 +47,8 @@ public class SelectedEntityService {
     public ObjectProperty<Entity> entityPropertyProperty() {
         return entityProperty;
     }
+
+    public void log(String str) {
+        log.severe(str);
+    }
 }

@@ -45,7 +45,7 @@ VMBridge.prototype = {
 		}
 		y
 		ent.on("click", function() {
-			self.vm.log(geom.focus())
+			geom.focus()
 			javaEnt.select()
 		}).addTo(geoEntities)
 	},

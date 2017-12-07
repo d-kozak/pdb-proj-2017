@@ -40,7 +40,7 @@ public class PointGeometry implements EntityGeometry {
         return distance < 10;
     }
 
-    public String focus() {
-        return "Touched!";
+    public void focus() {
+        log.severe("Touched!");
     }
 }
