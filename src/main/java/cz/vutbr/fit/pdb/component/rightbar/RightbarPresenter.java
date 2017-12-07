@@ -190,6 +190,7 @@ public class RightbarPresenter implements Initializable {
                     });
 
         };
+        fromDate.setValue(entity.getFrom());
         fromDate.valueProperty()
                 .addListener(fromDateChangeListener);
         toDateChangeListener = (observable, oldValue, newValue) -> {
@@ -203,6 +204,7 @@ public class RightbarPresenter implements Initializable {
                         toDate.setValue(entity.getTo());
                     });
         };
+        toDate.setValue(entity.getTo());
         toDate.valueProperty()
               .addListener(toDateChangeListener);
 
