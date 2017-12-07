@@ -13,7 +13,7 @@
             </HBox.margin>
         </Text>
 
-        <HBox fx:id="drawingModeButtons">
+        <HBox disable="true" fx:id="drawingModeButtons">
             <children>
                 <Button fx:id="pointBtn" mnemonicParsing="false" onAction="#onPoint" text="Point">
                     <HBox.margin>

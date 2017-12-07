@@ -24,7 +24,7 @@ public class Configuration {
 
     private IntegerProperty year = new SimpleIntegerProperty();
     private ObjectProperty<DrawingMode> drawMode = new SimpleObjectProperty<>(DrawingMode.POINT);
-    private ObjectProperty<AppMode> appMode = new SimpleObjectProperty<>(AppMode.EDIT);
+    private ObjectProperty<AppMode> appMode = new SimpleObjectProperty<>(AppMode.VIEW);
 
     private ObjectProperty<Color> drawingColor = new SimpleObjectProperty<>(Color.color(0, 0, 0));
 
