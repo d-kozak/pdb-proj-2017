@@ -12,6 +12,7 @@ import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityImage;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,12 +20,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.java.Log;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -67,6 +70,8 @@ public class RightbarPresenter implements Initializable {
     private Configuration configuration;
 
     private Entity selectedEntity;
+    private ChangeListener<LocalDate> fromDateChangeListener;
+    private ChangeListener<LocalDate> toDateChangeListener;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -106,10 +111,17 @@ public class RightbarPresenter implements Initializable {
     private void initViewForEntity(Entity entity) {
         log.info("displaying entity: " + entity);
         this.selectedEntity = entity;
-        nameField.textProperty()
-                 .bindBidirectional(entity.nameProperty());
-        descriptionField.textProperty()
-                        .bindBidirectional(entity.descriptionProperty());
+        nameField.setText(entity.getName());
+        nameField.setOnAction(event -> {
+            entity.setName(nameField.getText());
+        });
+        descriptionField.setText(entity.getDescription());
+        descriptionField.setOnKeyReleased(keyEvent -> {
+            if (keyEvent.getCode()
+                        .equals(KeyCode.ENTER))
+                entity.setDescription(descriptionField.getText());
+        });
+
         Optional<EntityImage> flagOptional = Optional.ofNullable(entity.getFlag());
         flagOptional.ifPresent(flag -> {
             flagView.imageProperty()
@@ -134,10 +146,16 @@ public class RightbarPresenter implements Initializable {
             entity.flagProperty()
                   .setValue(image);
         }));
+        fromDateChangeListener = (observable, oldValue, newValue) -> {
+            entity.setFrom(fromDate.getValue());
+        };
         fromDate.valueProperty()
-                .bindBidirectional(entity.fromProperty());
+                .addListener(fromDateChangeListener);
+        toDateChangeListener = (observable, oldValue, newValue) -> {
+            entity.setTo(toDate.getValue());
+        };
         toDate.valueProperty()
-              .bindBidirectional(entity.toProperty());
+              .addListener(toDateChangeListener);
 
         switch (entity.getGeometryType()) {
             case POINT:
@@ -175,9 +193,9 @@ public class RightbarPresenter implements Initializable {
                             .imageProperty());
         });
         fromDate.valueProperty()
-                .unbindBidirectional(selectedEntity.fromProperty());
+                .removeListener(fromDateChangeListener);
         toDate.valueProperty()
-              .unbindBidirectional(selectedEntity.toProperty());
+              .removeListener(toDateChangeListener);
     }
 
     private void initForPoint() {
