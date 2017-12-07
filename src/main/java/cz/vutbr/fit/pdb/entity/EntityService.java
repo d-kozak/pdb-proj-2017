@@ -40,9 +40,6 @@ public class EntityService {
             try {
                 entities.clear();
                 entities.addAll(loadAllEntitiesTask.get());
-                if (!entities.isEmpty()) {
-                    selectedEntityService.setEntityProperty(entities.get(0));
-                }
                 log.info("Loaded entities: " + entities);
                 initDataLoaded.set(true);
 
