@@ -198,6 +198,12 @@ public class MapMakerDB {
         }
     }
 
+    public static void deleteEntity(Entity entity) {
+        dbConnection.execute("DELETE FROM SpatialEntity " +
+                "WHERE id = " + entity.getId()
+        );
+    }
+
     /**
      * Runs SQL script on the given filePath.
      * @param filePath Path to the initialization script.
