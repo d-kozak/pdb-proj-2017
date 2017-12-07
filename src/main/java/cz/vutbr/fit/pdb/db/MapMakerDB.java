@@ -301,7 +301,7 @@ public class MapMakerDB {
             );
         } else if (geometry instanceof PolygonGeometry){
             ObservableList<Point> points = ((PolygonGeometry) geometry).getPoints();
-            double coords[] = new double[points.size()];
+            double coords[] = new double[points.size() * DIMENSION];
             for ( int i = 0; i < points.size(); i++) {
                 coords[i * DIMENSION] = points.get(i).getX();
                 coords[i * DIMENSION + 1] = points.get(i).getY();
