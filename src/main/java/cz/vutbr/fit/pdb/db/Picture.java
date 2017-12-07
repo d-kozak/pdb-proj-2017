@@ -231,7 +231,7 @@ public class Picture {
                 try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()) {
                     rset.next();
                     srcImageProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
-                    description = "BLABLA";// rset.getString("description");
+                    description = rset.getString("description");
                     type = rset.getString("pictureType");
                     createdAt = rset.getDate("createdAt");
                     spatialEntityId = rset.getInt("spatialEntityId");
