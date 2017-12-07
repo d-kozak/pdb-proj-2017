@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.entity.concurent;
 
+import cz.vutbr.fit.pdb.db.MapMakerDB;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.utils.ExceptionGun;
 import javafx.concurrent.Task;
@@ -16,8 +17,7 @@ public class RemoveEntityTask extends Task<Void> {
 
     @Override
     protected Void call() throws Exception {
-        log.severe("Not impl yet!");
-        ExceptionGun.throwMeMaybe();
+        MapMakerDB.deleteEntity(entity);
         return null;
     }
 
