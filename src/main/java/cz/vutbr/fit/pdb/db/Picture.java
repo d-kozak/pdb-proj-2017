@@ -100,6 +100,7 @@ public class Picture {
             connection.setAutoCommit(false);
         } catch (SQLException ex) {
             log.info("Cannot disable autocommit: " + ex);
+            throw new RuntimeException(ex);
         }
 
         try {
@@ -121,7 +122,7 @@ public class Picture {
             }
         } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         OrdImage imgProxy = null;
@@ -135,12 +136,12 @@ public class Picture {
                     imgProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
                 } catch (SQLException ex) {
                     log.severe("Init picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         try {
@@ -148,7 +149,7 @@ public class Picture {
             imgProxy.setProperties();
         } catch (SQLException | IOException ex) {
             log.severe("Failed to load img: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         try {
@@ -166,7 +167,7 @@ public class Picture {
             }
         } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         try {
@@ -186,12 +187,12 @@ public class Picture {
                     stmt.executeUpdate(updateSql2);
                 } catch (SQLException ex) {
                     log.severe("Init picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         try {
@@ -214,6 +215,7 @@ public class Picture {
             connection.setAutoCommit(false);
         } catch (SQLException ex) {
             log.info("Cannot disable autocommit: " + ex);
+            throw new RuntimeException(ex);
         }
 
         // retrieve ORDImage object of a source image
@@ -237,18 +239,12 @@ public class Picture {
                     spatialEntityId = rset.getInt("spatialEntityId");
                 } catch (SQLException ex) {
                     log.severe("Load picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("Load picture failed: Create SQL statement exception: " + ex);
-            return false;
-        }
-
-        try {
-            connection.setAutoCommit(false);
-        } catch (SQLException ex) {
-            log.info("Cannot disable autocommit: " + ex);
+            throw new RuntimeException(ex);
         }
 
         // insert a new record with an empty ORDImage object
@@ -266,12 +262,12 @@ public class Picture {
                     stmt.executeUpdate();
                 } catch (SQLException ex) {
                     log.severe("Insert picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("Insert picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         // retrieve the previously created ORDImage object for updating
@@ -286,12 +282,12 @@ public class Picture {
                     dstImgProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
                 } catch (SQLException ex) {
                     log.severe("Select picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("Select picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         // perform conversion (processing occurs on the Oracle Database)
@@ -299,6 +295,7 @@ public class Picture {
             srcImageProxy.processCopy(modification, dstImgProxy);
         } catch (SQLException ex) {
             log.severe("Img processing failed: " + ex);
+            throw new RuntimeException(ex);
         }
 
         // save the target image
@@ -312,7 +309,7 @@ public class Picture {
                     stmt.executeUpdate();
                 } catch (SQLException ex) {
                     log.severe("Save picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
@@ -338,12 +335,12 @@ public class Picture {
                     stmt.executeUpdate(updateSql2);
                 } catch (SQLException ex) {
                     log.severe("Update picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("update picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         try {
@@ -383,14 +380,17 @@ public class Picture {
                             }
                         } catch (IOException ex) {
                             log.severe("Load image failed: " + ex);
+                            throw new RuntimeException(ex);
                         }
                     }
                 }
             } catch (SQLException ex) {
                 log.severe("Load image: Execute SQL query exception: " + ex);
+                throw new RuntimeException(ex);
             }
         } catch (SQLException ex) {
             log.severe("Load image: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
         }
         return images;
     }
@@ -417,14 +417,17 @@ public class Picture {
                             }
                         } catch (IOException ex) {
                             log.severe("Loading similar picture failed: " + ex);
+                            throw new RuntimeException(ex);
                         }
                     }
                 }
             } catch (SQLException ex) {
                 log.severe("Find similar picture failed: Execute SQL statement exception: " + ex);
+                throw new RuntimeException(ex);
             }
         } catch (SQLException ex) {
             log.severe("Find similar picture failed: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
         }
         return images;
     }

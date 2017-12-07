@@ -137,9 +137,11 @@ public class MapMakerDB {
 				throw new RuntimeException(ex);
 			} catch (Exception ex){
 				log.severe("Load entities: Exception: " + ex);
+                throw new RuntimeException(ex);
 			}
 		} catch (SQLException ex) {
 			log.severe("Load entities: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
 		}
     }
 
@@ -157,9 +159,11 @@ public class MapMakerDB {
                 }
             } catch (SQLException ex) {
                 log.severe("Load description: Execute SQL query exception: " + ex);
+                throw new RuntimeException(ex);
             }
         } catch (SQLException ex) {
             log.severe("Load description: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
         }
         return "Description.";
     }
@@ -206,7 +210,7 @@ public class MapMakerDB {
             script = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException ex) {
             log.severe("Reading of initialization script failed: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         queries = Arrays.asList(script.trim().split(";"));
@@ -215,7 +219,7 @@ public class MapMakerDB {
             dbConnection.execute(queries);
         } catch (Exception ex) {
             log.severe("Init DB failed: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         if (!initPictures()) {
