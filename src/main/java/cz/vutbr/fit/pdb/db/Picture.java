@@ -51,7 +51,7 @@ public class Picture {
 
     private static void deletePicture(Integer id, String type) {
         dbConnection.execute("DELETE FROM Picture " +
-                "id = " + id + " and pictureType = " + type
+                "WHERE id = " + id + " and pictureType = " + type
         );
     }
 
