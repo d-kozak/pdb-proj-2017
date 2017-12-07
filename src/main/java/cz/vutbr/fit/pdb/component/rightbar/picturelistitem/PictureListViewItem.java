@@ -1,7 +1,6 @@
 package cz.vutbr.fit.pdb.component.rightbar.picturelistitem;
 
 import cz.vutbr.fit.pdb.entity.EntityImage;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ContextMenu;
@@ -20,7 +19,7 @@ public class PictureListViewItem {
     @FXML
     private HBox hbox;
 
-    public PictureListViewItem(EntityImage image, ObservableList<EntityImage> allImages, Consumer<EntityImage> setAsFlag) {
+    public PictureListViewItem(EntityImage image, Consumer<EntityImage> onDelete, Consumer<EntityImage> setAsFlag) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("picturelistitem.fxml"));
         fxmlLoader.setController(this);
         try {
@@ -34,7 +33,7 @@ public class PictureListViewItem {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem deletePictureMenuItem = new MenuItem("Delete picture");
         deletePictureMenuItem.setOnAction(event -> {
-            allImages.remove(image);
+            onDelete.accept(image);
         });
         MenuItem setAsFlagMenuItem = new MenuItem("Set picture as flag");
         setAsFlagMenuItem.setOnAction(event -> {

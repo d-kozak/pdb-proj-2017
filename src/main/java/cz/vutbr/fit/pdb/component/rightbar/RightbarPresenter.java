@@ -123,7 +123,11 @@ public class RightbarPresenter implements Initializable {
         }
 
         picturesView.setItems(entity.getImages());
-        picturesView.setCellFactory(param -> new PictureListViewCell(entity.getImages(), image -> {
+        picturesView.setCellFactory(param -> new PictureListViewCell(
+                image -> {
+                    entity.getImages()
+                          .remove(image);
+                }, image -> {
             flagView.imageProperty()
                     .setValue(image.getImage());
             Tooltip.install(flagView, new Tooltip(image.getDescription()));
