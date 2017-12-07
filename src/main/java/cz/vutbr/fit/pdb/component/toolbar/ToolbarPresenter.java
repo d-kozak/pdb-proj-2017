@@ -21,6 +21,9 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
+
 public class ToolbarPresenter implements Initializable {
 
 
@@ -115,10 +118,17 @@ public class ToolbarPresenter implements Initializable {
 
     public void onDeleteSelected(ActionEvent event) {
         Entity selectedEntity = selectedEntityService.getEntityProperty();
-        entityService.removeEntity(selectedEntity);
-        selectedEntityService.setEntityProperty(null);
-        configuration.getMapRenderer()
-                     .redraw();
+        entityService.removeEntity(
+                selectedEntity,
+                () -> {
+                    showInfo("Entity removed", "Entity removed successfully");
+                    selectedEntityService.setEntityProperty(null);
+                    configuration.getMapRenderer()
+                                 .redraw();
+                },
+                () -> {
+                    showError("Database error", "Could not remove entity, please try again");
+                });
     }
 
     static class ColorRectCell extends ListCell<String> {

@@ -3,6 +3,7 @@ package cz.vutbr.fit.pdb.entity;
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.concurent.AddEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.LoadAllEntitiesTask;
+import cz.vutbr.fit.pdb.entity.concurent.RemoveEntityTask;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -85,8 +86,18 @@ public class EntityService {
         });
     }
 
-    public void removeEntity(Entity entity) {
-        entities.remove(entity);
+    public Task<Void> removeEntity(Entity entity, Runnable onSucceeded, Runnable onFailed) {
+        RemoveEntityTask removeEntityTask = new RemoveEntityTask();
+        removeEntityTask.setEntity(entity);
+        removeEntityTask.setOnSucceeded(event -> {
+            onSucceeded.run();
+            entities.remove(entity);
+        });
+        removeEntityTask.setOnFailed(event -> {
+            onFailed.run();
+        });
+        Configuration.THREAD_POOL.submit(removeEntityTask);
+        return removeEntityTask;
     }
 
     public boolean isInitDataLoaded() {
