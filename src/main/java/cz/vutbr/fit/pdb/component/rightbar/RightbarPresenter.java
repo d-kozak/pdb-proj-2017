@@ -116,7 +116,9 @@ public class RightbarPresenter implements Initializable {
         this.selectedEntity = entity;
         nameField.setText(entity.getName());
         nameField.setOnAction(event -> {
-            entityService.updateEntity(entity, "name",
+            Entity copy = entity.copyOf();
+            copy.setName(nameField.getText());
+            entityService.updateEntity(copy, "name",
                     () -> {
                         showInfo("Entity updated", "Entity updated successfully");
                         entity.setName(nameField.getText());
@@ -129,9 +131,11 @@ public class RightbarPresenter implements Initializable {
         });
         descriptionField.setText(entity.getDescription());
         descriptionField.setOnKeyReleased(keyEvent -> {
+            Entity copy = entity.copyOf();
+            copy.setDescription(descriptionField.getText());
             if (keyEvent.getCode()
                         .equals(KeyCode.ENTER)) {
-                entityService.updateEntity(entity, "description",
+                entityService.updateEntity(copy, "description",
                         () -> {
                             showInfo("Entity updated", "Entity updated successfully");
                             entity.setDescription(descriptionField.getText());
@@ -158,7 +162,10 @@ public class RightbarPresenter implements Initializable {
         picturesView.setItems(entity.getImages());
         picturesView.setCellFactory(param -> new PictureListViewCell(
                 image -> {
-                    entityService.updateEntity(entity, "images",
+                    Entity copy = entity.copyOf();
+                    copy.getImages()
+                        .remove(image);
+                    entityService.updateEntity(copy, "images",
                             () -> {
                                 showInfo("Entity updated", "Entity updated successfully");
                                 entity.getImages()
@@ -168,7 +175,9 @@ public class RightbarPresenter implements Initializable {
                                 showError("Database error", "Could not update entity");
                             });
                 }, image -> {
-            entityService.updateEntity(entity, "flag", () -> {
+            Entity copy = entity.copyOf();
+            copy.setFlag(image);
+            entityService.updateEntity(copy, "flag ", () -> {
                         showInfo("Entity updated", "Entity updated successfully");
                         flagView.setImage(image.getImage());
                         Tooltip.install(flagView, new Tooltip(image.getDescription()));
@@ -179,7 +188,9 @@ public class RightbarPresenter implements Initializable {
                     });
         }));
         fromDateChangeListener = (observable, oldValue, newValue) -> {
-            entityService.updateEntity(entity, "from",
+            Entity copy = entity.copyOf();
+            copy.setFrom(newValue);
+            entityService.updateEntity(copy, "from",
                     () -> {
                         showInfo("Entity updated", "Entity updated successfully");
                         entity.setFrom(fromDate.getValue());
@@ -194,7 +205,9 @@ public class RightbarPresenter implements Initializable {
         fromDate.valueProperty()
                 .addListener(fromDateChangeListener);
         toDateChangeListener = (observable, oldValue, newValue) -> {
-            entityService.updateEntity(entity, "to",
+            Entity copy = entity.copyOf();
+            copy.setTo(newValue);
+            entityService.updateEntity(copy, "to",
                     () -> {
                         showInfo("Entity updated", "Entity updated successfully");
                         entity.setTo(toDate.getValue());
@@ -232,10 +245,9 @@ public class RightbarPresenter implements Initializable {
             log.severe("Selected entity is null, cannot unbind");
             return;
         }
-        nameField.textProperty()
-                 .unbindBidirectional(selectedEntity.nameProperty());
-        descriptionField.textProperty()
-                        .unbindBidirectional(selectedEntity.descriptionProperty());
+        nameField.setOnAction(null);
+        descriptionField.setOnKeyReleased(null);
+
         Optional<EntityImage> entityImage = Optional.ofNullable(selectedEntity.flagProperty()
                                                                               .get());
         entityImage.ifPresent(image -> {
@@ -283,7 +295,12 @@ public class RightbarPresenter implements Initializable {
 
         presenter.getResult()
                  .ifPresent(result -> {
-                     entityService.updateEntity(selectedEntity, "pictures",
+                     Entity copy = selectedEntity.copyOf();
+                     copy.getImages()
+                         .clear();
+                     copy.getImages()
+                         .add(result);
+                     entityService.updateEntity(copy, "pictures",
                              () -> {
                                  showInfo("Entity updated", "Entity updated successfully");
                                  picturesView.getItems()

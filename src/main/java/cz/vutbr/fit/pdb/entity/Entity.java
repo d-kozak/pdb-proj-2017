@@ -189,4 +189,17 @@ public class Entity {
 
         return from.getYear() <= selectedYear && selectedYear <= to.getYear();
     }
+
+    public Entity copyOf() {
+        Entity copy = new Entity();
+        copy.setId(getId());
+        copy.setName(getName());
+        copy.setDescription(getDescription());
+        copy.setFlag(getFlag());
+        copy.setFrom(getFrom());
+        copy.setTo(getTo());
+        copy.setGeometry(getGeometry());
+        copy.setImages(FXCollections.observableArrayList(getImages()));
+        return copy;
+    }
 }
