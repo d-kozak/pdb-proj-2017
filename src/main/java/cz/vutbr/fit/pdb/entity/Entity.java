@@ -18,8 +18,8 @@ public class Entity {
     private StringProperty type = new SimpleStringProperty();
     private ObjectProperty<EntityImage> flag = new SimpleObjectProperty<>();
     private ObservableList<EntityImage> images = FXCollections.observableArrayList();
-    private ObjectProperty<LocalDate> from = new SimpleObjectProperty<>();
-    private ObjectProperty<LocalDate> to = new SimpleObjectProperty<>();
+    private ObjectProperty<LocalDate> from = new SimpleObjectProperty<>(LocalDate.now());
+    private ObjectProperty<LocalDate> to = new SimpleObjectProperty<>(LocalDate.now());
 
     private EntityGeometry geometry;
     private ObjectProperty<Color> color = new SimpleObjectProperty<>();
