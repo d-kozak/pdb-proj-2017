@@ -1,5 +1,7 @@
 package cz.vutbr.fit.pdb.entity;
 
+import cz.vutbr.fit.pdb.configuration.Configuration;
+import cz.vutbr.fit.pdb.entity.concurent.AddEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.LoadAllEntitiesTask;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
@@ -7,6 +9,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.concurrent.Task;
 import lombok.extern.java.Log;
 
 import javax.annotation.PostConstruct;
@@ -28,8 +31,6 @@ public class EntityService {
 
     private BooleanProperty initDataLoaded = new SimpleBooleanProperty(false);
 
-    private EntityUpdater entityUpdater = new EntityUpdater(this);
-
     @PostConstruct
     public void init() {
         LoadAllEntitiesTask loadAllEntitiesTask = new LoadAllEntitiesTask();
@@ -42,7 +43,6 @@ public class EntityService {
                 }
                 log.info("Loaded entities: " + entities);
                 initDataLoaded.set(true);
-                entityUpdater.addListeners(entities);
 
                 showInfo("Success", "Entities loaded successfully");
             } catch (InterruptedException | ExecutionException e) {
@@ -56,9 +56,18 @@ public class EntityService {
         THREAD_POOL.submit(loadAllEntitiesTask);
     }
 
-    public void addEntity(Entity entity) {
+    public Task<Void> addEntity(Entity entity, Runnable onSucceeded, Runnable onFailed) {
         log.info(String.format("Adding new entity %s", entity));
-        entities.add(entity);
+        AddEntityTask addEntityTask = new AddEntityTask();
+        addEntityTask.setEntity(entity);
+        addEntityTask.setOnSucceeded(event -> {
+            onSucceeded.run();
+            entities.add(entity);
+        });
+        addEntityTask.setOnFailed(event -> onFailed.run());
+
+        Configuration.THREAD_POOL.submit(addEntityTask);
+        return addEntityTask;
     }
 
     public ObservableList<Entity> getEntities() {
