@@ -32,7 +32,7 @@ CREATE TABLE Picture (
   img_tx ORDSYS.SI_TEXTURE,
 
   CONSTRAINT PKPicture PRIMARY KEY (id),
-  CONSTRAINT FKPictureSpatialEntity FOREIGN KEY (spatialEntityId) REFERENCES SpatialEntity(id)
+  CONSTRAINT FKPictureSpatialEntity FOREIGN KEY (spatialEntityId) REFERENCES SpatialEntity(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Description (
@@ -44,7 +44,7 @@ CREATE TABLE Description (
 
   CHECK(validTo >= validFrom),
   CONSTRAINT PKDescription PRIMARY KEY(id),
-  CONSTRAINT FKDescriptionSpatialEntity FOREIGN KEY (spatialEntityId) REFERENCES SpatialEntity(id)
+  CONSTRAINT FKDescriptionSpatialEntity FOREIGN KEY (spatialEntityId) REFERENCES SpatialEntity(id) ON DELETE CASCADE
 );
 
 CREATE TABLE BlindMapResult (
