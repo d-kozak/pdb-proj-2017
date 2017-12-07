@@ -108,6 +108,20 @@ public class MapMakerDB {
 								new PointGeometry(new Point(pointCoords[0], pointCoords[1]))
 							);
 							break;
+                        case "largePlace":
+                            byte[] circlePlaceData = rset.getBytes("geometry");
+                            JGeometry jGeometryCircle = JGeometry.load(circlePlaceData);
+                            double[] circleCoords = jGeometryCircle.getOrdinatesArray();
+                            double xCoord = circleCoords[0];
+                            double yCoord = circleCoords[5];
+                            double radius = circleCoords[5] - circleCoords[1];
+                            entity.setGeometry(
+                                    new CircleGeometry(
+                                            new Point(xCoord, yCoord),
+                                            radius
+                                    )
+                            );
+                            break;
 						default:
 							log.severe("Unknown spatial entity: " + entityType);
 					}
@@ -246,7 +260,7 @@ public class MapMakerDB {
         if (geometry instanceof PointGeometry) {
             return "place";
         } else if (geometry instanceof CircleGeometry) {
-            return "place";
+            return "largePlace";
         } else if (geometry instanceof PolygonGeometry) {
             return "country";
         } else if (geometry instanceof LineGeometry) {

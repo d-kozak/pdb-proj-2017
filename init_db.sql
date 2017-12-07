@@ -11,7 +11,7 @@ CREATE TABLE SpatialEntity (
   geometry SDO_GEOMETRY NOT NULL,
   validFrom DATE NULL,
   validTo DATE NULL,
-  entityType VARCHAR(10) CHECK(entityType in ('country', 'river', 'place')),
+  entityType VARCHAR(10) CHECK(entityType in ('country', 'river', 'place', 'largePlace')),
 
   CHECK(validTo >= validFrom),
   CONSTRAINT PKSpatialEntity PRIMARY KEY (id)
@@ -69,13 +69,13 @@ COMMIT;
 INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES (
     1,
     'Brno',
-    SDO_GEOMETRY(2001, NULL,
-	    SDO_POINT_TYPE(142, 142, NULL),
-		NULL, NULL
+    SDO_GEOMETRY(2003, NULL, NULL,
+		SDO_ELEM_INFO_ARRAY(1, 1003, 4),
+		SDO_ORDINATE_ARRAY(75, 15, 75, 95, 115, 55)
 	),
 	TO_DATE('27-10-1500', 'dd-mm-yyyy'),
     TO_DATE('27-10-2200', 'dd-mm-yyyy'),
-    'place'
+    'largePlace'
 );
 
 INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VALUES (
