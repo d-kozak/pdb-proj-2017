@@ -1,14 +1,12 @@
 package cz.vutbr.fit.pdb.entity;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.scene.image.Image;
 
 import java.time.LocalDate;
 
 public class EntityImage {
+    private IntegerProperty id = new SimpleIntegerProperty();
     private StringProperty description = new SimpleStringProperty();
     private ObjectProperty<Image> image = new SimpleObjectProperty<>();
     private ObjectProperty<LocalDate> time = new SimpleObjectProperty<>();
@@ -49,10 +47,23 @@ public class EntityImage {
         return time;
     }
 
+    public int getId() {
+        return id.get();
+    }
+
+    public void setId(int id) {
+        this.id.set(id);
+    }
+
+    public IntegerProperty idProperty() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "EntityImage{" +
-                "description=" + description +
+                "id=" + id +
+                ", description=" + description +
                 ", image=" + image +
                 ", time=" + time +
                 '}';
