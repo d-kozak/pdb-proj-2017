@@ -198,6 +198,49 @@ public class MapMakerDB {
         }
     }
 
+    public static void updateEntity(Entity entity, String field) {
+        if (field == "description") {
+            log.severe("NOT IMPLEMENTED YET!");
+            throw new RuntimeException();
+        }
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "UPDATE SpatialEntity SET " + field + " = ? WHERE id = ?"
+        )) {
+            stmt.setInt(2, entity.getId());
+
+            switch (field){
+                case "name":
+                    stmt.setString(1, entity.getName());
+                    break;
+                case "from":
+                    stmt.setDate(1, Date.valueOf(entity.getFrom()));
+                    break;
+                case "to":
+                    stmt.setDate(1, Date.valueOf(entity.getTo()));
+                    break;
+                case "color":
+                    stmt.setString(1, entity.getColor().toString());
+                    break;
+                case "geometry":
+                    try {
+                        stmt.setObject(1, JGeometry.storeJS(connection, geometryToJGeometry(entity.getGeometry())));
+                    } catch (Exception ex) {
+                        log.severe("Update entity: Conversion to JGeometry: " + ex);
+                        throw new RuntimeException(ex);
+                    }
+                    break;
+                default:
+                    log.severe("Unknown field to update: " + field);
+                    throw new RuntimeException();
+            }
+
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            log.severe("Update entity: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+    }
+
     public static void deleteEntity(Entity entity) {
         dbConnection.execute("DELETE FROM SpatialEntity " +
                 "WHERE id = " + entity.getId()
