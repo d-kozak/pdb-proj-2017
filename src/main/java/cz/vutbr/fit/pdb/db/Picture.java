@@ -376,6 +376,9 @@ public class Picture {
                                 WritableImage writableImage = SwingFXUtils.toFXImage(img, null);
                                 EntityImage entityImage = new EntityImage();
                                 entityImage.setImage(writableImage);
+                                entityImage.setId(rset.getInt("id"));
+                                entityImage.setDescription(rset.getString("description"));
+                                entityImage.setTime(rset.getDate("createdAt").toLocalDate());
                                 images.add(entityImage);
                             }
                         } catch (IOException ex) {
