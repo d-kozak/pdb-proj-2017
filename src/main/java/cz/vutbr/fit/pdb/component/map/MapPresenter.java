@@ -73,7 +73,7 @@ public class MapPresenter implements Initializable, MapRenderer {
         ObservableList<Entity> entities = entityService.getEntities();
         for (Entity entity : entities) {
             EntityGeometry geometry = entity.getGeometry();
-            leaflet.call("draw", geometry);
+            leaflet.call("draw", entity);
             log.severe(gson.toJson(geometry));
            /* switch (entity.getGeometryType()) {
                 case POINT:

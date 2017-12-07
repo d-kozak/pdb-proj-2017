@@ -8,10 +8,11 @@ VMBridge.prototype = {
 		// this.vm.log("drawing: " + x + ", " + y)
 		// L.marker(Point(x, y)).addTo(map)
 	// },
-	draw: function(geom) {
-		var desc,
-			pt, pts,
-			x, y
+	draw: function(javaEnt) {
+		var geom = javaEnt.getGeometry(),
+			desc,
+			pt, pts, ent,
+			x, y, self = this
 			
 		this.vm.log("draw: " + geom.getType())
 		
@@ -19,7 +20,7 @@ VMBridge.prototype = {
 			case "POINT":
 				desc = geom.getDescription()
 				x = desc.getX(); y = desc.getY()
-				L.marker(Point(x, y)).addTo(geoEntities)
+				ent = L.marker(Point(x, y))
 				// this.vm.log("drawing: " + x + ", " + y)
 				break;
 				
@@ -32,16 +33,21 @@ VMBridge.prototype = {
 				}
 				// this.vm.log("drawing: " + pts)
 				if(geom.getType() == "LINE")
-					L.polyline(pts).addTo(geoEntities)
+					ent = L.polyline(pts)
 				else
-					L.polygon(pts).addTo(geoEntities)
+					ent = L.polygon(pts)
 				break
 				
 			case "CIRCLE":
 				desc = geom.getDescription()
 				pt = desc.getCenter()
-				L.circle(Point(pt.getX(), pt.getY()), {radius: desc.getRadius()}).addTo(geoEntities)
+				ent = L.circle(Point(pt.getX(), pt.getY()), {radius: desc.getRadius()})
 		}
+		y
+		ent.on("click", function() {
+			self.vm.log(geom.focus())
+			javaEnt.select()
+		}).addTo(geoEntities)
 	},
 	check: function(geom) {
 				str = ""

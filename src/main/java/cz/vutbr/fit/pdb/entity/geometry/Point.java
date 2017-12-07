@@ -2,6 +2,7 @@ package cz.vutbr.fit.pdb.entity.geometry;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import lombok.extern.java.Log;
 
 import java.util.Optional;
 

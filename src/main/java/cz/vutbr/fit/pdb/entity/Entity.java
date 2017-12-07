@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
+import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -188,4 +189,11 @@ public class Entity {
 
         return from.getYear() <= selectedYear && selectedYear <= to.getYear();
     }
+
+
+    @Inject
+    private SelectedEntityService selectedEntityService;
+    public void select() {
+        selectedEntityService.setEntityProperty(this);
+    };
 }
