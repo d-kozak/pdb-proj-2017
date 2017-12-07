@@ -68,7 +68,7 @@ public class MenubarPresenter {
 
     @FXML
     private void onShowTerminal(ActionEvent event) {
-
+        notImpl();
     }
 
 
@@ -106,12 +106,17 @@ public class MenubarPresenter {
 
     @FXML
     private void onShowTutorial(ActionEvent event) {
-
+        notImpl();
     }
 
 
     @FXML
     private void onShowAbout(ActionEvent event) {
+        notImpl();
+    }
 
+    private void notImpl() {
+        showError("Error", "Not impl yet!");
+        log.severe("Not impl yet!");
     }
 }
