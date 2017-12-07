@@ -134,6 +134,7 @@ public class MapMakerDB {
 				}
 			} catch (SQLException ex) {
 				log.severe("Load entities: Execute SQL query exception: " + ex);
+				throw new RuntimeException(ex);
 			} catch (Exception ex){
 				log.severe("Load entities: Exception: " + ex);
 			}
@@ -186,6 +187,7 @@ public class MapMakerDB {
             stmt.setDate(5, Date.valueOf(entity.getTo()));
             stmt.setString(6, geometryToType(entity.getGeometry()));
             stmt.setString(7, entity.getColor().toString());
+            stmt.executeUpdate();
         } catch (SQLException ex) {
             log.severe("Insert entity: Create SQL statement exception: " + ex);
             throw new RuntimeException(ex);
