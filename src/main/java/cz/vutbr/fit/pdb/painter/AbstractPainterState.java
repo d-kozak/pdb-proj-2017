@@ -32,6 +32,7 @@ public abstract class AbstractPainterState implements PainterState {
     }
 
     protected void addEntity(Entity entity) {
+        // TODO set the id from DB (equals does not work without it)
         getEntityService().addEntity(
                 entity,
                 () -> showInfo("Entity added", "Entity added successfully"),
