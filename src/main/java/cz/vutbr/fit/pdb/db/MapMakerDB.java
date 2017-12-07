@@ -168,7 +168,7 @@ public class MapMakerDB {
      * Only description, dates and geometry is inserted. Images and flag are NOT inserted!
      * @param entity
      */
-    private static void insertEntity(Entity entity) {
+    public static void insertEntity(Entity entity) {
         try (PreparedStatement stmt = connection.prepareStatement(
                 "INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType, color) VALUES( " +
                         "?, ?, ?, ?, ?, ?, ?)"
@@ -180,7 +180,7 @@ public class MapMakerDB {
                 stmt.setObject(3, JGeometry.storeJS(connection, geometryToJGeometry(entity.getGeometry())));
             } catch (Exception ex) {
                 log.severe("Insert entity: Conversion to JGeometry: " + ex);
-                return;
+                throw new RuntimeException(ex);
             }
             stmt.setDate(4, Date.valueOf(entity.getFrom()));
             stmt.setDate(5, Date.valueOf(entity.getTo()));
@@ -188,6 +188,7 @@ public class MapMakerDB {
             stmt.setString(7, entity.getColor().toString());
         } catch (SQLException ex) {
             log.severe("Insert entity: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
         }
     }
 
