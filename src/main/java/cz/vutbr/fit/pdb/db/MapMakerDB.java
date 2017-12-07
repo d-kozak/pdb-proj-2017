@@ -255,6 +255,12 @@ public class MapMakerDB {
                 2,
                 "src/resources/praha-bridge.jpg"
         );
+        res |= Picture.insertFlag(
+                "CR flag",
+                Date.valueOf(LocalDate.now()),
+                4,
+                "src/resources/cr-flag.jpg"
+        );
         Picture.makeImageMonochrome(2);
         return res;
     }
