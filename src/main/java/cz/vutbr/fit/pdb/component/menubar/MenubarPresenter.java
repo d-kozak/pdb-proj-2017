@@ -42,6 +42,9 @@ public class MenubarPresenter {
         MapMakerDB db = MapMakerDB.getInstance();
         if(db.initDB("init_db.sql")) {
             showInfo("Success", "Database initiazlized successfully.");
+            entityService.init();
+            configuration.getMapRenderer()
+                         .redraw();
         } else {
             showError("Failure", "Database initiazlization FAILED!");
         }
@@ -107,10 +110,5 @@ public class MenubarPresenter {
     @FXML
     private void onShowAbout(ActionEvent event) {
 
-    }
-
-    @FXML
-    private void onLoadEntities(ActionEvent event) {
-        entityService.init();
     }
 }
