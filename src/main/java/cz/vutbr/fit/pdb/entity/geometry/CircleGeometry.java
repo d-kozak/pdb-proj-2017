@@ -18,6 +18,11 @@ public class CircleGeometry implements EntityGeometry {
         this.radius = new SimpleDoubleProperty(radius);
     }
 
+    public CircleGeometry(double x, double y, double radius) {
+        this.center = new Point(x, y);
+        this.radius = new SimpleDoubleProperty(radius);
+    }
+
     @Override
     public DrawingMode getType() {
         return DrawingMode.CIRCLE;
