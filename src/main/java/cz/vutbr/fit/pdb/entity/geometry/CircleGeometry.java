@@ -59,4 +59,9 @@ public class CircleGeometry implements EntityGeometry {
     public DoubleProperty radiusProperty() {
         return radius;
     }
+
+    @Override
+    public EntityGeometry copyOf() {
+        return new CircleGeometry(new Point(center.getX(), center.getY()), radius.get());
+    }
 }

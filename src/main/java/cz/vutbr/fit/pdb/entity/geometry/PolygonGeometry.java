@@ -42,4 +42,9 @@ public class PolygonGeometry implements EntityGeometry {
     public ObservableList<Point> getPoints() {
         return points;
     }
+
+    @Override
+    public EntityGeometry copyOf() {
+        return new PolygonGeometry(FXCollections.observableArrayList(points));
+    }
 }

@@ -197,7 +197,7 @@ public class Entity {
         copy.setFlag(getFlag());
         copy.setFrom(getFrom());
         copy.setTo(getTo());
-        copy.setGeometry(getGeometry());
+        copy.setGeometry(getGeometry().copyOf());
         copy.setImages(FXCollections.observableArrayList(getImages()));
         return copy;
     }

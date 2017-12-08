@@ -43,4 +43,9 @@ public class LineGeometry implements EntityGeometry {
     public ObservableList<Point> getPoints() {
         return points;
     }
+
+    @Override
+    public EntityGeometry copyOf() {
+        return new LineGeometry(FXCollections.observableArrayList(points));
+    }
 }
