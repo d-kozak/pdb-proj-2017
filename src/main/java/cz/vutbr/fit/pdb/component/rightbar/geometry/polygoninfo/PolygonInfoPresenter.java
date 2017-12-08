@@ -41,7 +41,8 @@ public class PolygonInfoPresenter implements Initializable {
                                                                .getGeometry()
                                                                .getDescription());
         polygonListView.setItems(points);
-        polygonListView.setCellFactory(item -> new PointListViewCell(configuration, points::remove));
+        polygonListView.setCellFactory(item -> new PointListViewCell(configuration, (point, point2) -> {
+        }, points::remove));
 
         Listeners.addRedrawListener(configuration.getMapRenderer(), points);
     }

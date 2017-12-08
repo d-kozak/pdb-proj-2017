@@ -2,7 +2,7 @@ package cz.vutbr.fit.pdb.component.rightbar.pointlistitem;
 
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
-import cz.vutbr.fit.pdb.utils.StringNumConverter;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ContextMenu;
@@ -11,6 +11,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class PointListViewItem {
@@ -23,7 +25,7 @@ public class PointListViewItem {
     @FXML
     private TextField yField;
 
-    public PointListViewItem(Point point, Consumer<Point> onDelete, Configuration configuration) {
+    public PointListViewItem(Point point, BiConsumer<Point, Point> onUpdate, Consumer<Point> onDelete, Configuration configuration) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("pointlistitem.fxml"));
         fxmlLoader.setController(this);
         try {
@@ -32,20 +34,17 @@ public class PointListViewItem {
             throw new RuntimeException(e);
         }
 
-        xField.textProperty()
-              .bindBidirectional(point.xProperty(), new StringNumConverter());
-        xField.textProperty()
-              .addListener((observable, oldValue, newValue) -> {
-                  configuration.getMapRenderer()
-                               .redraw();
-              });
-        yField.textProperty()
-              .bindBidirectional(point.yProperty(), new StringNumConverter());
-        yField.textProperty()
-              .addListener((observable, oldValue, newValue) -> {
-                  configuration.getMapRenderer()
-                               .redraw();
-              });
+        xField.setText(point.getX() + "");
+        yField.setText(point.getY() + "");
+
+        javafx.event.EventHandler<ActionEvent> updateHandler = event -> {
+            Optional<Point> newPointOptional = Point.of(xField.getText(), yField.getText());
+            newPointOptional.ifPresent(newPoint -> {
+                onUpdate.accept(point, newPoint);
+            });
+        };
+        xField.setOnAction(updateHandler);
+        yField.setOnAction(updateHandler);
 
         ContextMenu contextMenu = new ContextMenu();
         MenuItem deletePoint = new MenuItem("Delete point");

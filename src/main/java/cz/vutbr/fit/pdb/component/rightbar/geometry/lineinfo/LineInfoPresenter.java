@@ -2,10 +2,13 @@ package cz.vutbr.fit.pdb.component.rightbar.geometry.lineinfo;
 
 import cz.vutbr.fit.pdb.component.rightbar.pointlistitem.PointListViewCell;
 import cz.vutbr.fit.pdb.configuration.Configuration;
+import cz.vutbr.fit.pdb.entity.Entity;
+import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
+import cz.vutbr.fit.pdb.entity.geometry.LineGeometry;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
 import cz.vutbr.fit.pdb.utils.Listeners;
-import cz.vutbr.fit.pdb.utils.MathUtils;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +21,9 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
 
 
 @Log
@@ -33,6 +39,9 @@ public class LineInfoPresenter implements Initializable {
     private SelectedEntityService selectedEntityService;
 
     @Inject
+    private EntityService entityService;
+
+    @Inject
     private Configuration configuration;
 
     private ObservableList<Point> points;
@@ -43,13 +52,73 @@ public class LineInfoPresenter implements Initializable {
                                                               .getGeometry()
                                                               .getDescription();
         lineListView.setItems(points);
-        lineListView.setCellFactory(item -> new PointListViewCell(configuration, points::remove));
+        lineListView.setCellFactory(item -> new PointListViewCell(configuration, this::tryToUpdatePoint, this::tryToRemovePoint));
 
         Listeners.addRedrawListener(configuration.getMapRenderer(), points);
     }
 
+    private void tryToUpdatePoint(Point oldValue, Point newValue) {
+        Entity copy = selectedEntityService.getEntityProperty()
+                                           .copyOf();
+        ObservableList<Point> updatedPoints = FXCollections.observableArrayList(this.points);
+        updatePointInList(oldValue, newValue, updatedPoints);
+        copy.setGeometry(new LineGeometry(updatedPoints));
+        entityService.updateEntity(copy, "geometry",
+                () -> {
+                    updatePointInList(oldValue, newValue, points);
+                    configuration.getMapRenderer()
+                                 .redraw();
+                    showInfo("Entity updated", "Entity updated successfully");
+                }, () -> {
+                    showError("Database error", "Could not update entity");
+                });
+    }
+
+    private void updatePointInList(Point oldValue, Point newValue, ObservableList<Point> updatedPoints) {
+        int i = updatedPoints.indexOf(oldValue);
+        Point fromList = updatedPoints.get(i);
+        fromList.setX(newValue.getX());
+        fromList.setY(newValue.getY());
+    }
+
+    private void tryToRemovePoint(Point point) {
+        Entity copy = selectedEntityService.getEntityProperty()
+                                           .copyOf();
+        ObservableList<Point> newPoints = FXCollections.observableArrayList(this.points);
+        newPoints.remove(point);
+        copy.setGeometry(new LineGeometry(newPoints));
+        entityService.updateEntity(copy, "geometry",
+                () -> {
+                    points.remove(point);
+                    lineListView.refresh();
+                    configuration.getMapRenderer()
+                                 .redraw();
+                    showInfo("Entity updated", "Entity updated successfully");
+                },
+                () -> {
+                    showError("Database error", "Could not update entity");
+                });
+    }
+
     public void addLinePoint(ActionEvent event) {
-        Optional<Point> point = Point.of(lineXField.getText(), lineYField.getText());
-        point.ifPresent(p -> MathUtils.addNewPointFromFields(p, lineXField, lineYField, points, configuration));
+        Optional<Point> pointOptional = Point.of(lineXField.getText(), lineYField.getText());
+        pointOptional.ifPresent(newPoint -> {
+            Entity copy = selectedEntityService.getEntityProperty()
+                                               .copyOf();
+            ObservableList<Point> pointsCopy = FXCollections.observableArrayList(this.points);
+            pointsCopy.add(newPoint);
+            copy.setGeometry(new LineGeometry(pointsCopy));
+            entityService.updateEntity(copy, "geometry",
+                    () -> {
+                        this.points.add(newPoint);
+                        lineXField.setText("");
+                        lineYField.setText("");
+                        configuration.getMapRenderer()
+                                     .redraw();
+                        showInfo("Entity updated", "Entity updated successfully");
+                    }, () -> {
+                        showError("Database error", "Could not update entity");
+                    });
+        });
     }
 }
