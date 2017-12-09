@@ -3,8 +3,8 @@ package cz.vutbr.fit.pdb.component.menubar;
 import cz.vutbr.fit.pdb.component.settings.SettingsView;
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.db.DBConnection;
-import cz.vutbr.fit.pdb.db.MapMakerDB;
 import cz.vutbr.fit.pdb.entity.EntityService;
+import cz.vutbr.fit.pdb.entity.concurent.InitDatabaseTask;
 import cz.vutbr.fit.pdb.utils.JavaFXUtils;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -39,12 +39,18 @@ public class MenubarPresenter {
 
     @FXML
     private void onInitDB(ActionEvent event) {
-        MapMakerDB db = MapMakerDB.getInstance();
-        if(db.initDB("init_db.sql")) {
-            showInfo("Success", "Database initiazlized successfully.");
-        } else {
-            showError("Failure", "Database initiazlization FAILED!");
-        }
+        InitDatabaseTask initDatabaseTask = new InitDatabaseTask();
+        initDatabaseTask.setOnSucceeded((stateEvent) -> {
+            entityService.init();
+            configuration.getMapRenderer()
+                         .redraw();
+            showInfo("Success", "Database initialized successfully.");
+        });
+        initDatabaseTask.setOnFailed((stateEvent) -> {
+            showError("Failure", "Database initialization FAILED!");
+        });
+        showInfo("Initialization started", "Please wait a little");
+        Configuration.THREAD_POOL.submit(initDatabaseTask);
     }
 
     @FXML
@@ -62,7 +68,7 @@ public class MenubarPresenter {
 
     @FXML
     private void onShowTerminal(ActionEvent event) {
-
+        notImpl();
     }
 
 
@@ -100,17 +106,17 @@ public class MenubarPresenter {
 
     @FXML
     private void onShowTutorial(ActionEvent event) {
-
+        notImpl();
     }
 
 
     @FXML
     private void onShowAbout(ActionEvent event) {
-
+        notImpl();
     }
 
-    @FXML
-    private void onLoadEntities(ActionEvent event) {
-        entityService.init();
+    private void notImpl() {
+        showError("Error", "Not impl yet!");
+        log.severe("Not impl yet!");
     }
 }

@@ -1,12 +1,16 @@
 package cz.vutbr.fit.pdb.entity;
 
+import cz.vutbr.fit.pdb.configuration.Configuration;
+import cz.vutbr.fit.pdb.entity.concurent.AddEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.LoadAllEntitiesTask;
+import cz.vutbr.fit.pdb.entity.concurent.RemoveEntityTask;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.concurrent.Task;
 import lombok.extern.java.Log;
 
 import javax.annotation.PostConstruct;
@@ -28,13 +32,12 @@ public class EntityService {
 
     private BooleanProperty initDataLoaded = new SimpleBooleanProperty(false);
 
-    private EntityUpdater entityUpdater = new EntityUpdater(this);
-
     @PostConstruct
     public void init() {
         LoadAllEntitiesTask loadAllEntitiesTask = new LoadAllEntitiesTask();
         loadAllEntitiesTask.setOnSucceeded(event -> {
             try {
+                entities.clear();
                 entities.addAll(loadAllEntitiesTask.get());
                 if (!entities.isEmpty()) {
                     selectedEntityService.setEntityProperty(entities.get(0));
@@ -44,7 +47,6 @@ public class EntityService {
                 }
                 log.info("Loaded entities: " + entities);
                 initDataLoaded.set(true);
-                entityUpdater.addListeners(entities);
 
                 showInfo("Success", "Entities loaded successfully");
             } catch (InterruptedException | ExecutionException e) {
@@ -58,11 +60,19 @@ public class EntityService {
         THREAD_POOL.submit(loadAllEntitiesTask);
     }
 
-    public void addEntity(Entity entity) {
+    public Task<Void> addEntity(Entity entity, Runnable onSucceeded, Runnable onFailed) {
         log.info(String.format("Adding new entity %s", entity));
         entity.selectedEntityService = selectedEntityService;
-        log.severe(String.valueOf(selectedEntityService));
-        entities.add(entity);
+        AddEntityTask addEntityTask = new AddEntityTask();
+        addEntityTask.setEntity(entity);
+        addEntityTask.setOnSucceeded(event -> {
+            onSucceeded.run();
+            entities.add(entity);
+        });
+        addEntityTask.setOnFailed(event -> onFailed.run());
+
+        Configuration.THREAD_POOL.submit(addEntityTask);
+        return addEntityTask;
     }
 
     public ObservableList<Entity> getEntities() {
@@ -80,8 +90,18 @@ public class EntityService {
         });
     }
 
-    public void removeEntity(Entity entity) {
-        entities.remove(entity);
+    public Task<Void> removeEntity(Entity entity, Runnable onSucceeded, Runnable onFailed) {
+        RemoveEntityTask removeEntityTask = new RemoveEntityTask();
+        removeEntityTask.setEntity(entity);
+        removeEntityTask.setOnSucceeded(event -> {
+            onSucceeded.run();
+            entities.remove(entity);
+        });
+        removeEntityTask.setOnFailed(event -> {
+            onFailed.run();
+        });
+        Configuration.THREAD_POOL.submit(removeEntityTask);
+        return removeEntityTask;
     }
 
     public boolean isInitDataLoaded() {

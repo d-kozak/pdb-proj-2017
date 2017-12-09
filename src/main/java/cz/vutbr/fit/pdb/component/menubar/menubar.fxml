@@ -12,7 +12,6 @@
                 <Menu mnemonicParsing="false" text="File">
                     <items>
                         <MenuItem onAction="#onInitDB" mnemonicParsing="false" text="Initialize database"/>
-                        <MenuItem onAction="#onLoadEntities" mnemonicParsing="false" text="Load entities"/>
                         <MenuItem onAction="#onSettings" mnemonicParsing="false" text="Settings"/>
                         <MenuItem onAction="#onClose" mnemonicParsing="false" text="Close"/>
                     </items>

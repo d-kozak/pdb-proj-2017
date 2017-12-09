@@ -10,6 +10,9 @@ import javafx.beans.property.DoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
+
 public class CirclePainterState extends AbstractPainterState {
     private Point center;
 
@@ -41,9 +44,10 @@ public class CirclePainterState extends AbstractPainterState {
             getGraphics().setFill(drawingColor);
             getGraphics().setStroke(drawingColor);
             getGraphics().fillOval(center.getX(), center.getY(), radius, radius);
-            getEntityService().addEntity(entity);
+            addEntity(entity);
             center = null;
         }
+
     }
 
     @Override

@@ -1,5 +1,6 @@
-package cz.vutbr.fit.pdb.project01;
+package cz.vutbr.fit.pdb;
 
+import cz.vutbr.fit.pdb.utils.ReflectionUtilsTest;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -22,7 +23,7 @@ public class AppTest
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite(AppTest.class);
+        return new TestSuite(AppTest.class, ReflectionUtilsTest.class);
     }
 
     /**
