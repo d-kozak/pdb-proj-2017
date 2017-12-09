@@ -212,31 +212,31 @@ public class MapMakerDB {
           "Brno flag",
           Date.valueOf(LocalDate.now()),
           1,
-          "src/resources/brno-flag.jpg"
+          "brno-flag.jpg"
         );
         res |= Picture.insertImage(
                 "Brno Petrov",
                 Date.valueOf(LocalDate.now()),
                 1,
-                "src/resources/brno-petrov.jpg"
+                "brno-petrov.jpg"
         );
         res |= Picture.insertImage(
                 "Brno square",
                 Date.valueOf(LocalDate.now()),
                 1,
-                "src/resources/brno-square.jpg"
+                "brno-square.jpg"
         );
         res |= Picture.insertFlag(
                 "Praha flag",
                 Date.valueOf(LocalDate.now()),
                 2,
-                "src/resources/praha-flag.jpg"
+                "praha-flag.jpg"
         );
         res |= Picture.insertImage(
                 "Praha bridge",
                 Date.valueOf(LocalDate.now()),
                 2,
-                "src/resources/praha-bridge.jpg"
+                "praha-bridge.jpg"
         );
         Picture.makeImageMonochrome(2);
         return res;
