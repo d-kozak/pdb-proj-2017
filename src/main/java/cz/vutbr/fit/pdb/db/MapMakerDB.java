@@ -55,7 +55,9 @@ public class MapMakerDB {
     private static ObservableList<Entity> entities = FXCollections.observableArrayList();
 
     static {
-        loadEntities();
+        try {
+            loadEntities();
+        } catch(Exception ex) {};
     }
 
     public static void addEntity(Entity entity) {
@@ -248,18 +250,29 @@ public class MapMakerDB {
     }
 
     /**
-     * Runs SQL script on the given filePath.
+     * Runs SQL script on the given filePath of DDL .
+     * @param clearFilePath Path to the cleansing script. (exceptions skipped)
      * @param filePath Path to the initialization script.
      */
-    public boolean initDB(String filePath) {
+    public boolean initDB(String clearFilePath, String filePath) {
+        List<String> clearQueries;
         List<String> queries;
+        String clearScript;
         String script;
 
         try {
+            clearScript = new String(Files.readAllBytes(Paths.get(clearFilePath)));
             script = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException ex) {
             log.severe("Reading of initialization script failed: " + ex);
             throw new RuntimeException(ex);
+        }
+
+        clearQueries = Arrays.asList(clearScript.trim().split(";"));
+
+        try {
+            dbConnection.execute(clearQueries);
+        } catch (Exception ex) {
         }
 
         queries = Arrays.asList(script.trim().split(";"));
@@ -276,6 +289,8 @@ public class MapMakerDB {
             return false;
         }
         log.info("DB successfully initialized");
+
+        loadEntities();
         return true;
     }
 
