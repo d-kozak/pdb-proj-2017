@@ -39,8 +39,4 @@ public class PointGeometry implements EntityGeometry {
         log.info(format("Distance between [%f,%f] and [%f,%f] is %f", x, y, point.getX(), point.getY(), distance));
         return distance < 10;
     }
-
-    public void focus() {
-        log.severe("Touched!");
-    }
 }

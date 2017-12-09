@@ -2,6 +2,8 @@ package cz.vutbr.fit.pdb.entity;
 
 import cz.vutbr.fit.pdb.configuration.DrawingMode;
 import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
+import cz.vutbr.fit.pdb.entity.geometry.Point;
+import cz.vutbr.fit.pdb.entity.geometry.PointGeometry;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -194,14 +196,13 @@ public class Entity {
     }
 
     public SelectedEntityService selectedEntityService;
+
     public void select() {
-        log.severe("trytosel");
-        // selectedEntityService.setEntityProperty(this);
-        selectedEntityService.setEntityProperty(null);
-        //JOptionPane.showMessageDialog(null, "ohnoes!", "ohnoes!", JOptionPane.ERROR_MESSAGE);
-        if(selectedEntityService.getEntityProperty() == null)
-            log.severe("nothing selected");
-        else
-            log.severe("something selected");
+        selectedEntityService.setEntityProperty(this);
+        log.info("Selection of entity from map.");
     };
+
+    public void updatePointGeometry(double x, double y) {
+        setGeometry(new PointGeometry(new Point(x, y)));
+    }
 }

@@ -49,9 +49,28 @@
         var layer = event.layer;
 
         geoEntities.addLayer(layer);
+		
+		layer.on("click", function(e) {
+			;
+		})
     });
 	
-	//L.marker([51.5, -0.09]).addTo(map)
+	if(navigator.userAgent.indexOf("JavaFX") < 0) {
+		map.on("click", function(e) {
+			alert(e.latlng)
+			coord = e.latlng
+		})
+		
+		map.on(L.Draw.Event.EDITED, function (e) {
+			e.layers.eachLayer(function (layer) {
+				console.log	("testuju")
+				if (layer instanceof L.Marker){
+					console.log(":" + layer.getLatLng())
+				}
+			})
+		})
+		//L.marker([51.5, -0.09]).addTo(map)
+	}
 
 </script>
 

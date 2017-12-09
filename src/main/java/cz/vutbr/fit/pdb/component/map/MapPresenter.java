@@ -70,6 +70,7 @@ public class MapPresenter implements Initializable, MapRenderer {
         log.severe("Redraw!");
         // TEMP:
         //ObservableList<Entity> entities = entityService.getEntities(configuration.getYear());
+        leaflet.call("clearAll");
         ObservableList<Entity> entities = entityService.getEntities();
         for (Entity entity : entities) {
             EntityGeometry geometry = entity.getGeometry();
@@ -121,6 +122,7 @@ public class MapPresenter implements Initializable, MapRenderer {
         gson = builder.create();
 
         webEngine.load(this.getClass().getClassLoader().getResource("leaflet.html").toExternalForm());
+
         /*
         this.canvas = new ResizableCanvas();
         vbox.getChildren()
@@ -170,9 +172,9 @@ public class MapPresenter implements Initializable, MapRenderer {
         log.info(String.format("Clicked on canvas at[%f,%f]", x, y));
         if (configuration.getAppMode() == AppMode.VIEW)
             entityService.tryToSelectEntityAt(x, y);
-        else if (configuration.getAppMode() == AppMode.EDIT)
+        /*else if (configuration.getAppMode() == AppMode.EDIT)
             painter.clicked(x, y);
-        else throw new RuntimeException("Not impl yet");
+        else throw new RuntimeException("Not impl yet");*/
     }
 
     public class VMBridge {
@@ -185,6 +187,11 @@ public class MapPresenter implements Initializable, MapRenderer {
          */
         public void log(String msg) {
             log.severe(msg);
+        }
+
+        public void clickEvent(double x, double y) { // [x, y]
+            log.info("You clicked the map at " + x + " " + y);
+            entityService.tryToSelectEntityAt(x, y);
         }
     }
 

@@ -39,6 +39,9 @@ public class EntityService {
                 if (!entities.isEmpty()) {
                     selectedEntityService.setEntityProperty(entities.get(0));
                 }
+                for(Entity entity : entities) {
+                    entity.selectedEntityService = selectedEntityService;
+                }
                 log.info("Loaded entities: " + entities);
                 initDataLoaded.set(true);
                 entityUpdater.addListeners(entities);
@@ -58,6 +61,7 @@ public class EntityService {
     public void addEntity(Entity entity) {
         log.info(String.format("Adding new entity %s", entity));
         entity.selectedEntityService = selectedEntityService;
+        log.severe(String.valueOf(selectedEntityService));
         entities.add(entity);
     }
 
