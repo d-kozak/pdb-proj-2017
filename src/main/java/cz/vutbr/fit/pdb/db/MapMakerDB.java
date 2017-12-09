@@ -69,6 +69,7 @@ public class MapMakerDB {
     }
 
     private static void loadEntities() {
+        entities.clear();
 		try (Statement stmt = connection.createStatement()) {
 			try (ResultSet rset = stmt.executeQuery("SELECT * FROM SpatialEntity")) {
 				while (rset.next()) {
