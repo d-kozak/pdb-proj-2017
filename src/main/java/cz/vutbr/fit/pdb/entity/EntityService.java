@@ -4,6 +4,7 @@ import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.concurent.AddEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.LoadAllEntitiesTask;
 import cz.vutbr.fit.pdb.entity.concurent.RemoveEntityTask;
+import cz.vutbr.fit.pdb.entity.concurent.UpdateEntityTask;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -39,9 +40,6 @@ public class EntityService {
             try {
                 entities.clear();
                 entities.addAll(loadAllEntitiesTask.get());
-                if (!entities.isEmpty()) {
-                    selectedEntityService.setEntityProperty(entities.get(0));
-                }
                 for(Entity entity : entities) {
                     entity.selectedEntityService = selectedEntityService;
                 }
@@ -54,7 +52,7 @@ public class EntityService {
             }
         });
         loadAllEntitiesTask.setOnFailed(event -> {
-            log.severe("Couldn't load entities");
+            printException(loadAllEntitiesTask.getException());
             showError("Database error", "Could not load entities");
         });
         THREAD_POOL.submit(loadAllEntitiesTask);
@@ -68,8 +66,12 @@ public class EntityService {
         addEntityTask.setOnSucceeded(event -> {
             onSucceeded.run();
             entities.add(entity);
+            selectedEntityService.setEntityProperty(entity);
         });
-        addEntityTask.setOnFailed(event -> onFailed.run());
+        addEntityTask.setOnFailed(event -> {
+            printException(addEntityTask.getException());
+            onFailed.run();
+        });
 
         Configuration.THREAD_POOL.submit(addEntityTask);
         return addEntityTask;
@@ -98,10 +100,25 @@ public class EntityService {
             entities.remove(entity);
         });
         removeEntityTask.setOnFailed(event -> {
+            printException(removeEntityTask.getException());
             onFailed.run();
         });
         Configuration.THREAD_POOL.submit(removeEntityTask);
         return removeEntityTask;
+    }
+
+    public <T> Task<Void> updateEntity(Entity entity, String fieldName, Runnable onSucceeded, Runnable onFailed) {
+        UpdateEntityTask updateEntityTask = new UpdateEntityTask();
+        updateEntityTask.setEntity(entity);
+        updateEntityTask.setFieldName(fieldName);
+        updateEntityTask.setOnSucceeded(event -> onSucceeded.run());
+        updateEntityTask.setOnFailed(event -> {
+            printException(updateEntityTask.getException());
+            onFailed.run();
+        });
+
+        Configuration.THREAD_POOL.submit(updateEntityTask);
+        return updateEntityTask;
     }
 
     public boolean isInitDataLoaded() {
@@ -122,5 +139,10 @@ public class EntityService {
         FilteredList<Entity> selected = entities.filtered(entity -> entity.existsInYear(selectedYear));
         log.info("Selected entities :" + selected);
         return selected;
+    }
+
+    public void printException(Throwable exception) {
+        log.severe("Task failed with exception:" + exception);
+        exception.printStackTrace();
     }
 }

@@ -43,6 +43,11 @@ public class PolygonGeometry implements EntityGeometry {
         return points;
     }
 
+    @Override
+    public EntityGeometry copyOf() {
+        return new PolygonGeometry(FXCollections.observableArrayList(points));
+    }
+
     public double[] getPtArr() {
         double[] array = new double[points.size()*2];
         int i = 0;

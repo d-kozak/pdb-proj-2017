@@ -1,5 +1,7 @@
 package cz.vutbr.fit.pdb.component.rightbar;
 
+import cz.vutbr.fit.pdb.component.loadpicture.LoadPicturePresenter;
+import cz.vutbr.fit.pdb.component.loadpicture.LoadPictureView;
 import cz.vutbr.fit.pdb.component.rightbar.geometry.circleinfo.CircleInfoView;
 import cz.vutbr.fit.pdb.component.rightbar.geometry.lineinfo.LineInfoView;
 import cz.vutbr.fit.pdb.component.rightbar.geometry.pointinfo.PointInfoView;
@@ -7,24 +9,30 @@ import cz.vutbr.fit.pdb.component.rightbar.geometry.polygoninfo.PolygonInfoView;
 import cz.vutbr.fit.pdb.component.rightbar.picturelistitem.PictureListViewCell;
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.Entity;
+import cz.vutbr.fit.pdb.entity.EntityImage;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.FileChooser;
+import javafx.scene.input.KeyCode;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.java.Log;
-import lombok.val;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
 
 @Log
 public class RightbarPresenter implements Initializable {
@@ -50,7 +58,7 @@ public class RightbarPresenter implements Initializable {
     private DatePicker toDate;
 
     @FXML
-    private ListView<Image> picturesView;
+    private ListView<EntityImage> picturesView;
 
     @Inject
     private EntityService entityService;
@@ -65,6 +73,8 @@ public class RightbarPresenter implements Initializable {
     private Configuration configuration;
 
     private Entity selectedEntity;
+    private ChangeListener<LocalDate> fromDateChangeListener;
+    private ChangeListener<LocalDate> toDateChangeListener;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -104,23 +114,112 @@ public class RightbarPresenter implements Initializable {
     private void initViewForEntity(Entity entity) {
         log.info("displaying entity: " + entity);
         this.selectedEntity = entity;
-        nameField.textProperty()
-                 .bindBidirectional(entity.nameProperty());
-        descriptionField.textProperty()
-                        .bindBidirectional(entity.descriptionProperty());
-        flagView.imageProperty()
-                .setValue(entity.getFlag());
-        picturesView.setItems(entity.getImages());
-        picturesView.setCellFactory(param -> new PictureListViewCell(entity.getImages(), image -> {
+        nameField.setText(entity.getName());
+        nameField.setOnAction(event -> {
+            Entity copy = entity.copyOf();
+            copy.setName(nameField.getText());
+            entityService.updateEntity(copy, "name",
+                    () -> {
+                        showInfo("Entity updated", "Entity updated successfully");
+                        entity.setName(nameField.getText());
+                    },
+                    () -> {
+                        showError("Database error", "Could not update entity");
+                        nameField.setText(entity.getName());
+                    });
+
+        });
+        descriptionField.setText(entity.getDescription());
+        descriptionField.setOnKeyReleased(keyEvent -> {
+            Entity copy = entity.copyOf();
+            copy.setDescription(descriptionField.getText());
+            if (keyEvent.getCode()
+                        .equals(KeyCode.ENTER)) {
+                entityService.updateEntity(copy, "description",
+                        () -> {
+                            showInfo("Entity updated", "Entity updated successfully");
+                            entity.setDescription(descriptionField.getText());
+                        },
+                        () -> {
+                            showError("Database error", "Could not update entity");
+                            descriptionField.setText(entity.getDescription());
+                        });
+            }
+        });
+
+        Optional<EntityImage> flagOptional = Optional.ofNullable(entity.getFlag());
+        flagOptional.ifPresent(flag -> {
             flagView.imageProperty()
-                    .setValue(image);
-            entity.flagProperty()
-                  .setValue(image);
+                    .setValue(flag
+                            .getImage());
+            Tooltip.install(flagView, new Tooltip(flag
+                    .getDescription()));
+        });
+        if (!flagOptional.isPresent()) {
+            flagView.setImage(null);
+        }
+
+        picturesView.setItems(entity.getImages());
+        picturesView.setCellFactory(param -> new PictureListViewCell(
+                image -> {
+                    Entity copy = entity.copyOf();
+                    copy.getImages()
+                        .remove(image);
+                    entityService.updateEntity(copy, "images",
+                            () -> {
+                                showInfo("Entity updated", "Entity updated successfully");
+                                entity.getImages()
+                                      .remove(image);
+                            },
+                            () -> {
+                                showError("Database error", "Could not update entity");
+                            });
+                }, image -> {
+            Entity copy = entity.copyOf();
+            copy.setFlag(image);
+            entityService.updateEntity(copy, "flag", () -> {
+                        showInfo("Entity updated", "Entity updated successfully");
+                        flagView.setImage(image.getImage());
+                        Tooltip.install(flagView, new Tooltip(image.getDescription()));
+                        entity.setFlag(image);
+                    },
+                    () -> {
+                        showError("Database error", "Could not update entity");
+                    });
         }));
+        fromDateChangeListener = (observable, oldValue, newValue) -> {
+            Entity copy = entity.copyOf();
+            copy.setFrom(newValue);
+            entityService.updateEntity(copy, "from",
+                    () -> {
+                        showInfo("Entity updated", "Entity updated successfully");
+                        entity.setFrom(fromDate.getValue());
+                    },
+                    () -> {
+                        showError("Database error", "Could not update entity");
+                        fromDate.setValue(entity.getFrom());
+                    });
+
+        };
+        fromDate.setValue(entity.getFrom());
         fromDate.valueProperty()
-                .bindBidirectional(entity.fromProperty());
+                .addListener(fromDateChangeListener);
+        toDateChangeListener = (observable, oldValue, newValue) -> {
+            Entity copy = entity.copyOf();
+            copy.setTo(newValue);
+            entityService.updateEntity(copy, "to",
+                    () -> {
+                        showInfo("Entity updated", "Entity updated successfully");
+                        entity.setTo(toDate.getValue());
+                    },
+                    () -> {
+                        showError("Database error", "Could not update entity");
+                        toDate.setValue(entity.getTo());
+                    });
+        };
+        toDate.setValue(entity.getTo());
         toDate.valueProperty()
-              .bindBidirectional(entity.toProperty());
+              .addListener(toDateChangeListener);
 
         switch (entity.getGeometryType()) {
             case POINT:
@@ -146,16 +245,20 @@ public class RightbarPresenter implements Initializable {
             log.severe("Selected entity is null, cannot unbind");
             return;
         }
-        nameField.textProperty()
-                 .unbindBidirectional(selectedEntity.nameProperty());
-        descriptionField.textProperty()
-                        .unbindBidirectional(selectedEntity.descriptionProperty());
-        flagView.imageProperty()
-                .unbindBidirectional(selectedEntity.flagProperty());
+        nameField.setOnAction(null);
+        descriptionField.setOnKeyReleased(null);
+
+        Optional<EntityImage> entityImage = Optional.ofNullable(selectedEntity.flagProperty()
+                                                                              .get());
+        entityImage.ifPresent(image -> {
+            flagView.imageProperty()
+                    .unbindBidirectional(image
+                            .imageProperty());
+        });
         fromDate.valueProperty()
-                .unbindBidirectional(selectedEntity.fromProperty());
+                .removeListener(fromDateChangeListener);
         toDate.valueProperty()
-              .unbindBidirectional(selectedEntity.toProperty());
+              .removeListener(toDateChangeListener);
     }
 
     private void initForPoint() {
@@ -176,16 +279,39 @@ public class RightbarPresenter implements Initializable {
 
     @FXML
     private void onLoadNewPhoto(ActionEvent event) {
-        val fileChooser = new FileChooser();
-        fileChooser.setTitle("Select new picture");
-        File file = fileChooser.showOpenDialog(mainStage);
-        if (file != null) {
-            val image = new Image(file.toURI()
-                                      .toString());
-            selectedEntityService.getEntityProperty()
-                                 .getImages()
-                                 .add(image);
-            log.info("Image " + file.getName() + " loaded successfully");
-        }
+        LoadPictureView loadPictureView = new LoadPictureView();
+        Stage stage = new Stage();
+        Scene scene = new Scene(loadPictureView.getView());
+        stage.setTitle("Load new picture");
+        stage.setScene(scene);
+
+        LoadPicturePresenter presenter = (LoadPicturePresenter) loadPictureView.getPresenter();
+        presenter.setStage(stage);
+
+        // make the dialog modal
+        stage.initOwner(mainStage.getOwner());
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
+
+        presenter.getResult()
+                 .ifPresent(result -> {
+                     Entity copy = selectedEntity.copyOf();
+                     copy.getImages()
+                         .clear();
+                     copy.getImages()
+                         .add(result);
+                     entityService.updateEntity(copy, "pictures",
+                             () -> {
+                                 showInfo("Entity updated", "Entity updated successfully");
+                                 picturesView.getItems()
+                                             .add(result);
+                             },
+                             () -> {
+                                 showError("Database error", "Could not update entity");
+                             });
+
+
+                 });
+
     }
 }

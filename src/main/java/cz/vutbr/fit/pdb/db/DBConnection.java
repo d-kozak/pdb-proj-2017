@@ -61,7 +61,7 @@ public class DBConnection {
             } catch (Exception ex) {
                 log.severe("Connection to: " + url + " failed: " + ex);
                 isConnected = false;
-                return false;
+                throw new RuntimeException(ex);
             }
         }
         log.info("DB successfully connnected.");
@@ -96,7 +96,7 @@ public class DBConnection {
     public void execute(List<String> queries) {
         if (!isConnected) {
             log.severe("Cannot execute queries on DB without connection.");
-            return;
+            throw new RuntimeException();
         }
 
         try {
@@ -114,7 +114,6 @@ public class DBConnection {
                 } catch (SQLException sqlEx) {
                     log.info("Cannot enable autocommit: " + sqlEx);
                 }
-                return;
             }
         });
 
@@ -135,6 +134,7 @@ public class DBConnection {
     public void execute(String query) {
         if (!isConnected) {
             log.severe("Cannot execute query on DB without connection.");
+            throw new RuntimeException();
         }
 
         try {
@@ -144,12 +144,14 @@ public class DBConnection {
                 }
                 catch (SQLException ex) {
                     log.severe("DB query failed: Execute SQL query exception: " + ex + " : " +query);
+                    throw new RuntimeException(ex);
                 }
 
             }
         }
         catch (SQLException ex) {
             log.severe("DB query failed: Create SQL statement exception: " + ex + " : " + query);
+            throw new RuntimeException(ex);
         }
     }
 

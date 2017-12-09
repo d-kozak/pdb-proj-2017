@@ -1,26 +1,25 @@
 package cz.vutbr.fit.pdb.component.rightbar.picturelistitem;
 
-import javafx.collections.ObservableList;
+import cz.vutbr.fit.pdb.entity.EntityImage;
 import javafx.scene.control.ListCell;
-import javafx.scene.image.Image;
 
 import java.util.function.Consumer;
 
-public class PictureListViewCell extends ListCell<Image> {
+public class PictureListViewCell extends ListCell<EntityImage> {
 
-    private ObservableList<Image> images;
-    private Consumer<Image> setAsFlag;
+    private Consumer<EntityImage> onDelete;
+    private Consumer<EntityImage> setAsFlag;
 
-    public PictureListViewCell(ObservableList<Image> images, Consumer<Image> setAsFlag) {
-        this.images = images;
+    public PictureListViewCell(Consumer<EntityImage> onDelete, Consumer<EntityImage> setAsFlag) {
+        this.onDelete = onDelete;
         this.setAsFlag = setAsFlag;
     }
 
     @Override
-    protected void updateItem(Image item, boolean empty) {
+    protected void updateItem(EntityImage item, boolean empty) {
         super.updateItem(item, empty);
         if (item != null) {
-            PictureListViewItem pictureListViewItem = new PictureListViewItem(item, images, setAsFlag);
+            PictureListViewItem pictureListViewItem = new PictureListViewItem(item, onDelete, setAsFlag);
             setGraphic(pictureListViewItem.getView());
         }
     }

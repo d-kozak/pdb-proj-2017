@@ -7,7 +7,7 @@ public class InitDatabaseTask extends Task<Void> {
     @Override
     protected Void call() throws Exception {
         MapMakerDB db = MapMakerDB.getInstance();
-        if (!db.initDB("init_db.sql")) {
+        if (!db.initDB("clear_db.sql", "init_db.sql")) {
             throw new RuntimeException("Failed");
         }
         return null;

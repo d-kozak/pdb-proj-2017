@@ -27,15 +27,21 @@ public class BottombarPresenter implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        yearSlider.minProperty()
+                  .bindBidirectional(configuration.mininumYearProperty());
+        yearSlider.maxProperty()
+                  .bindBidirectional(configuration.maximumYearProperty());
+
         yearSlider.valueProperty()
                   .addListener((obs, oldval, newVal) ->
                           yearSlider.setValue(Math.round(newVal.doubleValue())));
+
+        yearSlider.valueProperty()
+                  .bindBidirectional(configuration.yearProperty());
 
         yearTextField.textProperty()
                      .bindBidirectional(yearSlider.valueProperty(), new StringNumConverter());
 
 
-        configuration.yearProperty()
-                     .bindBidirectional(yearSlider.valueProperty());
     }
 }

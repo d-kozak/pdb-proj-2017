@@ -1,11 +1,11 @@
 package cz.vutbr.fit.pdb.component.rightbar.picturelistitem;
 
-import javafx.collections.ObservableList;
+import cz.vutbr.fit.pdb.entity.EntityImage;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
@@ -19,7 +19,7 @@ public class PictureListViewItem {
     @FXML
     private HBox hbox;
 
-    public PictureListViewItem(Image image, ObservableList<Image> allImages, Consumer<Image> setAsFlag) {
+    public PictureListViewItem(EntityImage image, Consumer<EntityImage> onDelete, Consumer<EntityImage> setAsFlag) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("picturelistitem.fxml"));
         fxmlLoader.setController(this);
         try {
@@ -28,11 +28,12 @@ public class PictureListViewItem {
             throw new RuntimeException(e);
         }
         imageView.imageProperty()
-                 .setValue(image);
+                 .setValue(image.getImage());
+        Tooltip.install(imageView, new Tooltip(image.getDescription()));
         ContextMenu contextMenu = new ContextMenu();
         MenuItem deletePictureMenuItem = new MenuItem("Delete picture");
         deletePictureMenuItem.setOnAction(event -> {
-            allImages.remove(image);
+            onDelete.accept(image);
         });
         MenuItem setAsFlagMenuItem = new MenuItem("Set picture as flag");
         setAsFlagMenuItem.setOnAction(event -> {

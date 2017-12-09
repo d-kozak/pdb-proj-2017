@@ -7,7 +7,6 @@ import cz.vutbr.fit.pdb.entity.geometry.PointGeometry;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import lombok.extern.java.Log;
 
@@ -22,11 +21,10 @@ public class Entity {
     private IntegerProperty id = new SimpleIntegerProperty();
     private StringProperty name = new SimpleStringProperty();
     private StringProperty description = new SimpleStringProperty();
-    private StringProperty type = new SimpleStringProperty();
-    private ObjectProperty<Image> flag = new SimpleObjectProperty<>();
-    private ObservableList<Image> images = FXCollections.observableArrayList();
-    private ObjectProperty<LocalDate> from = new SimpleObjectProperty<>();
-    private ObjectProperty<LocalDate> to = new SimpleObjectProperty<>();
+    private ObjectProperty<EntityImage> flag = new SimpleObjectProperty<>();
+    private ObservableList<EntityImage> images = FXCollections.observableArrayList();
+    private ObjectProperty<LocalDate> from = new SimpleObjectProperty<>(LocalDate.now());
+    private ObjectProperty<LocalDate> to = new SimpleObjectProperty<>(LocalDate.now());
 
     private EntityGeometry geometry;
     private ObjectProperty<Color> color = new SimpleObjectProperty<>();
@@ -34,7 +32,7 @@ public class Entity {
     public Entity() {
     }
 
-    public Entity(Integer id, String name, String description, Image flag, List<Image> images, EntityGeometry geometry) {
+    public Entity(Integer id, String name, String description, EntityImage flag, List<EntityImage> images, EntityGeometry geometry) {
         this.id.setValue(id);
         this.name.setValue(name);
         this.description.setValue(description);
@@ -43,7 +41,7 @@ public class Entity {
         this.geometry = geometry;
     }
 
-    public Entity(Integer id, String name, String description, Image flag, List<Image> images, EntityGeometry geometry, LocalDate from, LocalDate to) {
+    public Entity(Integer id, String name, String description, EntityImage flag, List<EntityImage> images, EntityGeometry geometry, LocalDate from, LocalDate to) {
         this.id.setValue(id);
         this.name.setValue(name);
         this.description.setValue(description);
@@ -54,7 +52,9 @@ public class Entity {
         this.to.setValue(to);
     }
 
-    public Integer getId() { return id.get(); }
+    public Integer getId() {
+        return id.get();
+    }
 
     public IntegerProperty idProperty() {
         return id;
@@ -88,23 +88,23 @@ public class Entity {
         this.description.set(description);
     }
 
-    public Image getFlag() {
+    public EntityImage getFlag() {
         return flag.get();
     }
 
-    public ObjectProperty<Image> flagProperty() {
-        return flag;
-    }
-
-    public void setFlag(Image flag) {
+    public void setFlag(EntityImage flag) {
         this.flag.set(flag);
     }
 
-    public ObservableList<Image> getImages() {
+    public ObjectProperty<EntityImage> flagProperty() {
+        return flag;
+    }
+
+    public ObservableList<EntityImage> getImages() {
         return images;
     }
 
-    public void setImages(ObservableList<Image> images) {
+    public void setImages(ObservableList<EntityImage> images) {
         this.images = images;
     }
 
@@ -193,6 +193,19 @@ public class Entity {
             return true;
 
         return from.getYear() <= selectedYear && selectedYear <= to.getYear();
+    }
+
+    public Entity copyOf() {
+        Entity copy = new Entity();
+        copy.setId(getId());
+        copy.setName(getName());
+        copy.setDescription(getDescription());
+        copy.setFlag(getFlag());
+        copy.setFrom(getFrom());
+        copy.setTo(getTo());
+        copy.setGeometry(getGeometry().copyOf());
+        copy.setImages(FXCollections.observableArrayList(getImages()));
+        return copy;
     }
 
     public SelectedEntityService selectedEntityService;

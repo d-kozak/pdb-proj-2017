@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.entity.concurent;
 
+import cz.vutbr.fit.pdb.db.MapMakerDB;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.utils.ExceptionGun;
 import javafx.concurrent.Task;
@@ -14,14 +15,13 @@ public class UpdateEntityTask extends Task<Void> {
         this.entity = entity;
     }
 
-    public void setField(String field) {
+    public void setFieldName(String field) {
         this.field = field;
     }
 
     @Override
     protected Void call() throws Exception {
-        log.severe("Not impl yet!");
-        ExceptionGun.throwMeMaybe();
+        MapMakerDB.updateEntity(entity, field);
         return null;
     }
 }

@@ -10,9 +10,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
-import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
-
 public class CirclePainterState extends AbstractPainterState {
     private Point center;
 
@@ -26,8 +23,8 @@ public class CirclePainterState extends AbstractPainterState {
         Object[] description = (Object[]) entity.getGeometry()
                                                 .getDescription();
         Point center = ((Point) description[0]);
-        DoubleProperty doubleProperty = ((DoubleProperty) description[1]);
-        graphics.fillOval(center.getX(), center.getY(), doubleProperty.doubleValue(), doubleProperty.doubleValue());
+        DoubleProperty radius = ((DoubleProperty) description[1]);
+        graphics.fillOval(center.getX() - radius.get(), center.getY() - radius.get(), 2 * radius.get(), 2 * radius.get());
     }
 
     @Override
@@ -43,7 +40,7 @@ public class CirclePainterState extends AbstractPainterState {
             entity.setName("New circle");
             getGraphics().setFill(drawingColor);
             getGraphics().setStroke(drawingColor);
-            getGraphics().fillOval(center.getX(), center.getY(), radius, radius);
+            getGraphics().fillOval(center.getX() - radius, center.getY() - radius, 2 * radius, 2 * radius);
             addEntity(entity);
             center = null;
         }

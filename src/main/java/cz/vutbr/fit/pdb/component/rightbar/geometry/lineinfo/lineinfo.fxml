@@ -11,7 +11,7 @@
             <content>
                 <VBox>
                     <children>
-                        <ListView fx:id="lineListView" prefHeight="200.0" prefWidth="200.0"/>
+                        <ListView fx:id="pointsListView" prefHeight="200.0" prefWidth="200.0"/>
                         <HBox>
                             <children>
                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="X:">
@@ -19,18 +19,18 @@
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                     </HBox.margin>
                                 </Text>
-                                <TextField fx:id="lineXField" prefWidth="40.0"/>
+                                <TextField fx:id="xField" prefWidth="40.0"/>
                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Y:">
                                     <HBox.margin>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                     </HBox.margin>
                                 </Text>
-                                <TextField fx:id="lineYField" prefWidth="40.0">
+                                <TextField fx:id="yField" prefWidth="40.0">
                                     <HBox.margin>
                                         <Insets right="10.0"/>
                                     </HBox.margin>
                                 </TextField>
-                                <Button onAction="#addLinePoint" mnemonicParsing="false"
+                                <Button onAction="#addNewPoint" mnemonicParsing="false"
                                         text="Add new"/>
                             </children>
                         </HBox>

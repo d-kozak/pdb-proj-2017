@@ -1,9 +1,12 @@
 package cz.vutbr.fit.pdb.db;
 
+import cz.vutbr.fit.pdb.entity.EntityImage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import lombok.extern.java.Log;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleResultSet;
 import oracle.ord.im.OrdImage;
@@ -17,8 +20,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import lombok.extern.java.Log;
-
 @Log
 public class Picture {
     private static DBConnection dbConnection = DBConnection.getInstance();
@@ -28,12 +29,12 @@ public class Picture {
 
     }
 
-    public static ObservableList<Image> loadImagesFor(Integer entityId) {
+    public static ObservableList<EntityImage> loadImagesFor(Integer entityId) {
         return loadPicturesFor(entityId, "normal");
     }
 
-    public static Image loadFlagFor(Integer entityId) {
-        ObservableList<Image> images = loadPicturesFor(entityId, "flag");
+    public static EntityImage loadFlagFor(Integer entityId) {
+        ObservableList<EntityImage> images = loadPicturesFor(entityId, "flag");
         if (!images.isEmpty()) {
             return images.get(0);
         }
@@ -48,31 +49,33 @@ public class Picture {
         deletePicture(id, "flag");
     }
 
-    private static void deletePicture(Integer id, String type){
+    private static void deletePicture(Integer id, String type) {
         dbConnection.execute("DELETE FROM Picture " +
-                "id = " + id + " and pictureType = " + type
+                "WHERE id = " + id + " and pictureType = " + type
         );
     }
 
     /**
      * Inserts a new image to the database.
-     * @param description Description of the image.
-     * @param createdAt Date of creation.
+     *
+     * @param description     Description of the image.
+     * @param createdAt       Date of creation.
      * @param spatialEntityId Id of referenced entity.
-     * @param imgPath Path to the image.
+     * @param imgPath         Path to the image.
      * @return Boolean value.
      */
     public static boolean insertFlag(String description, Date createdAt,
-                                      Integer spatialEntityId, String imgPath) {
+                                     Integer spatialEntityId, String imgPath) {
         return insertPicture(description, "flag", createdAt, spatialEntityId, imgPath);
     }
 
     /**
      * Inserts a new image to the database.
-     * @param description Description of the image.
-     * @param createdAt Date of creation.
+     *
+     * @param description     Description of the image.
+     * @param createdAt       Date of creation.
      * @param spatialEntityId Id of referenced entity.
-     * @param imgPath Path to the image.
+     * @param imgPath         Path to the image.
      * @return Boolean value.
      */
     public static boolean insertImage(String description, Date createdAt,
@@ -82,11 +85,12 @@ public class Picture {
 
     /**
      * Inserts a new image to the database.
-     * @param description Description of the image.
-     * @param type Type - 'flag' or 'normal'.
-     * @param createdAt Date of creation.
+     *
+     * @param description     Description of the image.
+     * @param type            Type - 'flag' or 'normal'.
+     * @param createdAt       Date of creation.
      * @param spatialEntityId Id of referenced entity.
-     * @param imgPath Path to the image.
+     * @param imgPath         Path to the image.
      * @return Boolean value.
      */
     private static boolean insertPicture(String description, String type, Date createdAt,
@@ -96,6 +100,7 @@ public class Picture {
             connection.setAutoCommit(false);
         } catch (SQLException ex) {
             log.info("Cannot disable autocommit: " + ex);
+            throw new RuntimeException(ex);
         }
 
         try {
@@ -110,15 +115,14 @@ public class Picture {
                 stmt.setInt(5, spatialEntityId);
                 try {
                     stmt.executeUpdate();
-                }
-                catch (SQLException ex) {
+                } catch (SQLException ex) {
                     log.severe("Init picture failed: Execute SQL query exception: " + ex);
                     return false;
                 }
             }
         } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         OrdImage imgProxy = null;
@@ -127,26 +131,25 @@ public class Picture {
                     "SELECT img from Picture WHERE id = ? FOR UPDATE"
             )) {
                 stmt.setInt(1, id);
-                try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()){
+                try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()) {
                     rset.next();
                     imgProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
-                }
-                catch (SQLException ex) {
+                } catch (SQLException ex) {
                     log.severe("Init picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         try {
             imgProxy.loadDataFromFile(imgPath);
             imgProxy.setProperties();
-        } catch (SQLException  | IOException ex) {
+        } catch (SQLException | IOException ex) {
             log.severe("Failed to load img: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         try {
@@ -157,15 +160,14 @@ public class Picture {
                 stmt.setInt(2, id);
                 try {
                     stmt.executeUpdate();
-                }
-                catch (SQLException ex) {
+                } catch (SQLException ex) {
                     log.severe("Init picture failed: Execute SQL query exception: " + ex);
                     return false;
                 }
             }
         } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         try {
@@ -183,15 +185,14 @@ public class Picture {
                             "img_tx = SI_TEXTURE(img_si) " +
                             "WHERE id = " + id;
                     stmt.executeUpdate(updateSql2);
-                }
-                catch (SQLException ex) {
+                } catch (SQLException ex) {
                     log.severe("Init picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("Init picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         try {
@@ -214,6 +215,7 @@ public class Picture {
             connection.setAutoCommit(false);
         } catch (SQLException ex) {
             log.info("Cannot disable autocommit: " + ex);
+            throw new RuntimeException(ex);
         }
 
         // retrieve ORDImage object of a source image
@@ -228,28 +230,21 @@ public class Picture {
                     "SELECT description, pictureType, createdAt, spatialEntityId, img FROM Picture WHERE id = ?"
             )) {
                 stmt.setInt(1, srcId);
-                try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()){
+                try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()) {
                     rset.next();
                     srcImageProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
-                    description = "BLABLA";// rset.getString("description");
+                    description = rset.getString("description");
                     type = rset.getString("pictureType");
                     createdAt = rset.getDate("createdAt");
                     spatialEntityId = rset.getInt("spatialEntityId");
-                }
-                catch (SQLException ex) {
+                } catch (SQLException ex) {
                     log.severe("Load picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("Load picture failed: Create SQL statement exception: " + ex);
-            return false;
-        }
-
-        try {
-            connection.setAutoCommit(false);
-        } catch (SQLException ex) {
-            log.info("Cannot disable autocommit: " + ex);
+            throw new RuntimeException(ex);
         }
 
         // insert a new record with an empty ORDImage object
@@ -265,15 +260,14 @@ public class Picture {
                 stmt.setInt(5, spatialEntityId);
                 try {
                     stmt.executeUpdate();
-                }
-                catch (SQLException ex) {
+                } catch (SQLException ex) {
                     log.severe("Insert picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("Insert picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         // retrieve the previously created ORDImage object for updating
@@ -283,18 +277,17 @@ public class Picture {
                     "SELECT img from Picture WHERE id = ? FOR UPDATE"
             )) {
                 stmt.setInt(1, dstId);
-                try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()){
+                try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()) {
                     rset.next();
                     dstImgProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
-                }
-                catch (SQLException ex) {
+                } catch (SQLException ex) {
                     log.severe("Select picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("Select picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         // perform conversion (processing occurs on the Oracle Database)
@@ -302,6 +295,7 @@ public class Picture {
             srcImageProxy.processCopy(modification, dstImgProxy);
         } catch (SQLException ex) {
             log.severe("Img processing failed: " + ex);
+            throw new RuntimeException(ex);
         }
 
         // save the target image
@@ -313,10 +307,9 @@ public class Picture {
                 stmt.setInt(2, dstId);
                 try {
                     stmt.executeUpdate();
-                }
-                catch (SQLException ex) {
+                } catch (SQLException ex) {
                     log.severe("Save picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
@@ -340,15 +333,14 @@ public class Picture {
                             "img_tx = SI_TEXTURE(img_si) " +
                             "WHERE id = " + dstId;
                     stmt.executeUpdate(updateSql2);
-                }
-                catch (SQLException ex) {
+                } catch (SQLException ex) {
                     log.severe("Update picture failed: Execute SQL query exception: " + ex);
-                    return false;
+                    throw new RuntimeException(ex);
                 }
             }
         } catch (SQLException ex) {
             log.severe("update picture failed: Create SQL statement exception: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         try {
@@ -360,8 +352,50 @@ public class Picture {
         return true;
     }
 
-    public ObservableList<Image> findSmiliar(Integer id)
-    {
+    private static ObservableList<EntityImage> loadPicturesFor(Integer entityId, String type) {
+        ObservableList<EntityImage> images = FXCollections.observableArrayList();
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "SELECT * FROM Picture " +
+                        "WHERE spatialEntityId = ? and pictureType = ? " +
+                        "ORDER BY createdAt DESC"
+        )) {
+            stmt.setInt(1, entityId);
+            stmt.setString(2, type);
+            try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()) {
+                while (rset.next()) {
+                    OrdImage imgProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
+                    if (imgProxy != null) {
+                        try {
+                            if (imgProxy.getDataInByteArray() != null) {
+                                BufferedImage img = ImageIO.read(
+                                        new ByteArrayInputStream(imgProxy.getDataInByteArray())
+                                );
+                                WritableImage writableImage = SwingFXUtils.toFXImage(img, null);
+                                EntityImage entityImage = new EntityImage();
+                                entityImage.setImage(writableImage);
+                                entityImage.setId(rset.getInt("id"));
+                                entityImage.setDescription(rset.getString("description"));
+                                entityImage.setTime(rset.getDate("createdAt").toLocalDate());
+                                images.add(entityImage);
+                            }
+                        } catch (IOException ex) {
+                            log.severe("Load image failed: " + ex);
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                }
+            } catch (SQLException ex) {
+                log.severe("Load image: Execute SQL query exception: " + ex);
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException ex) {
+            log.severe("Load image: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+        return images;
+    }
+
+    public ObservableList<Image> findSmiliar(Integer id) {
         ObservableList<Image> images = FXCollections.observableArrayList();
         try (PreparedStatement stmt = connection.prepareStatement(
                 "SELECT dest.*, SI_ScoreByFtrList(" +
@@ -383,49 +417,17 @@ public class Picture {
                             }
                         } catch (IOException ex) {
                             log.severe("Loading similar picture failed: " + ex);
+                            throw new RuntimeException(ex);
                         }
                     }
                 }
             } catch (SQLException ex) {
                 log.severe("Find similar picture failed: Execute SQL statement exception: " + ex);
+                throw new RuntimeException(ex);
             }
         } catch (SQLException ex) {
             log.severe("Find similar picture failed: Create SQL statement exception: " + ex);
-        }
-        return images;
-    }
-
-
-    private static ObservableList<Image> loadPicturesFor(Integer entityId, String type) {
-        ObservableList<Image> images = FXCollections.observableArrayList();
-        try (PreparedStatement stmt = connection.prepareStatement(
-                "SELECT * FROM Picture " +
-                        "WHERE spatialEntityId = ? and pictureType = ? " +
-                        "ORDER BY createdAt DESC"
-        )) {
-            stmt.setInt(1, entityId);
-            stmt.setString(2, type);
-            try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()) {
-                while(rset.next()) {
-                    OrdImage imgProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
-                    if (imgProxy != null) {
-                        try {
-                            if (imgProxy.getDataInByteArray() != null) {
-                                BufferedImage img = ImageIO.read(
-                                        new ByteArrayInputStream(imgProxy.getDataInByteArray())
-                                );
-                                images.add(SwingFXUtils.toFXImage(img, null));
-                            }
-                        } catch (IOException ex) {
-                            log.severe("Load image failed: " + ex);
-                        }
-                    }
-                }
-            } catch (SQLException ex) {
-                log.severe("Load image: Execute SQL query exception: " + ex);
-            }
-        } catch (SQLException ex) {
-            log.severe("Load image: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
         }
         return images;
     }

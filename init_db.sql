@@ -1,17 +1,13 @@
 ALTER SESSION SET NLS_DATE_FORMAT='DD-MM-YYYY';
 
-DROP TABLE SpatialEntity CASCADE CONSTRAINT;
-DROP TABLE Picture;
-DROP TABLE Description;
-DROP TABLE BlindMapResult;
-
 CREATE TABLE SpatialEntity (
   id NUMBER NOT NULL,
   name VARCHAR(30) NOT NULL,
   geometry SDO_GEOMETRY NOT NULL,
   validFrom DATE NULL,
   validTo DATE NULL,
-  entityType VARCHAR(10) CHECK(entityType in ('country', 'river', 'place')),
+  entityType VARCHAR(10) CHECK(entityType in ('country', 'river', 'place', 'largePlace')),
+  color VARCHAR(15),
 
   CHECK(validTo >= validFrom),
   CONSTRAINT PKSpatialEntity PRIMARY KEY (id)
@@ -31,7 +27,7 @@ CREATE TABLE Picture (
   img_tx ORDSYS.SI_TEXTURE,
 
   CONSTRAINT PKPicture PRIMARY KEY (id),
-  CONSTRAINT FKPictureSpatialEntity FOREIGN KEY (spatialEntityId) REFERENCES SpatialEntity(id)
+  CONSTRAINT FKPictureSpatialEntity FOREIGN KEY (spatialEntityId) REFERENCES SpatialEntity(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Description (
@@ -43,7 +39,7 @@ CREATE TABLE Description (
 
   CHECK(validTo >= validFrom),
   CONSTRAINT PKDescription PRIMARY KEY(id),
-  CONSTRAINT FKDescriptionSpatialEntity FOREIGN KEY (spatialEntityId) REFERENCES SpatialEntity(id)
+  CONSTRAINT FKDescriptionSpatialEntity FOREIGN KEY (spatialEntityId) REFERENCES SpatialEntity(id) ON DELETE CASCADE
 );
 
 CREATE TABLE BlindMapResult (
@@ -66,16 +62,17 @@ CREATE INDEX SP_INDEX_SpatialEntitiesGeometry ON SpatialEntity (geometry) indext
 
 COMMIT;
 
-INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES (
+INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType, color) VALUES (
     1,
     'Brno',
-    SDO_GEOMETRY(2001, NULL,
-	    SDO_POINT_TYPE(142, 142, NULL),
-		NULL, NULL
+    SDO_GEOMETRY(2003, NULL, NULL,
+		SDO_ELEM_INFO_ARRAY(1, 1003, 4),
+		SDO_ORDINATE_ARRAY(75, 15, 75, 95, 115, 55)
 	),
 	TO_DATE('27-10-1500', 'dd-mm-yyyy'),
     TO_DATE('27-10-2200', 'dd-mm-yyyy'),
-    'place'
+    'largePlace',
+    'salmon'
 );
 
 INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VALUES (
@@ -86,7 +83,7 @@ INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VA
     1
 );
 
-INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES (
+INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType, color) VALUES (
     2,
     'Praha',
     SDO_GEOMETRY(2001, NULL,
@@ -95,7 +92,8 @@ INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VA
 	),
 	TO_DATE('27-10-1100', 'dd-mm-yyyy'),
     TO_DATE('27-10-2300', 'dd-mm-yyyy'),
-    'place'
+    'place',
+    'lightsalmon'
 );
 
 INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VALUES (
@@ -106,7 +104,7 @@ INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VA
     2
 );
 
-INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES (
+INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType, color) VALUES (
 	3,
 	'Some river',
 	SDO_GEOMETRY(2002, NULL, NULL,
@@ -115,7 +113,8 @@ INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VA
 	),
 	TO_DATE('3-11-1120', 'dd-mm-yyyy'),
 	TO_DATE('3-11-2116', 'dd-mm-yyyy'),
-	'river'
+	'river',
+	'blue'
 );
 
 INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VALUES (
@@ -126,7 +125,7 @@ INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VA
     3
 );
 
-INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES (
+INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType, color) VALUES (
 	4,
 	'Czech Republic',
 	SDO_GEOMETRY(2003, NULL, NULL,
@@ -135,7 +134,8 @@ INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VA
 	),
 	TO_DATE('1-1-1993', 'dd-mm-yyyy'),
 	TO_DATE('1-1-3000', 'dd-mm-yyyy'),
-	'country'
+	'country',
+	'gold'
 );
 
 INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) VALUES (

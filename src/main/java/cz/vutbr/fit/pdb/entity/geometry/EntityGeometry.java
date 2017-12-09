@@ -8,4 +8,6 @@ public interface EntityGeometry {
     Object getDescription();
 
     boolean containsPoint(double x, double y);
+
+    EntityGeometry copyOf();
 }

@@ -19,6 +19,7 @@ import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.geometry.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
@@ -54,7 +55,9 @@ public class MapMakerDB {
     private static ObservableList<Entity> entities = FXCollections.observableArrayList();
 
     static {
-        loadEntities();
+        try {
+            loadEntities();
+        } catch(Exception ex) {};
     }
 
     public static void addEntity(Entity entity) {
@@ -66,12 +69,14 @@ public class MapMakerDB {
     }
 
     private static void loadEntities() {
+        entities.clear();
 		try (Statement stmt = connection.createStatement()) {
 			try (ResultSet rset = stmt.executeQuery("SELECT * FROM SpatialEntity")) {
 				while (rset.next()) {
 					Entity entity = new Entity();
 					entity.setId(rset.getInt("id"));
 					entity.setName(rset.getString("name"));
+					entity.setColor(Color.web(rset.getString("color")));
 
 					entity.setFrom(rset.getDate("validFrom").toLocalDate());
 					entity.setTo(rset.getDate("validTo").toLocalDate());
@@ -108,6 +113,20 @@ public class MapMakerDB {
 								new PointGeometry(new Point(pointCoords[0], pointCoords[1]))
 							);
 							break;
+                        case "largePlace":
+                            byte[] circlePlaceData = rset.getBytes("geometry");
+                            JGeometry jGeometryCircle = JGeometry.load(circlePlaceData);
+                            double[] circleCoords = jGeometryCircle.getOrdinatesArray();
+                            double xCoord = circleCoords[0];
+                            double yCoord = circleCoords[5];
+                            double radius = circleCoords[5] - circleCoords[1];
+                            entity.setGeometry(
+                                    new CircleGeometry(
+                                            new Point(xCoord, yCoord),
+                                            radius
+                                    )
+                            );
+                            break;
 						default:
 							log.severe("Unknown spatial entity: " + entityType);
 					}
@@ -118,11 +137,14 @@ public class MapMakerDB {
 				}
 			} catch (SQLException ex) {
 				log.severe("Load entities: Execute SQL query exception: " + ex);
+				throw new RuntimeException(ex);
 			} catch (Exception ex){
 				log.severe("Load entities: Exception: " + ex);
+                throw new RuntimeException(ex);
 			}
 		} catch (SQLException ex) {
 			log.severe("Load entities: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
 		}
     }
 
@@ -140,9 +162,11 @@ public class MapMakerDB {
                 }
             } catch (SQLException ex) {
                 log.severe("Load description: Execute SQL query exception: " + ex);
+                throw new RuntimeException(ex);
             }
         } catch (SQLException ex) {
             log.severe("Load description: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
         }
         return "Description.";
     }
@@ -152,10 +176,10 @@ public class MapMakerDB {
      * Only description, dates and geometry is inserted. Images and flag are NOT inserted!
      * @param entity
      */
-    private static void insertEntity(Entity entity) {
+    public static void insertEntity(Entity entity) {
         try (PreparedStatement stmt = connection.prepareStatement(
-                "INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType) VALUES( " +
-                        "?, ?, ?, ?, ?, ?)"
+                "INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType, color) VALUES( " +
+                        "?, ?, ?, ?, ?, ?, ?)"
         )) {
             entity.setId(dbConnection.getMaxId("spatialEntity") + 1);
             stmt.setInt(1, entity.getId());
@@ -164,29 +188,92 @@ public class MapMakerDB {
                 stmt.setObject(3, JGeometry.storeJS(connection, geometryToJGeometry(entity.getGeometry())));
             } catch (Exception ex) {
                 log.severe("Insert entity: Conversion to JGeometry: " + ex);
-                return;
+                throw new RuntimeException(ex);
             }
             stmt.setDate(4, Date.valueOf(entity.getFrom()));
             stmt.setDate(5, Date.valueOf(entity.getTo()));
             stmt.setString(6, geometryToType(entity.getGeometry()));
+            stmt.setString(7, entity.getColor().toString());
+            stmt.executeUpdate();
         } catch (SQLException ex) {
             log.severe("Insert entity: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
         }
     }
 
+    public static void updateEntity(Entity entity, String field) {
+        if (field == "description") {
+            log.severe("NOT IMPLEMENTED YET!");
+            throw new RuntimeException();
+        }
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "UPDATE SpatialEntity SET " + field + " = ? WHERE id = ?"
+        )) {
+            stmt.setInt(2, entity.getId());
+
+            switch (field){
+                case "name":
+                    stmt.setString(1, entity.getName());
+                    break;
+                case "from":
+                    stmt.setDate(1, Date.valueOf(entity.getFrom()));
+                    break;
+                case "to":
+                    stmt.setDate(1, Date.valueOf(entity.getTo()));
+                    break;
+                case "color":
+                    stmt.setString(1, entity.getColor().toString());
+                    break;
+                case "geometry":
+                    try {
+                        stmt.setObject(1, JGeometry.storeJS(connection, geometryToJGeometry(entity.getGeometry())));
+                    } catch (Exception ex) {
+                        log.severe("Update entity: Conversion to JGeometry: " + ex);
+                        throw new RuntimeException(ex);
+                    }
+                    break;
+                default:
+                    log.severe("Unknown field to update: " + field);
+                    throw new RuntimeException();
+            }
+
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            log.severe("Update entity: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static void deleteEntity(Entity entity) {
+        dbConnection.execute("DELETE FROM SpatialEntity " +
+                "WHERE id = " + entity.getId()
+        );
+    }
+
     /**
-     * Runs SQL script on the given filePath.
+     * Runs SQL script on the given filePath of DDL .
+     * @param clearFilePath Path to the cleansing script. (exceptions skipped)
      * @param filePath Path to the initialization script.
      */
-    public boolean initDB(String filePath) {
+    public boolean initDB(String clearFilePath, String filePath) {
+        List<String> clearQueries;
         List<String> queries;
+        String clearScript;
         String script;
 
         try {
+            clearScript = new String(Files.readAllBytes(Paths.get(clearFilePath)));
             script = new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException ex) {
             log.severe("Reading of initialization script failed: " + ex);
-            return false;
+            throw new RuntimeException(ex);
+        }
+
+        clearQueries = Arrays.asList(clearScript.trim().split(";"));
+
+        try {
+            dbConnection.execute(clearQueries);
+        } catch (Exception ex) {
         }
 
         queries = Arrays.asList(script.trim().split(";"));
@@ -195,7 +282,7 @@ public class MapMakerDB {
             dbConnection.execute(queries);
         } catch (Exception ex) {
             log.severe("Init DB failed: " + ex);
-            return false;
+            throw new RuntimeException(ex);
         }
 
         if (!initPictures()) {
@@ -203,6 +290,8 @@ public class MapMakerDB {
             return false;
         }
         log.info("DB successfully initialized");
+
+        loadEntities();
         return true;
     }
 
@@ -238,6 +327,12 @@ public class MapMakerDB {
                 2,
                 "praha-bridge.jpg"
         );
+        res |= Picture.insertFlag(
+                "CR flag",
+                Date.valueOf(LocalDate.now()),
+                4,
+                "src/resources/cr-flag.jpg"
+        );
         Picture.makeImageMonochrome(2);
         return res;
     }
@@ -246,7 +341,7 @@ public class MapMakerDB {
         if (geometry instanceof PointGeometry) {
             return "place";
         } else if (geometry instanceof CircleGeometry) {
-            return "place";
+            return "largePlace";
         } else if (geometry instanceof PolygonGeometry) {
             return "country";
         } else if (geometry instanceof LineGeometry) {
@@ -272,13 +367,13 @@ public class MapMakerDB {
                     new int[]{1, 1003, 4},
                     new double[]{
                             cGeometry.getCenter().getX(), cGeometry.getCenter().getY() - radius,
-                            cGeometry.getCenter().getX() + radius, cGeometry.getCenter().getY(),
                             cGeometry.getCenter().getX(), cGeometry.getCenter().getY() + radius,
+                            cGeometry.getCenter().getX() + radius, cGeometry.getCenter().getY()
                     }
             );
         } else if (geometry instanceof PolygonGeometry){
             ObservableList<Point> points = ((PolygonGeometry) geometry).getPoints();
-            double coords[] = new double[points.size()];
+            double coords[] = new double[points.size() * DIMENSION];
             for ( int i = 0; i < points.size(); i++) {
                 coords[i * DIMENSION] = points.get(i).getX();
                 coords[i * DIMENSION + 1] = points.get(i).getY();
