@@ -9,6 +9,7 @@ import cz.vutbr.fit.pdb.configuration.AppMode;
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityService;
+import cz.vutbr.fit.pdb.entity.SelectedEntityService;
 import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
 import cz.vutbr.fit.pdb.entity.geometry.LineGeometry;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
@@ -35,6 +36,8 @@ import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 import com.google.gson.Gson;
 
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.toRGBCode;
 
 @Log
@@ -54,6 +57,8 @@ public class MapPresenter implements Initializable, MapRenderer {
 
     @Inject
     private EntityService entityService;
+    @Inject
+    private SelectedEntityService selectedEntityService;
 
     @Inject
     private Configuration configuration;
@@ -158,7 +163,7 @@ public class MapPresenter implements Initializable, MapRenderer {
         /**
          * called when the JS side wants a String to be converted.
          *
-         * @param value
+         * @param msg
          *         the String to convert
          */
         public void log(String msg) {
@@ -168,6 +173,21 @@ public class MapPresenter implements Initializable, MapRenderer {
         public void clickEvent(double x, double y) { // [x, y]
             log.info("You clicked the map at " + x + " " + y);
             entityService.tryToSelectEntityAt(x, y);
+        }
+
+        public void removeEntity(Entity entity) {
+            entityService.removeEntity(
+                    entity,
+                    () -> {
+                        showInfo("Entity removed", "Entity removed successfully");
+                        if(selectedEntityService.getEntityProperty() == entity)
+                            selectedEntityService.setEntityProperty(null);
+                    },
+                    () -> {
+                        showError("Database error", "Could not remove entity, please try again");
+                        configuration.getMapRenderer()
+                                .redraw();
+                    });
         }
     }
 

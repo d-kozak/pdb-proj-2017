@@ -89,7 +89,7 @@ VMBridge.prototype = {
 				self.vm.clickEvent(dpt[0], dpt[1])
 			})
 			
-			// Layer editation
+			// Editation of geometry
 			map.on(L.Draw.Event.EDITED, function (e) {
 				e.layers.eachLayer(function (layer) {
 					var coords, coords2, i, dpt
@@ -118,6 +118,14 @@ VMBridge.prototype = {
 						layer._javaEnt.updateStringGeometry(JSON.stringify(coords2))
 					}
 			
+				})
+			})
+			
+			// Entity deletion
+			map.on(L.Draw.Event.DELETED, function (e) {
+				e.layers.eachLayer(function (layer) {
+
+					self.vm.removeEntity(layer._javaEnt)
 				})
 			})
 			
