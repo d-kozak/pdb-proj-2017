@@ -40,16 +40,15 @@ public class Picture {
     }
 
     public static void deleteImage(EntityImage entityImage) {
-        deletePicture(entityImage, "normal");
+        deletePicture(entityImage);
     }
 
     public static void deleteFlag(EntityImage entityImage) {
-        deletePicture(entityImage, "flag");
+        deletePicture(entityImage);
     }
 
-    private static void deletePicture(EntityImage entityImage, String type) {
-        dbConnection.execute("DELETE FROM Picture " +
-                "WHERE id = " + entityImage.getId() + " and pictureType = " + type
+    private static void deletePicture(EntityImage entityImage) {
+        dbConnection.execute("DELETE FROM Picture WHERE id = " + entityImage.getId()
         );
     }
 
