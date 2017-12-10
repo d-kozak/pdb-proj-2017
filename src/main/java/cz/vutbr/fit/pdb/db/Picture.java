@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.db;
 
+import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityImage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,10 +16,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 @Log
 public class Picture {
@@ -81,6 +79,71 @@ public class Picture {
     public static boolean insertImage(String description, Date createdAt,
                                       Integer spatialEntityId, String imgPath) {
         return insertPicture(description, "normal", createdAt, spatialEntityId, imgPath);
+    }
+
+    public static boolean pictureToFlag(EntityImage picture, Integer spatialEntityId) {
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException ex) {
+            log.info("Cannot disable autocommit: " + ex);
+            throw new RuntimeException(ex);
+        }
+
+
+        try {
+            Integer oldFlag = null;
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "SELECT id FROM Picture WHERE pictureType = ? and spatialEntityId = ? "
+            )) {
+                stmt.setString(1, "flag");
+                stmt.setInt(2, spatialEntityId);
+                try (ResultSet rset = stmt.executeQuery()){
+                    if (rset.next()) {
+                        oldFlag = rset.getInt("id");
+                    }
+                } catch (SQLException ex) {
+                    log.severe("Execute SQL query exception: " + ex);
+                    throw new RuntimeException(ex);
+                }
+            }
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "UPDATE Picture SET pictureType = ? WHERE id = ? "
+            )) {
+                stmt.setString(1, "flag");
+                stmt.setInt(2, picture.getId());
+                try {
+                    stmt.executeUpdate();
+                } catch (SQLException ex) {
+                    log.severe("Execute SQL query exception: " + ex);
+                    throw new RuntimeException(ex);
+                }
+            }
+            if (oldFlag != null) {
+                try (PreparedStatement stmt = connection.prepareStatement(
+                        "UPDATE Picture SET pictureType = ? WHERE id = ? "
+                )) {
+                    stmt.setString(1, "normal");
+                    stmt.setInt(2, oldFlag);
+                    try {
+                        stmt.executeUpdate();
+                    } catch (SQLException ex) {
+                        log.severe("Execute SQL query exception: " + ex);
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            log.severe("Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+
+        try {
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException ex) {
+            log.info("Cannot commit: " + ex);
+        }
+        return true;
     }
 
     /**
