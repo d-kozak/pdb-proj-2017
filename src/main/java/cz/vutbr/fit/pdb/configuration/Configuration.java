@@ -23,7 +23,7 @@ public class Configuration {
 
     private ObjectProperty<DBConfiguration> dbConfiguration = new SimpleObjectProperty<>(new DBConfiguration());
 
-    private IntegerProperty year = new SimpleIntegerProperty(2000);
+    private IntegerProperty year = new SimpleIntegerProperty(2017);
     private ObjectProperty<DrawingMode> drawMode = new SimpleObjectProperty<>(DrawingMode.POINT);
     private ObjectProperty<AppMode> appMode = new SimpleObjectProperty<>(AppMode.VIEW);
 
