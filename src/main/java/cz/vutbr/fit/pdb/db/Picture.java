@@ -39,17 +39,17 @@ public class Picture {
         return null;
     }
 
-    public static void deleteImage(Integer id) {
-        deletePicture(id, "normal");
+    public static void deleteImage(EntityImage entityImage) {
+        deletePicture(entityImage, "normal");
     }
 
-    public static void deleteFlag(Integer id) {
-        deletePicture(id, "flag");
+    public static void deleteFlag(EntityImage entityImage) {
+        deletePicture(entityImage, "flag");
     }
 
-    private static void deletePicture(Integer id, String type) {
+    private static void deletePicture(EntityImage entityImage, String type) {
         dbConnection.execute("DELETE FROM Picture " +
-                "WHERE id = " + id + " and pictureType = " + type
+                "WHERE id = " + entityImage.getId() + " and pictureType = " + type
         );
     }
 

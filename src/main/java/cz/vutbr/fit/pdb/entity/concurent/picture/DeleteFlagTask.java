@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.entity.concurent.picture;
 
+import cz.vutbr.fit.pdb.db.Picture;
 import cz.vutbr.fit.pdb.entity.EntityImage;
 import javafx.concurrent.Task;
 import lombok.extern.java.Log;
@@ -10,7 +11,7 @@ public class DeleteFlagTask extends Task<Void> {
 
     @Override
     protected Void call() throws Exception {
-        log.severe("Not impl yet!");
+        Picture.deleteFlag(entityImage);
         return null;
     }
 
