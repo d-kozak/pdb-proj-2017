@@ -99,6 +99,19 @@ public class MapMakerDB {
                             }
                             entity.setGeometry(new PolygonGeometry(countryPoints));
 							break;
+                        case "countryRec":
+                            byte[] countryRecData = rset.getBytes("geometry");
+                            JGeometry jGeometryRecCountry = JGeometry.load(countryRecData);
+                            double[] countryRecCoords = jGeometryRecCountry.getOrdinatesArray();
+                            ObservableList<Point> countryRecPoints = FXCollections.observableArrayList();
+                            if (countryRecCoords.length < 4) {
+                                log.severe("Not enough rectangle coords.");
+                                throw new RuntimeException();
+                            }
+                            countryRecPoints.add(new Point(countryRecCoords[0], countryRecCoords[1]));
+                            countryRecPoints.add(new Point(countryRecCoords[2], countryRecCoords[3]));
+                            entity.setGeometry(new RectangleGeometry(countryRecPoints));
+                            break;
 						case "river":
 						    byte[] riverData = rset.getBytes("geometry");
 						    JGeometry jGeometryRiver = JGeometry.load(riverData);
@@ -352,6 +365,8 @@ public class MapMakerDB {
             return "place";
         } else if (geometry instanceof CircleGeometry) {
             return "largePlace";
+        } else if (geometry instanceof RectangleGeometry) {
+            return "countryRec";
         } else if (geometry instanceof PolygonGeometry) {
             return "country";
         } else if (geometry instanceof LineGeometry) {
@@ -380,6 +395,23 @@ public class MapMakerDB {
                             cGeometry.getCenter().getX(), cGeometry.getCenter().getY() + radius,
                             cGeometry.getCenter().getX() + radius, cGeometry.getCenter().getY()
                     }
+            );
+        } else if (geometry instanceof RectangleGeometry){
+            List<Point> points = new ArrayList<>(((RectangleGeometry) geometry).getPoints());
+            if (points.size() < 2) {
+                log.severe("Not enough rectangle points.");
+                throw new RuntimeException();
+            }
+            double coords[] = new double[4];
+            coords[0] = points.get(0).getX();
+            coords[1] = points.get(0).getY();
+            coords[2] = points.get(1).getX();
+            coords[3] = points.get(1).getY();
+            return new JGeometry(
+                    3,
+                    SRID,
+                    new int[]{1, 1003, 3}, // exterior polygon
+                    coords
             );
         } else if (geometry instanceof PolygonGeometry){
             List<Point> points = new ArrayList<>(((PolygonGeometry) geometry).getPoints());

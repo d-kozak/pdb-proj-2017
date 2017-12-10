@@ -448,19 +448,20 @@ public class Picture {
         return images;
     }
 
-    public ObservableList<Image> findSmiliar(Integer id) {
+    public ObservableList<Image> findSmiliar(Integer id, Integer count) {
         ObservableList<Image> images = FXCollections.observableArrayList();
         try (PreparedStatement stmt = connection.prepareStatement(
                 "SELECT dest.*, SI_ScoreByFtrList(" +
                         "new SI_FeatureList(src.img_ac, 0.3, src.img_ch,0.3, src.img_pc, 0.1, src.img_tx, 0.3), dest.img_si) " +
                         "AS similarity FROM Picture src, Picture dest " +
                         "WHERE (src.id <> dest.id) AND src.id = ? " +
-                        "ORDER BY similarity ASC"
+                        "ORDER BY similarity ASC " +
+                        "FETCH FIRST " + count + " ROWS ONLY"
         )) {
             stmt.setInt(1, id);
             try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()) {
-                while (rset.next()) {
-                    OrdImage imgProxy = null;
+                for (int i = 0; (i < count) && rset.next(); ++i) {
+                    OrdImage imgProxy;
                     imgProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
                     if (imgProxy != null) {
                         try {

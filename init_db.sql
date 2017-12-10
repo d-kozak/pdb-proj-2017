@@ -6,7 +6,7 @@ CREATE TABLE SpatialEntity (
   geometry SDO_GEOMETRY NOT NULL,
   validFrom DATE NULL,
   validTo DATE NULL,
-  entityType VARCHAR(10) CHECK(entityType in ('country', 'river', 'place', 'largePlace')),
+  entityType VARCHAR(10) CHECK(entityType in ('country', 'countryRec', 'river', 'place', 'largePlace')),
   color VARCHAR(15),
 
   CHECK(validTo >= validFrom),
@@ -135,6 +135,19 @@ INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType, co
 	TO_DATE('1-1-1993', 'dd-mm-yyyy'),
 	TO_DATE('1-1-3000', 'dd-mm-yyyy'),
 	'country',
+	'gold'
+);
+
+INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType, color) VALUES (
+	5,
+	'Square republic',
+	SDO_GEOMETRY(2003, NULL, NULL,
+		SDO_ELEM_INFO_ARRAY(1, 1003, 3),
+		SDO_ORDINATE_ARRAY(20, 20, 250, 300)
+	),
+	TO_DATE('1-1-1993', 'dd-mm-yyyy'),
+	TO_DATE('1-1-3000', 'dd-mm-yyyy'),
+	'countryRec',
 	'gold'
 );
 
