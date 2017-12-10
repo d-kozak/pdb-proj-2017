@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import cz.vutbr.fit.pdb.entity.Entity;
+import cz.vutbr.fit.pdb.entity.EntityImage;
 import cz.vutbr.fit.pdb.entity.geometry.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -306,42 +307,42 @@ public class MapMakerDB {
 
     private boolean initPictures() {
         boolean res = false;
-        res |= Picture.insertFlag(
-          "Brno flag",
-          Date.valueOf(LocalDate.now()),
-          1,
-          "src/resources/brno-flag.jpg"
-        );
-        res |= Picture.insertImage(
-                "Brno Petrov",
-                Date.valueOf(LocalDate.now()),
-                1,
-                "src/resources/brno-petrov.jpg"
-        );
-        res |= Picture.insertImage(
-                "Brno square",
-                Date.valueOf(LocalDate.now()),
-                1,
-                "src/resources/brno-square.jpg"
-        );
-        res |= Picture.insertFlag(
-                "Praha flag",
-                Date.valueOf(LocalDate.now()),
-                2,
-                "src/resources/praha-flag.jpg"
-        );
-        res |= Picture.insertImage(
-                "Praha bridge",
-                Date.valueOf(LocalDate.now()),
-                2,
-                "src/resources/praha-bridge.jpg"
-        );
-        res |= Picture.insertFlag(
-                "CR flag",
-                Date.valueOf(LocalDate.now()),
-                4,
-                "src/resources/cr-flag.jpg"
-        );
+        EntityImage entityImage = new EntityImage();
+        entityImage.setDescription("Brno flag");
+        entityImage.setTime(LocalDate.now());
+        entityImage.setUrl("src/resources/brno-flag.jpg");
+        res |= Picture.insertFlag(entityImage, 1);
+
+        entityImage = new EntityImage();
+        entityImage.setDescription("Brno Petrov");
+        entityImage.setTime(LocalDate.now());
+        entityImage.setUrl("src/resources/brno-petrov.jpg");
+        res |= Picture.insertImage(entityImage, 1);
+
+        entityImage = new EntityImage();
+        entityImage.setDescription("Brno square");
+        entityImage.setTime(LocalDate.now());
+        entityImage.setUrl("src/resources/brno-square.jpg");
+        res |= Picture.insertImage(entityImage, 1);
+
+        entityImage = new EntityImage();
+        entityImage.setDescription("Praha flag");
+        entityImage.setTime(LocalDate.now());
+        entityImage.setUrl("src/resources/praha-flag.jpg");
+        res |= Picture.insertFlag(entityImage, 2);
+
+        entityImage = new EntityImage();
+        entityImage.setDescription("Praha bridge");
+        entityImage.setTime(LocalDate.now());
+        entityImage.setUrl("src/resources/praha-bridge.jpg");
+        res |= Picture.insertImage(entityImage, 2);
+
+        entityImage = new EntityImage();
+        entityImage.setDescription("CR flag");
+        entityImage.setTime(LocalDate.now());
+        entityImage.setUrl("src/resources/cr-flag.jpg");
+        res |= Picture.insertFlag(entityImage, 4);
+
         Picture.makeImageMonochrome(2);
         return res;
     }
