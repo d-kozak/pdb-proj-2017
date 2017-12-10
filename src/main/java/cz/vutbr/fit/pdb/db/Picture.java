@@ -257,27 +257,27 @@ public class Picture {
         return true;
     }
 
-    public static boolean makeImageMonochrome(Integer id) {
-        return modifyPicture("contentFormat=monochrome fileformat=png", id);
+    public static boolean makeImageMonochrome(EntityImage entityImage) {
+        return modifyPicture("contentFormat=monochrome fileformat=png", entityImage);
     }
 
-    public static boolean makeImageGrayscale(Integer id) {
-        return modifyPicture("contentFormat=8bitlutgray fileformat=png", id);
+    public static boolean makeImageGrayscale(EntityImage entityImage) {
+        return modifyPicture("contentFormat=8bitlutgray fileformat=png", entityImage);
     }
 
-    public static boolean makeImageMirror(Integer id) {
-        return modifyPicture("mirror fileformat=png", id);
+    public static boolean makeImageMirror(EntityImage entityImage) {
+        return modifyPicture("mirror fileformat=png", entityImage);
     }
 
-    public static boolean makeImageRotateLeft(Integer id) {
-        return modifyPicture("rotate=90 fileformat=png", id);
+    public static boolean makeImageRotateLeft(EntityImage entityImage) {
+        return modifyPicture("rotate=90 fileformat=png", entityImage);
     }
 
-    public static boolean makeImageRotateRight(Integer id) {
-        return modifyPicture("rotate=270 fileformat=png", id);
+    public static boolean makeImageRotateRight(EntityImage entityImage) {
+        return modifyPicture("rotate=270 fileformat=png", entityImage);
     }
 
-    private static boolean modifyPicture(String modification, Integer srcId) {
+    private static boolean modifyPicture(String modification, EntityImage srcEntityImage) {
         Integer dstId = dbConnection.getMaxId("Picture") + 1;
 
         try {
@@ -298,7 +298,7 @@ public class Picture {
             try (PreparedStatement stmt = connection.prepareStatement(
                     "SELECT description, pictureType, createdAt, spatialEntityId, img FROM Picture WHERE id = ?"
             )) {
-                stmt.setInt(1, srcId);
+                stmt.setInt(1, srcEntityImage.getId());
                 try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()) {
                     rset.next();
                     srcImageProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
@@ -411,6 +411,8 @@ public class Picture {
             log.severe("update picture failed: Create SQL statement exception: " + ex);
             throw new RuntimeException(ex);
         }
+
+        deleteImage(srcEntityImage);
 
         try {
             connection.commit();

@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.entity.concurent.picture;
 
+import cz.vutbr.fit.pdb.db.Picture;
 import cz.vutbr.fit.pdb.entity.EntityImage;
 import javafx.concurrent.Task;
 import lombok.extern.java.Log;
@@ -11,7 +12,17 @@ public class ImageEditTask extends Task<EntityImage> {
 
     @Override
     protected EntityImage call() throws Exception {
-        log.severe("Not impl yet");
+        switch (imageOperation) {
+            case GREYSCALE:
+                Picture.makeImageGrayscale(entityImage);
+                break;
+            case MONOCHROMATIC:
+                break;
+            case ROTATE_LEFT:
+                break;
+            case ROTATE_RIGHT:
+                break;
+        }
         return null;
     }
 

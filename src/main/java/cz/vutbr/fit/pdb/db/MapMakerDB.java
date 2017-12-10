@@ -356,7 +356,6 @@ public class MapMakerDB {
         entityImage.setUrl("src/resources/cr-flag.jpg");
         res |= Picture.insertFlag(entityImage, 4);
 
-        Picture.makeImageMonochrome(2);
         return res;
     }
 
