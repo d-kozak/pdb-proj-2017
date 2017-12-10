@@ -6,6 +6,7 @@ import cz.vutbr.fit.pdb.component.rightbar.geometry.circleinfo.CircleInfoView;
 import cz.vutbr.fit.pdb.component.rightbar.geometry.lineinfo.LineInfoView;
 import cz.vutbr.fit.pdb.component.rightbar.geometry.pointinfo.PointInfoView;
 import cz.vutbr.fit.pdb.component.rightbar.geometry.polygoninfo.PolygonInfoView;
+import cz.vutbr.fit.pdb.component.rightbar.geometry.rectangleinfo.RectangleInfoView;
 import cz.vutbr.fit.pdb.component.rightbar.picturelistitem.PictureListViewCell;
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.Entity;
@@ -247,6 +248,10 @@ public class RightbarPresenter implements Initializable {
                 initForPolygon();
                 break;
 
+            case RECTANGLE:
+                initForRectangle();
+                break;
+
             default:
                 throw new RuntimeException();
         }
@@ -292,6 +297,10 @@ public class RightbarPresenter implements Initializable {
                 .removeListener(fromDateChangeListener);
         toDate.valueProperty()
               .removeListener(toDateChangeListener);
+    }
+
+    private void initForRectangle() {
+        geometryTitledPane.setContent(new RectangleInfoView().getView());
     }
 
     private void initForPoint() {

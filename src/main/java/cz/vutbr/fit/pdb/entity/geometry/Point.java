@@ -2,7 +2,6 @@ package cz.vutbr.fit.pdb.entity.geometry;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import lombok.extern.java.Log;
 
 import java.util.Optional;
 
@@ -70,5 +69,9 @@ public class Point {
         int result = x != null ? x.hashCode() : 0;
         result = 31 * result + (y != null ? y.hashCode() : 0);
         return result;
+    }
+
+    public Point copyOf() {
+        return new Point(this.getX(), this.getY());
     }
 }

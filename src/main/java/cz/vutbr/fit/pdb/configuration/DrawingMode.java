@@ -5,5 +5,5 @@ public enum DrawingMode {
     LINE,
     CIRCLE,
     POLYGON,
-    RECTANGLE
+    RECTANGLE;
 }
