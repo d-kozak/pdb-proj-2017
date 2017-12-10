@@ -7,6 +7,7 @@ import cz.vutbr.fit.pdb.component.menubar.MenubarView;
 import cz.vutbr.fit.pdb.component.rightbar.RightbarView;
 import cz.vutbr.fit.pdb.component.toolbar.ToolbarView;
 import cz.vutbr.fit.pdb.configuration.Configuration;
+import cz.vutbr.fit.pdb.entity.EntityService;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
@@ -23,6 +24,9 @@ public class MainPresenter implements Initializable {
 
     @Inject
     private Configuration configuration;
+
+    @Inject
+    private EntityService entityService;
 
     @FXML
     private BorderPane borderPane;
@@ -61,7 +65,16 @@ public class MainPresenter implements Initializable {
                                  throw new RuntimeException("Default in switch");
                          }
                      });
-
     }
 
+    public void reload() {
+        entityService.init();
+        entityService.initDataLoadedProperty()
+                     .addListener((observable, oldValue, isDataLoaded) -> {
+                         if (isDataLoaded) {
+                             configuration.getMapRenderer()
+                                          .redraw();
+                         }
+                     });
+    }
 }

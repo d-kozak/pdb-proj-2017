@@ -98,7 +98,7 @@ public class SettingsPresenter implements Initializable {
             JavaFXUtils.closeWindow(event);
         } catch (RuntimeException ex) {
             log.severe("Error: " + ex.getMessage());
-            showError("Database error", "Please check that all the fields are correct");
+            showError("Database error", "Please correct your database credentials and check the internet connection");
 
         }
     }

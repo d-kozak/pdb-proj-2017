@@ -337,6 +337,7 @@ public class RightbarPresenter implements Initializable {
 
         presenter.getResult()
                  .ifPresent(result -> {
+                     log.info("Saving new image");
                      entityService.addImage(selectedEntity.getId(), result,
                              () -> {
                                  showInfo("Entity updated", "Entity updated successfully");

@@ -177,4 +177,8 @@ public class DBConnection {
         }
         return 0;
     }
+
+    public boolean isConnected() {
+        return isConnected;
+    }
 }

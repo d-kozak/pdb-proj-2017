@@ -1,11 +1,9 @@
 package cz.vutbr.fit.pdb.db;
 
-import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityImage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import lombok.extern.java.Log;
 import oracle.jdbc.OraclePreparedStatement;
@@ -21,7 +19,6 @@ import java.sql.*;
 @Log
 public class Picture {
     private static DBConnection dbConnection = DBConnection.getInstance();
-    private static Connection connection = dbConnection.getConnection();
 
     private Picture() {
 
@@ -83,6 +80,8 @@ public class Picture {
      */
     private static boolean insertPicture(EntityImage entityImage, Integer spatialEntityId, String pictureType) {
         Integer id = dbConnection.getMaxId("Picture") + 1;
+        Connection connection = DBConnection.getInstance()
+                                            .getConnection();
         try {
             connection.setAutoCommit(false);
         } catch (SQLException ex) {
@@ -193,6 +192,8 @@ public class Picture {
     }
 
     public static boolean pictureToFlag(EntityImage picture, Integer spatialEntityId) {
+        Connection connection = DBConnection.getInstance()
+                                            .getConnection();
         try {
             connection.setAutoCommit(false);
         } catch (SQLException ex) {
@@ -278,6 +279,8 @@ public class Picture {
     }
 
     private static boolean modifyPicture(String modification, EntityImage srcEntityImage) {
+        Connection connection = DBConnection.getInstance()
+                                            .getConnection();
         Integer dstId = dbConnection.getMaxId("Picture") + 1;
 
         try {
@@ -424,6 +427,8 @@ public class Picture {
     }
 
     private static ObservableList<EntityImage> loadPicturesFor(Integer entityId, String type) {
+        Connection connection = DBConnection.getInstance()
+                                            .getConnection();
         ObservableList<EntityImage> images = FXCollections.observableArrayList();
         try (PreparedStatement stmt = connection.prepareStatement(
                 "SELECT * FROM Picture " +
@@ -467,6 +472,8 @@ public class Picture {
     }
 
     public static ObservableList<EntityImage> findSmiliar(EntityImage entityImage, Integer count) {
+        Connection connection = DBConnection.getInstance()
+                                            .getConnection();
         ObservableList<EntityImage> images = FXCollections.observableArrayList();
         try (PreparedStatement stmt = connection.prepareStatement(
                 "SELECT dest.*, SI_ScoreByFtrList(" +

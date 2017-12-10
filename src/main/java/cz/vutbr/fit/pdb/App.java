@@ -1,10 +1,13 @@
 package cz.vutbr.fit.pdb;
 
 import com.airhacks.afterburner.injection.Injector;
+import cz.vutbr.fit.pdb.component.main.MainPresenter;
 import cz.vutbr.fit.pdb.component.main.MainView;
+import cz.vutbr.fit.pdb.component.settings.SettingsView;
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.configuration.DBConfiguration;
 import cz.vutbr.fit.pdb.db.DBConnection;
+import cz.vutbr.fit.pdb.utils.JavaFXUtils;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -17,6 +20,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
+
 /**
  * Hello darkness, my old friend, I've come to talk with you again...
  */
@@ -24,17 +29,22 @@ import java.util.logging.Logger;
 public class App extends Application {
 
     public static void main(String[] args) throws SQLException {
-        DBConnection dbConnection = DBConnection.getInstance();
-        boolean succeeded = dbConnection.connect(
-                DBConfiguration.HOST_DEFAULT,
-                DBConfiguration.PORT_DEFAULT + "",
-                DBConfiguration.SERVICE_NAME_DEFAULT,
-                DBConfiguration.USERNAME_DEFAULT,
-                DBConfiguration.PASSWORD_DEFAULT
-        );
-        if (!succeeded) {
+        try {
+            DBConnection dbConnection = DBConnection.getInstance();
+            boolean succeeded = dbConnection.connect(
+                    DBConfiguration.HOST_DEFAULT,
+                    DBConfiguration.PORT_DEFAULT + "",
+                    DBConfiguration.SERVICE_NAME_DEFAULT,
+                    DBConfiguration.USERNAME_DEFAULT,
+                    DBConfiguration.PASSWORD_DEFAULT
+            );
+            if (!succeeded) {
+                throw new RuntimeException();
+
+            }
+        } catch (RuntimeException ex) {
             log.severe("Connection failed!");
-            return;
+            log.severe("Exception " + ex.getMessage());
         }
 
         launch(args);
@@ -50,6 +60,22 @@ public class App extends Application {
         mainStage.setScene(scene);
         mainStage.setMaximized(true);
         mainStage.show();
+        checkAndFixDbConnection(mainStage, ((MainPresenter) view.getPresenter()));
+    }
+
+    private void checkAndFixDbConnection(Stage mainStage, MainPresenter mainPresenter) {
+        log.info("Verifying db connection");
+        DBConnection dbConnection = DBConnection.getInstance();
+        if (!dbConnection.isConnected()) {
+            while (!dbConnection.isConnected()) {
+                showError("Wrong credentials", "Please correct your database credentials and check the internet connection");
+                JavaFXUtils.openModalDialog(mainStage, "Settings", new SettingsView());
+            }
+            log.info("DB connection was fixed successfully");
+            mainPresenter.reload();
+        } else
+            log.info("DB connection is fine");
+
     }
 
     private void initAfterBurner(Stage mainStage) {
