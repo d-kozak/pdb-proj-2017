@@ -4,6 +4,18 @@ VMBridge.prototype = {
 	_bridgeUp: "VeriBridge",
 	vm: null,
 	drawColor: null,
+	selLayer: null,
+	
+	highlight: function(layer) {
+		// highligh selected entity
+		if(this.selLayer)
+			this.selLayer.setStyle({opacity: 0.75})
+		layer.setStyle({opacity: 1})
+		this.selLayer = layer
+	}, _highlight: function(layer) {
+		var self = this
+		return function() {self.highlight.call(self, layer)}
+	},
 	
 	clearAll: function() {
 		geoEntities.clearLayers()
@@ -13,7 +25,8 @@ VMBridge.prototype = {
 			options = {},
 			setting = {
 				shapeOptions: {
-					color: color
+					color: color,
+					opacity: 0.75
 				}
 			}
 			
@@ -26,7 +39,7 @@ VMBridge.prototype = {
 	
 	draw: function(javaEnt, color) {
 		var geom = javaEnt.getGeometry(),
-			desc, col = {color: color},
+			desc, col = {color: color, opacity: .75},
 			pt, pts, ent,
 			x, y, self = this
 			
@@ -60,12 +73,17 @@ VMBridge.prototype = {
 			case "CIRCLE":
 				desc = geom.getDescription() // [Point, Java DoubleProperty]
 				pt = desc[0]
-				ent = L.circle(Point(pt.getX(), pt.getY()), {radius: Radius(desc[1].get())}, col)
+				col.radius = Radius(desc[1].get())
+				ent = L.circle(Point(pt.getX(), pt.getY()), col)
 				break
 		}
 		
 		ent._javaEnt = javaEnt
+		javaEnt.setLayer({highlight: self._highlight(ent)})
+		
+		ent.on("click", self._highlight(ent))
 		ent.on("click", function(e) {
+			// select entity on Java GUI
 			javaEnt.select()
 		}).addTo(geoEntities)
 	},
@@ -185,6 +203,8 @@ VMBridge.prototype = {
 				}
 				
 				layer._javaEnt = ent
+				layer.on("click", self._highlight(layer))
+				ent.setLayer({highlight: self._highlight(layer)})
 			})
 			
 		} else // no bridge - no message

@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import lombok.extern.java.Log;
+import netscape.javascript.JSObject;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -253,5 +254,13 @@ public class Entity {
         else//(geometry instanceof PolygonGeometry)
             setGeometry(new LineGeometry(points));
         updateGeometry();
+    }
+
+    private JSObject layer; // LeafLet layer
+
+    public void setLayer(JSObject layer) {this.layer = layer;}
+
+    public void highlight() {
+        layer.call("highlight");
     }
 }

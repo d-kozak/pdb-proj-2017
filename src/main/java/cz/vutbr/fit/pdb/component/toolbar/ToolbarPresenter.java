@@ -49,6 +49,7 @@ public class ToolbarPresenter implements Initializable {
                         .selectedItemProperty()
                         .addListener((observable, oldValue, newValue) -> {
                             selectedEntityService.setEntityProperty(newValue);
+                            newValue.highlight();
                         });
         selectedEntityService.entityPropertyProperty()
                              .addListener((observable, oldValue, newValue) -> {
