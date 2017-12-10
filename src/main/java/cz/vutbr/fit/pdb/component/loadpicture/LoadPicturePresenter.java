@@ -74,8 +74,7 @@ public class LoadPicturePresenter implements Initializable {
             val image = new Image(file.toURI()
                                       .toString());
             imageView.setImage(image);
-            String url = file.toURI()
-                             .toString();
+            String url = file.getPath();
             result.setUrl(url);
 
             log.info("Image " + file.getName() + " loaded successfully");
