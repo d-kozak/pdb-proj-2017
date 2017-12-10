@@ -58,9 +58,7 @@ public class MapPresenter implements Initializable, MapRenderer {
 
     @Override
     public void redraw() {
-        /*canvas.getGraphicsContext2D()
-              .clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        painter.paintAll(entityService.getEntities(configuration.getYear()));*/
+
         if(leaflet == null) {
             return;
         }
@@ -121,25 +119,7 @@ public class MapPresenter implements Initializable, MapRenderer {
                 });
 
         /*
-        this.canvas = new ResizableCanvas();
-        vbox.getChildren()
-            .add(canvas);
-        canvas.widthProperty()
-              .bind(vbox.widthProperty());
-        canvas.heightProperty()
-              .bind(vbox.heightProperty());
-
-        this.painter = new Painter(canvas.getGraphicsContext2D(), entityService, configuration);
         this.canvas.setOnMouseClicked(this::onMouseClicked);
-
-        this.entityService.initDataLoadedProperty()
-                          .addListener((observable, oldValue, newValue) -> {
-                              if (newValue) {
-                                  this.painter.paintAll(entityService.getEntities(configuration.getYear()));
-                              }
-                          });
-
-        configuration.setMapRenderer(this);
 
         configuration.drawingFinishedProperty()
                      .addListener((observable, oldValue, drawingFinished) -> {
@@ -147,18 +127,6 @@ public class MapPresenter implements Initializable, MapRenderer {
                              painter.drawingFinished();
                              configuration.setDrawingFinished(false);
                          }
-                     });
-
-        configuration.canvasWidthProperty()
-                     .bindBidirectional(canvas.widthProperty());
-        configuration.canvasHeightProperty()
-                     .bindBidirectional(canvas.heightProperty());
-
-        configuration.setCanvas(canvas);
-
-        configuration.yearProperty()
-                     .addListener((observable, oldValue, newValue) -> {
-                         redraw();
                      });
                      */
     }
