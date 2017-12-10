@@ -20,7 +20,6 @@ import lombok.extern.java.Log;
 import lombok.val;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -75,12 +74,10 @@ public class LoadPicturePresenter implements Initializable {
             val image = new Image(file.toURI()
                                       .toString());
             imageView.setImage(image);
-            try {
-                result.setUrl(file.toURL()
-                                  .toExternalForm());
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
+            String url = file.toURI()
+                             .toString();
+            result.setUrl(url);
+
             log.info("Image " + file.getName() + " loaded successfully");
         }
     }
