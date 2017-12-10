@@ -54,7 +54,6 @@ public class MapPresenter implements Initializable, MapRenderer {
     @Inject
     private Configuration configuration;
 
-    private boolean missedRedraw = false;
     private Painter painter;
 
     @Override
@@ -63,30 +62,16 @@ public class MapPresenter implements Initializable, MapRenderer {
               .clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         painter.paintAll(entityService.getEntities(configuration.getYear()));*/
         if(leaflet == null) {
-            // TEMP:
-            missedRedraw = true;
             return;
         }
         log.severe("Redraw!");
-        // TEMP:
-        //ObservableList<Entity> entities = entityService.getEntities(configuration.getYear());
+
         leaflet.call("clearAll");
-        ObservableList<Entity> entities = entityService.getEntities();
+        ObservableList<Entity> entities = entityService.getEntities(configuration.getYear());
         for (Entity entity : entities) {
             EntityGeometry geometry = entity.getGeometry();
             leaflet.call("draw", entity);
             log.severe(gson.toJson(geometry));
-           /* switch (entity.getGeometryType()) {
-                case POINT:
-                    Point desc = (Point) geometry.getDescription();
-                    leaflet.call("draw", geometry);
-                    break;
-                case LINE:
-                    //Point[] array = ((ObservableList<Point>) geometry.getDescription()).toArray(new Point[0]);
-                    //log.severe(gson.toJson((LineGeometry) geometry));
-                    leaflet.call("draw", geometry);
-                default:
-            }*/
         }
     }
 
@@ -124,6 +109,16 @@ public class MapPresenter implements Initializable, MapRenderer {
         webEngine.load(this.getClass().getClassLoader().getResource("leaflet.html").toExternalForm());
 
         configuration.setMapRenderer(this);
+        configuration.yearProperty()
+                .addListener((observable, oldValue, newValue) -> {
+                    redraw();
+                });
+        this.entityService.initDataLoadedProperty()
+                .addListener((observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        redraw();
+                    }
+                });
 
         /*
         this.canvas = new ResizableCanvas();
