@@ -101,8 +101,8 @@ public class EntityService {
         RemoveEntityTask removeEntityTask = new RemoveEntityTask();
         removeEntityTask.setEntity(entity);
         removeEntityTask.setOnSucceeded(event -> {
-            onSucceeded.run();
             entities.remove(entity);
+            onSucceeded.run();
         });
         removeEntityTask.setOnFailed(event -> {
             printException(removeEntityTask.getException());
