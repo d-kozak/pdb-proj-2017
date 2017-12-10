@@ -162,10 +162,7 @@ public class RightbarPresenter implements Initializable {
         picturesView.setItems(entity.getImages());
         picturesView.setCellFactory(param -> new PictureListViewCell(
                 image -> {
-                    Entity copy = entity.copyOf();
-                    copy.getImages()
-                        .remove(image);
-                    entityService.updateEntity(copy, "images",
+                    entityService.removeImage(image,
                             () -> {
                                 showInfo("Entity updated", "Entity updated successfully");
                                 entity.getImages()
@@ -175,13 +172,13 @@ public class RightbarPresenter implements Initializable {
                                 showError("Database error", "Could not update entity");
                             });
                 }, image -> {
-            Entity copy = entity.copyOf();
-            copy.setFlag(image);
-            entityService.updateEntity(copy, "flag", () -> {
+            entityService.setAsFlag(selectedEntity.getId(), image, () -> {
                         showInfo("Entity updated", "Entity updated successfully");
                         flagView.setImage(image.getImage());
                         Tooltip.install(flagView, new Tooltip(image.getDescription()));
                         entity.setFlag(image);
+                        entity.getImages()
+                              .remove(image);
                     },
                     () -> {
                         showError("Database error", "Could not update entity");
@@ -295,12 +292,7 @@ public class RightbarPresenter implements Initializable {
 
         presenter.getResult()
                  .ifPresent(result -> {
-                     Entity copy = selectedEntity.copyOf();
-                     copy.getImages()
-                         .clear();
-                     copy.getImages()
-                         .add(result);
-                     entityService.updateEntity(copy, "pictures",
+                     entityService.addImage(selectedEntity.getId(), result,
                              () -> {
                                  showInfo("Entity updated", "Entity updated successfully");
                                  picturesView.getItems()

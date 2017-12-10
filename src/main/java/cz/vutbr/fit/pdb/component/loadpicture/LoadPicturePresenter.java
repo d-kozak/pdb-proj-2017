@@ -20,6 +20,7 @@ import lombok.extern.java.Log;
 import lombok.val;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -39,7 +40,7 @@ public class LoadPicturePresenter implements Initializable {
     private ObjectProperty<LocalDate> dateProperty = new SimpleObjectProperty<>();
 
     private Stage stage;
-    private EntityImage result;
+    private EntityImage result = new EntityImage();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -53,12 +54,10 @@ public class LoadPicturePresenter implements Initializable {
 
     @FXML
     private void onSave(ActionEvent event) {
-        val image = new EntityImage();
-        image.setDescription(descriptionProperty.get());
-        image.setImage(imageProperty.get());
-        image.setTime(dateProperty.get());
-        log.info("Created image : " + image);
-        result = image;
+        result.setDescription(descriptionProperty.get());
+        result.setImage(imageProperty.get());
+        result.setTime(dateProperty.get());
+        log.info("Created image : " + result);
         JavaFXUtils.closeWindow(event);
     }
 
@@ -76,6 +75,12 @@ public class LoadPicturePresenter implements Initializable {
             val image = new Image(file.toURI()
                                       .toString());
             imageView.setImage(image);
+            try {
+                result.setUrl(file.toURL()
+                                  .toExternalForm());
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
             log.info("Image " + file.getName() + " loaded successfully");
         }
     }

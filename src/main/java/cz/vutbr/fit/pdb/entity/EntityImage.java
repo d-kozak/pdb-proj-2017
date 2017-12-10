@@ -10,6 +10,7 @@ public class EntityImage {
     private StringProperty description = new SimpleStringProperty();
     private ObjectProperty<Image> image = new SimpleObjectProperty<>();
     private ObjectProperty<LocalDate> time = new SimpleObjectProperty<>();
+    private StringProperty url = new SimpleStringProperty();
 
     public String getDescription() {
         return description.get();
@@ -66,6 +67,19 @@ public class EntityImage {
                 ", description=" + description +
                 ", image=" + image +
                 ", time=" + time +
+                ", url=" + url +
                 '}';
+    }
+
+    public String getUrl() {
+        return url.get();
+    }
+
+    public void setUrl(String url) {
+        this.url.set(url);
+    }
+
+    public StringProperty urlProperty() {
+        return url;
     }
 }

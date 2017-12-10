@@ -5,6 +5,9 @@ import cz.vutbr.fit.pdb.entity.concurent.AddEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.LoadAllEntitiesTask;
 import cz.vutbr.fit.pdb.entity.concurent.RemoveEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.UpdateEntityTask;
+import cz.vutbr.fit.pdb.entity.concurent.picture.AddPictureTask;
+import cz.vutbr.fit.pdb.entity.concurent.picture.RemovePictureTask;
+import cz.vutbr.fit.pdb.entity.concurent.picture.SetAsFlagTask;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -40,7 +43,7 @@ public class EntityService {
             try {
                 entities.clear();
                 entities.addAll(loadAllEntitiesTask.get());
-                for(Entity entity : entities) {
+                for (Entity entity : entities) {
                     entity.entityService = this;
                 }
                 log.info("Loaded entities: " + entities);
@@ -119,6 +122,51 @@ public class EntityService {
 
         Configuration.THREAD_POOL.submit(updateEntityTask);
         return updateEntityTask;
+    }
+
+
+    public Task<Void> addImage(int entityId, EntityImage entityImage, Runnable onSucceeded, Runnable onFailed) {
+        AddPictureTask addPictureTask = new AddPictureTask();
+        addPictureTask.setEntityId(entityId);
+        addPictureTask.setEntityImage(entityImage);
+        addPictureTask.setOnSucceeded(event -> {
+            onSucceeded.run();
+        });
+        addPictureTask.setOnFailed(event -> {
+            onFailed.run();
+        });
+
+        Configuration.THREAD_POOL.submit(addPictureTask);
+        return addPictureTask;
+    }
+
+    public Task<Void> removeImage(EntityImage entityImage, Runnable onSucceeded, Runnable onFailed) {
+        RemovePictureTask removeImageTask = new RemovePictureTask();
+        removeImageTask.setEntityImage(entityImage);
+        removeImageTask.setOnSucceeded(event -> {
+            onSucceeded.run();
+        });
+        removeImageTask.setOnFailed(event -> {
+            onFailed.run();
+        });
+
+        Configuration.THREAD_POOL.submit(removeImageTask);
+        return removeImageTask;
+    }
+
+    public Task<Void> setAsFlag(int entityId, EntityImage entityImage, Runnable onSucceeded, Runnable onFailed) {
+        SetAsFlagTask setAsFlagTask = new SetAsFlagTask();
+        setAsFlagTask.setEntityImage(entityImage);
+        setAsFlagTask.setEntityId(entityId);
+        setAsFlagTask.setOnSucceeded(event -> {
+            onSucceeded.run();
+        });
+        setAsFlagTask.setOnFailed(event -> {
+            onFailed.run();
+        });
+
+        Configuration.THREAD_POOL.submit(setAsFlagTask);
+        return setAsFlagTask;
     }
 
     public boolean isInitDataLoaded() {
