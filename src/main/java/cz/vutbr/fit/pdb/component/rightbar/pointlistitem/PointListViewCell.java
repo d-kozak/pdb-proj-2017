@@ -26,7 +26,7 @@ public class PointListViewCell extends ListCell<Point> {
         if (point != null) {
             PointListViewItem pointListViewItem = new PointListViewItem(point, onUpdate, onDelete, configuration);
             setGraphic(pointListViewItem.getView());
-        }
+        } else setGraphic(null);
     }
 }
 
