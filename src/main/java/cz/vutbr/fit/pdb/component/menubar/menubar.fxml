@@ -16,11 +16,6 @@
                         <MenuItem onAction="#onClose" mnemonicParsing="false" text="Close"/>
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="View">
-                    <items>
-                        <MenuItem onAction="#onShowTerminal" mnemonicParsing="false" text="Show terminal dialog"/>
-                    </items>
-                </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
                         <MenuItem onAction="#onClearAll" mnemonicParsing="false" text="Clear all"/>

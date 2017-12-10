@@ -68,13 +68,6 @@ public class MenubarPresenter {
         Platform.exit();
     }
 
-
-    @FXML
-    private void onShowTerminal(ActionEvent event) {
-        notImpl();
-    }
-
-
     @FXML
     private void onClearAll(ActionEvent event) {
         log.info("Deleting all entities");
