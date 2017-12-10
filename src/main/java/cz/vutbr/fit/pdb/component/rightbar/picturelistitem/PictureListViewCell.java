@@ -25,6 +25,6 @@ public class PictureListViewCell extends ListCell<EntityImage> {
         if (item != null) {
             PictureListViewItem pictureListViewItem = new PictureListViewItem(item, onDelete, setAsFlag, onImageOperation);
             setGraphic(pictureListViewItem.getView());
-        }
+        } else setGraphic(null);
     }
 }

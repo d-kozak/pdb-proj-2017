@@ -39,6 +39,7 @@ public class EntityService {
 
     @PostConstruct
     public void init() {
+        initDataLoaded.set(false);
         LoadAllEntitiesTask loadAllEntitiesTask = new LoadAllEntitiesTask();
         loadAllEntitiesTask.setOnSucceeded(event -> {
             try {
