@@ -3,9 +3,24 @@ function VMBridge() {};
 VMBridge.prototype = {
 	_bridgeUp: "VeriBridge",
 	vm: null,
+	drawColor: null,
 	
 	clearAll: function() {
 		geoEntities.clearLayers()
+	},
+	setColor: function(color) { // sets color for all shapes
+		var ents = ['rectangle', 'polygon', 'polyline', 'circle'],
+			options = {},
+			setting = {
+				shapeOptions: {
+					color: color
+				}
+			}
+			
+		ents.forEach(function(ent) {
+			options[ent] = setting
+		})
+		DrawControl.setDrawingOptions(options)
 	},
 	
 	draw: function(javaEnt) {
@@ -41,7 +56,7 @@ VMBridge.prototype = {
 			case "CIRCLE":
 				desc = geom.getDescription() // [Point, Java DoubleProperty]
 				pt = desc[0]
-				ent = L.circle(Point(pt.getX(), pt.getY()), {radius: desc[1].get()})
+				ent = L.circle(Point(pt.getX(), pt.getY()), {radius: Radius(desc[1].get())})
 		}
 		
 		ent._javaEnt = javaEnt
@@ -86,7 +101,7 @@ VMBridge.prototype = {
 					} else if(layer instanceof L.Circle) {
 						dpt = dePoint(layer.getLatLng())
 						
-						layer._javaEnt.updateCircleGeometry(dpt[0], dpt[1], layer.getRadius())
+						layer._javaEnt.updateCircleGeometry(dpt[0], dpt[1], deRadius(layer.getRadius()))
 					} else if(layer instanceof L.Polyline) {
 						coords2 = []
 						coords = layer.getLatLngs()
@@ -114,6 +129,14 @@ function Point(x, y) {
 	return [48 + y / 100, 11 + x / 100] // [latitude, longitude]
 }
 
+function Radius(r) {
+	return r*100
+}
+
 function dePoint(xy) {
 	return [(xy.lng - 11) * 100, (xy.lat - 48) * 100] // [longitude, latitude]
+}
+
+function deRadius(r) {
+	return r/100
 }

@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -62,14 +63,14 @@ public class MapPresenter implements Initializable, MapRenderer {
         if(leaflet == null) {
             return;
         }
-        log.severe("Redraw!");
+        log.info("Redraw!");
 
         leaflet.call("clearAll");
         ObservableList<Entity> entities = entityService.getEntities(configuration.getYear());
         for (Entity entity : entities) {
             EntityGeometry geometry = entity.getGeometry();
             leaflet.call("draw", entity);
-            log.severe(gson.toJson(geometry));
+            log.info(gson.toJson(geometry));
         }
     }
 
@@ -84,9 +85,9 @@ public class MapPresenter implements Initializable, MapRenderer {
                 leaflet = (JSObject) webEngine.executeScript("new VMBridge");
 
                 if(leaflet.getMember("_bridgeUp").toString().equals("VeriBridge")) {
-                    log.severe("Bridge Java VM -> JS VM is up.");
+                    log.info("Bridge Java VM -> JS VM is up.");
                 } else {
-                    log.warning("Bridge is not up!");
+                    log.severe("Bridge is not up!");
                     return;
                 }
 
@@ -144,6 +145,7 @@ public class MapPresenter implements Initializable, MapRenderer {
 
     public class VMBridge {
         final public String _bridgeUp = "VeriBridge";
+        final WebViewLevel lvl = new WebViewLevel("WEBVIEW", 850);
         /**
          * called when the JS side wants a String to be converted.
          *
@@ -151,7 +153,7 @@ public class MapPresenter implements Initializable, MapRenderer {
          *         the String to convert
          */
         public void log(String msg) {
-            log.severe(msg);
+            log.log(lvl, msg);
         }
 
         public void clickEvent(double x, double y) { // [x, y]
@@ -183,6 +185,12 @@ public class MapPresenter implements Initializable, MapRenderer {
             writer.value(value.getX());
             writer.value(value.getY());
             writer.endArray();
+        }
+    }
+
+    class WebViewLevel extends Level {
+        private WebViewLevel(String name, int level) {
+            super(name, level);
         }
     }
 }
