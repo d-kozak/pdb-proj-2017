@@ -42,9 +42,14 @@ public class MenubarPresenter {
         InitDatabaseTask initDatabaseTask = new InitDatabaseTask();
         initDatabaseTask.setOnSucceeded((stateEvent) -> {
             entityService.init();
-            configuration.getMapRenderer()
-                         .redraw();
-            showInfo("Success", "Database initialized successfully.");
+            entityService.initDataLoadedProperty()
+                         .addListener((observable, oldValue, isDataLoaded) -> {
+                             if (isDataLoaded) {
+                                 configuration.getMapRenderer()
+                                              .redraw();
+                                 showInfo("Success", "Database initialized successfully.");
+                             }
+                         });
         });
         initDatabaseTask.setOnFailed((stateEvent) -> {
             showError("Failure", "Database initialization FAILED!");
