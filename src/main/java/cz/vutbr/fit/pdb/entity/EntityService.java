@@ -48,7 +48,10 @@ public class EntityService {
                 for (Entity entity : entities) {
                     entity.entityService = this;
                 }
-                log.info("Loaded entities: " + entities);
+                String entitiesFormatted = entities.stream()
+                                                   .map(Entity::toString)
+                                                   .collect(joining("\n\n"));
+                log.info("Loaded entities: \n" + entitiesFormatted);
                 initDataLoaded.set(true);
 
                 showInfo("Success", "Entities loaded successfully");
@@ -187,12 +190,11 @@ public class EntityService {
     }
 
     public ObservableList<Entity> getEntities(int selectedYear) {
-        log.info("All entities :" + entities);
-        log.info("Selecting year " + selectedYear);
+        log.info("Selecting entities from year " + selectedYear);
         FilteredList<Entity> selected = entities.filtered(entity -> entity.existsInYear(selectedYear));
         String prettyEntities = selected.stream()
                                         .map(Entity::toString)
-                                        .collect(joining("\n"));
+                                        .collect(joining("\n\n"));
         log.info("Selected entities :" + prettyEntities);
         return selected;
     }

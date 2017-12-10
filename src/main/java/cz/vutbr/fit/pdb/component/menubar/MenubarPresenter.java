@@ -38,6 +38,7 @@ public class MenubarPresenter {
 
     @FXML
     private void onInitDB(ActionEvent event) {
+        log.info("Initializing the database");
         InitDatabaseTask initDatabaseTask = new InitDatabaseTask();
         initDatabaseTask.setOnSucceeded((stateEvent) -> {
             entityService.init();

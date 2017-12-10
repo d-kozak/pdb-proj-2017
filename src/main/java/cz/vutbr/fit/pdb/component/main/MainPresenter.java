@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 import lombok.extern.java.Log;
 import lombok.val;
 
@@ -23,9 +22,6 @@ import java.util.ResourceBundle;
 public class MainPresenter implements Initializable {
 
     @Inject
-    private Stage mainStage;
-
-    @Inject
     private Configuration configuration;
 
     @FXML
@@ -33,8 +29,6 @@ public class MainPresenter implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        log.info("mainStage=" + mainStage);
-
         val mapView = new MapView();
         borderPane.setCenter(mapView.getView());
 
