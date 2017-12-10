@@ -378,6 +378,13 @@ public class MapMakerDB {
             );
         } else if (geometry instanceof PolygonGeometry){
             ObservableList<Point> points = ((PolygonGeometry) geometry).getPoints();
+            if (are_clockwise_points(points)) {
+                for (int i = 0; i < points.size() / 2; ++i) {
+                    Point tmp = points.get(i);
+                    points.set(i, points.get(points.size() - 1 - i));
+                    points.set(points.size() - 1 - i, tmp);
+                }
+            }
             double coords[] = new double[points.size() * DIMENSION];
             for ( int i = 0; i < points.size(); i++) {
                 coords[i * DIMENSION] = points.get(i).getX();
@@ -405,5 +412,19 @@ public class MapMakerDB {
         }
         log.severe("Unknown geometry: " + geometry.getClass());
         return null;
+    }
+
+    private static boolean are_clockwise_points(ObservableList<Point> points) {
+        // Based on: https://stackoverflow.com/a/1165943/5601069
+        int sum = 0;
+        for (int i = 0; i < (points.size() - 1); ++i) {
+            sum += (points.get(i + 1).getX() - points.get(i).getX()) *
+                    (points.get(i + 1).getY() + points.get(i).getY());
+        }
+        if (points.size() > 1) {
+            sum += (points.get(points.size() - 1).getX() - points.get(0).getX()) *
+                    (points.get(points.size() - 1).getY() + points.get(0).getY());
+        }
+        return sum > 0;
     }
 }
