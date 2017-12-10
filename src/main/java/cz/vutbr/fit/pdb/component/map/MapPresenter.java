@@ -10,10 +10,9 @@ import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
-import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
-import cz.vutbr.fit.pdb.entity.geometry.LineGeometry;
-import cz.vutbr.fit.pdb.entity.geometry.Point;
+import cz.vutbr.fit.pdb.entity.geometry.*;
 import cz.vutbr.fit.pdb.painter.Painter;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -173,6 +172,76 @@ public class MapPresenter implements Initializable, MapRenderer {
         public void clickEvent(double x, double y) { // [x, y]
             log.info("You clicked the map at " + x + " " + y);
             entityService.tryToSelectEntityAt(x, y);
+        }
+
+        private Entity newEntity() {
+            Entity ent = new Entity();
+            ent.setColor(configuration.getDrawingColor());
+            ent.setName("New entity");
+            return ent;
+        }
+
+        private void saveEntity(Entity ent) {
+            entityService.addEntity(
+                ent,
+                () -> showInfo("Entity added", "Entity added successfully"),
+                () -> {
+                    showError("Database error", "Sorry, could not add the entity, please try again");
+                    configuration.getMapRenderer()
+                            .redraw();
+                });
+        }
+
+        private ObservableList<Point> createString(String _coords) {
+            Gson gson = new Gson();
+            ObservableList<Point> points = FXCollections.observableArrayList();
+            double coords[] = gson.fromJson(_coords, double[].class);
+
+            for (int i = 0; i < coords.length; i += 2) {
+                points.add(new Point(coords[i], coords[i + 1]));
+            }
+            return points;
+        }
+
+        public Entity addPoint(double x, double y) {
+            Entity ent = newEntity();
+            ent.setGeometry(new PointGeometry(new Point(x, y)));
+            saveEntity(ent);
+            return ent;
+        }
+
+        public Entity addCircle(double x, double y, double r) {
+            Entity ent = newEntity();
+            ent.setGeometry(new CircleGeometry(x, y, r));
+            saveEntity(ent);
+            return ent;
+        }
+
+        public Entity addRectangle(double x1, double y1, double x2, double y2) {
+            Entity ent = newEntity();
+            ObservableList<Point> points = FXCollections.observableArrayList();
+            points.add(new Point(x1, y1));
+            points.add(new Point(x2, y2));
+            ent.setGeometry(new RectangleGeometry(points));
+            saveEntity(ent);
+            return ent;
+        }
+
+        public Entity addLine(String coords) {
+            log.severe("javaline");
+            Entity ent = newEntity();
+            ObservableList<Point> points = createString(coords);
+            ent.setGeometry(new LineGeometry(points));
+            saveEntity(ent);
+            return ent;
+        }
+
+        public Entity addPolygon(String coords) {
+            Entity ent = newEntity();
+            ObservableList<Point> points = createString(coords);
+            ent.setGeometry(new PolygonGeometry(points));
+            saveEntity(ent);
+            return ent;
         }
 
         public void removeEntity(Entity entity) {

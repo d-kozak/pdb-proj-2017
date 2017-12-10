@@ -133,6 +133,51 @@ VMBridge.prototype = {
 				})
 			})
 			
+			// Entity creation
+			map.on(L.Draw.Event.CREATED, function (e) {
+				var coords, coordes = [], i, dpt, ent,
+					layer = e.layer
+				
+				if(layer instanceof L.Marker) {
+					dpt = dePoint(layer.getLatLng())
+					
+					ent = self.vm.addPoint(dpt[0], dpt[1])
+				} else if(layer instanceof L.Circle) {
+					dpt = dePoint(layer.getLatLng())
+					
+					ent = self.vm.addCircle(dpt[0], dpt[1], deRadius(layer.getRadius()))
+				}
+				else if(layer instanceof L.Rectangle)
+				{
+					coords = layer.getLatLngs()[0]
+					
+					for(i = 0; i < coords.length; i += 2) { // every other points of rectangle (oen of diagonals)
+						dpt = dePoint(coords[i])
+						coordes.push(dpt[0], dpt[1])
+					}
+					
+					self.vm.addRectangle(coordes[0], coordes[1], coordes[2], coordes[3])
+				} else if(layer instanceof L.Polyline) {
+					coordes = []
+					coords = layer.getLatLngs()
+					if(layer instanceof L.Polygon) // [R-space, R-cycle]
+						coords = coords[0]
+					
+					for(i = 0; i < coords.length; i++) {
+						dpt = dePoint(coords[i])
+						coordes.push(dpt[0], dpt[1])
+					}
+					
+					coordes = JSON.stringify(coordes)
+					if(layer instanceof L.Polygon)
+						ent = self.vm.addPolygon(coordes)
+					else
+						ent = self.vm.addLine(coordes)
+				}
+				
+				layer._javaEnt = ent
+			})
+			
 		} else // no bridge - no message
 			this.vm.log(this.vm._bridgeUp)
 	}
