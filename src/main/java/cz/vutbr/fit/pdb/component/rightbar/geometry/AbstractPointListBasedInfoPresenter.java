@@ -51,6 +51,13 @@ public abstract class AbstractPointListBasedInfoPresenter implements Initializab
         points = (ObservableList<Point>) selectedEntityService.getEntityProperty()
                                                               .getGeometry()
                                                               .getDescription();
+
+        selectedEntityService.getEntityProperty()
+                             .geometryProperty()
+                             .addListener((observable, oldValue, newValue) -> {
+                                 pointsListView.setItems(((ObservableList<Point>) newValue.getDescription()));
+                             });
+
         pointsListView.setItems(points);
         pointsListView.setCellFactory(item -> new PointListViewCell(configuration, this::tryToUpdatePoint, this::tryToRemovePoint));
 
