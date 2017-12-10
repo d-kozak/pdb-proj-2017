@@ -216,6 +216,21 @@ public class EntityService {
         return getSimilarPicturesTask;
     }
 
+    public Task<EntityImage> editImage(EntityImage entityImage, ImageOperation imageOperation, Consumer<EntityImage> onSucceeded, Runnable onFailed) {
+        ImageEditTask editImageTask = new ImageEditTask();
+        editImageTask.setEntityImage(entityImage);
+        editImageTask.setImageOperation(imageOperation);
+        editImageTask.setOnSucceeded(event -> {
+            onSucceeded.accept(editImageTask.getValue());
+        });
+        editImageTask.setOnFailed(event -> {
+            printException(editImageTask.getException());
+            onFailed.run();
+        });
+        Configuration.THREAD_POOL.submit(editImageTask);
+        return editImageTask;
+    }
+
     public Task<Void> deleteFlag(EntityImage entityImage, Runnable onSucceeded, Runnable onFailed) {
         DeleteFlagTask deleteFlagTask = new DeleteFlagTask();
         deleteFlagTask.setEntityImage(entityImage);

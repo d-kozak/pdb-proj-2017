@@ -187,7 +187,18 @@ public class RightbarPresenter implements Initializable {
                     () -> {
                         showError("Database error", "Could not update entity");
                     });
-        }));
+        }, ((entityImage, imageOperation) -> {
+            entityService.editImage(entityImage, imageOperation,
+                    (newImage) -> {
+                        entity.getImages()
+                              .remove(entityImage);
+                        entity.getImages()
+                              .add(newImage);
+                        showInfo("Picture updated", "Picture updated successfully");
+                    }, () -> {
+                        showError("Database error", "Could not edit picture");
+                    });
+        })));
         fromDateChangeListener = (observable, oldValue, newValue) -> {
             Entity copy = entity.copyOf();
             copy.setFrom(newValue);
