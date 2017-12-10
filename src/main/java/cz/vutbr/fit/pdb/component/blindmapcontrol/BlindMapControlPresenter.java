@@ -3,6 +3,8 @@ package cz.vutbr.fit.pdb.component.blindmapcontrol;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityImage;
 import cz.vutbr.fit.pdb.entity.EntityService;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,7 +16,6 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
@@ -24,7 +25,8 @@ import static java.util.stream.Collectors.toList;
 
 @Log
 public class BlindMapControlPresenter implements Initializable {
-    public static Random random = new Random();
+    @FXML
+    private Text correctAnswers;
     @FXML
     private Text titleText;
     @FXML
@@ -36,9 +38,15 @@ public class BlindMapControlPresenter implements Initializable {
     @Inject
     private EntityService entityService;
 
+    private IntegerProperty correctAnswersCount = new SimpleIntegerProperty(0);
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         chooseCorrectImageExercise();
+        correctAnswers.setText("Number of correct answers: 0");
+        correctAnswersCount.addListener((observable, oldValue, newValue) -> {
+            correctAnswers.setText("Number of correct answers: " + newValue.intValue());
+        });
     }
 
     private void chooseCorrectImageExercise() {
@@ -73,7 +81,12 @@ public class BlindMapControlPresenter implements Initializable {
         imageViews.remove(imageView);
         imageView.setImage(correctImage.getImage());
         imageView.setOnMouseClicked(event -> {
-            showInfo("Correct", "You are so cool");
+            chooseCorrectImageExercise();
+            correctAnswersCount.setValue(correctAnswersCount.get() + 1);
+            imageView1.setImage(null);
+            imageView2.setImage(null);
+            imageView3.setImage(null);
+            showInfo("Correct", "Try another one");
         });
 
         imageView = randomElementFromList(imageViews);
@@ -82,7 +95,7 @@ public class BlindMapControlPresenter implements Initializable {
                                         .getImage());
 
         imageView.setOnMouseClicked(event -> {
-            showError("Incorrect", "You are so lame");
+            showError("Incorrect", "Try it again :)");
         });
 
         imageView = imageViews.get(0);
@@ -90,7 +103,7 @@ public class BlindMapControlPresenter implements Initializable {
         imageView.setImage(similarImages.get(1)
                                         .getImage());
         imageView.setOnMouseClicked(event -> {
-            showError("Incorrect", "Youa are so lame");
+            showError("Incorrect", "Try it again :)");
         });
     }
 
