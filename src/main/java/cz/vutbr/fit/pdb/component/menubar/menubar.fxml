@@ -2,8 +2,8 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.layout.HBox?>
+<HBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="cz.vutbr.fit.pdb.component.menubar.MenubarPresenter">
     <children>
@@ -40,4 +40,4 @@
             </menus>
         </MenuBar>
     </children>
-</VBox>
+</HBox>

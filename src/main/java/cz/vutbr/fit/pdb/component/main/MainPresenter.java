@@ -10,7 +10,7 @@ import cz.vutbr.fit.pdb.configuration.Configuration;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import lombok.extern.java.Log;
 import lombok.val;
@@ -40,10 +40,10 @@ public class MainPresenter implements Initializable {
 
         val toolbarView = new ToolbarView();
         val menubarView = new MenubarView();
-        VBox vBox = new VBox();
-        vBox.getChildren()
+        HBox hBox = new HBox();
+        hBox.getChildren()
             .addAll(menubarView.getView(), toolbarView.getView());
-        borderPane.setTop(vBox);
+        borderPane.setTop(hBox);
 
         val bottombarView = new BottombarView();
         borderPane.setBottom(bottombarView.getView());

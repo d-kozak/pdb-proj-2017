@@ -13,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -25,10 +24,6 @@ import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
 
 public class ToolbarPresenter implements Initializable {
-
-
-    @FXML
-    private HBox drawingModeButtons;
 
     @FXML
     private ComboBox<Entity> entitiesComboBox;
@@ -98,25 +93,14 @@ public class ToolbarPresenter implements Initializable {
 
     public void onModeView(ActionEvent event) {
         configuration.setAppMode(AppMode.VIEW);
-        disableDrawingButtons();
     }
 
     public void onModeEdit(ActionEvent event) {
         configuration.setAppMode(AppMode.EDIT);
-        enableDrawingButtons();
     }
 
     public void onModeBlindMap(ActionEvent event) {
         configuration.setAppMode(AppMode.BLIND_MAP);
-        disableDrawingButtons();
-    }
-
-    private void enableDrawingButtons() {
-        drawingModeButtons.setDisable(false);
-    }
-
-    private void disableDrawingButtons() {
-        drawingModeButtons.setDisable(true);
     }
 
     public void onFinishDrawing(ActionEvent event) {

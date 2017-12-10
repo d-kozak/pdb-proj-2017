@@ -7,41 +7,6 @@
 <HBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER_LEFT" xmlns="http://javafx.com/javafx/8"
       fx:controller="cz.vutbr.fit.pdb.component.toolbar.ToolbarPresenter">
     <children>
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Elements: ">
-            <HBox.margin>
-                <Insets left="10.0"/>
-            </HBox.margin>
-        </Text>
-
-        <HBox disable="true" fx:id="drawingModeButtons">
-            <children>
-                <Button fx:id="pointBtn" mnemonicParsing="false" onAction="#onPoint" text="Point">
-                    <HBox.margin>
-                        <Insets bottom="5.0" top="5.0"/>
-                    </HBox.margin>
-                </Button>
-                <Button fx:id="lineBtn" mnemonicParsing="false" onAction="#onLine" text="Line">
-                    <HBox.margin>
-                        <Insets bottom="5.0" top="5.0"/>
-                    </HBox.margin>
-                </Button>
-                <Button fx:id="circleBtn" mnemonicParsing="false" onAction="#onCircle" text="Circle">
-                    <HBox.margin>
-                        <Insets bottom="5.0" top="5.0"/>
-                    </HBox.margin>
-                </Button>
-                <Button fx:id="polygonBtn" mnemonicParsing="false" onAction="#onPolygon" text="Polygon">
-                    <HBox.margin>
-                        <Insets bottom="5.0" top="5.0"/>
-                    </HBox.margin>
-                </Button>
-                <Button mnemonicParsing="false" onAction="#onFinishDrawing" text="Complete current entity">
-                    <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" top="5.0"/>
-                    </HBox.margin>
-                </Button>
-            </children>
-        </HBox>
         <HBox>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color:">
                 <HBox.margin>
