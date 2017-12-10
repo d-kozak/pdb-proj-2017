@@ -130,7 +130,7 @@ INSERT INTO SpatialEntity(id, name, geometry, validFrom, validTo, entityType, co
 	'Czech Republic',
 	SDO_GEOMETRY(2003, NULL, NULL,
 		SDO_ELEM_INFO_ARRAY(1, 1003, 1),
-		SDO_ORDINATE_ARRAY(10, 10, 20, 100, 150, 150, 250, 170, 350, 120, 250, 50, 10, 10)
+		SDO_ORDINATE_ARRAY(10, 10, 250, 50, 350, 120, 150, 150, 170, 100, 20, 250, 10, 10)
 	),
 	TO_DATE('1-1-1993', 'dd-mm-yyyy'),
 	TO_DATE('1-1-3000', 'dd-mm-yyyy'),
