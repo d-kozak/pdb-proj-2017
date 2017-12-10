@@ -28,7 +28,7 @@ public class BottombarPresenter implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         yearSlider.minProperty()
-                  .bindBidirectional(configuration.mininumYearProperty());
+                  .bindBidirectional(configuration.minimumYearProperty());
         yearSlider.maxProperty()
                   .bindBidirectional(configuration.maximumYearProperty());
 

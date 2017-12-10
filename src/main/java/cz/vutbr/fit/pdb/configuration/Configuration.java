@@ -34,7 +34,7 @@ public class Configuration {
     private IntegerProperty canvasWidth = new SimpleIntegerProperty();
     private IntegerProperty canvasHeight = new SimpleIntegerProperty();
 
-    private IntegerProperty mininumYear = new SimpleIntegerProperty(-1000);
+    private IntegerProperty minimumYear = new SimpleIntegerProperty(-1000);
     private IntegerProperty maximumYear = new SimpleIntegerProperty(3000);
 
     private ObjectProperty<Canvas> canvas = new SimpleObjectProperty<>();
@@ -157,16 +157,16 @@ public class Configuration {
         return canvas;
     }
 
-    public int getMininumYear() {
-        return mininumYear.get();
+    public int getMinimumYear() {
+        return minimumYear.get();
     }
 
-    public void setMininumYear(int mininumYear) {
-        this.mininumYear.set(mininumYear);
+    public void setMinimumYear(int minimumYear) {
+        this.minimumYear.set(minimumYear);
     }
 
-    public IntegerProperty mininumYearProperty() {
-        return mininumYear;
+    public IntegerProperty minimumYearProperty() {
+        return minimumYear;
     }
 
     public int getMaximumYear() {
