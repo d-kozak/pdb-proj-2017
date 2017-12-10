@@ -2,7 +2,6 @@ package cz.vutbr.fit.pdb.entity.concurent;
 
 import cz.vutbr.fit.pdb.db.MapMakerDB;
 import cz.vutbr.fit.pdb.entity.Entity;
-import cz.vutbr.fit.pdb.utils.ExceptionGun;
 import javafx.concurrent.Task;
 import lombok.extern.java.Log;
 

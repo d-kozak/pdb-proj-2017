@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 import static cz.vutbr.fit.pdb.configuration.Configuration.THREAD_POOL;
+import static cz.vutbr.fit.pdb.utils.ExceptionUtils.printException;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
 import static java.util.stream.Collectors.joining;
@@ -195,10 +196,6 @@ public class EntityService {
         return selected;
     }
 
-    public void printException(Throwable exception) {
-        log.severe("Task failed with exception:" + exception);
-        exception.printStackTrace();
-    }
 
     public Task<ObservableList<EntityImage>> getTwoSimilarImagesFor(EntityImage entityImage, Consumer<ObservableList<EntityImage>> onSucceeded, Runnable onFailed) {
         GetSimilarPicturesTask getSimilarPicturesTask = new GetSimilarPicturesTask();

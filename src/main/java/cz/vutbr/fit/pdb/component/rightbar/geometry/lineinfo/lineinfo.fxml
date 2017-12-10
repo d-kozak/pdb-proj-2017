@@ -9,7 +9,7 @@
     <tabs>
         <Tab fx:id="lineTab" text="Line">
             <content>
-                <VBox>
+                <VBox fx:id="vbox">
                     <children>
                         <ListView fx:id="pointsListView" prefHeight="200.0" prefWidth="200.0"/>
                         <HBox>

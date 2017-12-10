@@ -4,6 +4,8 @@ import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
+import cz.vutbr.fit.pdb.entity.concurent.geometry.GetCircleDetailsTask;
+import cz.vutbr.fit.pdb.entity.geometry.CircleDetails;
 import cz.vutbr.fit.pdb.entity.geometry.CircleGeometry;
 import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
@@ -11,16 +13,22 @@ import cz.vutbr.fit.pdb.utils.Listeners;
 import cz.vutbr.fit.pdb.utils.StringNumConverter;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static cz.vutbr.fit.pdb.utils.ExceptionUtils.printException;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
+import static java.util.stream.Collectors.joining;
 
 public class CircleInfoPresenter implements Initializable {
     @FXML
@@ -29,6 +37,9 @@ public class CircleInfoPresenter implements Initializable {
     private TextField centerYField;
     @FXML
     private TextField radiusField;
+
+    @FXML
+    private VBox vbox;
 
     @Inject
     private Configuration configuration;
@@ -52,8 +63,34 @@ public class CircleInfoPresenter implements Initializable {
         initForCircle(selectedEntityService.getEntityProperty()
                                            .getGeometry());
 
+        loadDetails();
+
 
         Listeners.addRedrawListener(configuration.getMapRenderer(), centerXField.textProperty(), centerYField.textProperty(), radiusField.textProperty());
+    }
+
+    private void loadDetails() {
+        ObservableList<Node> children = vbox.getChildren();
+        if (children.size() > 1)
+            children.remove(1, children.size());
+
+        GetCircleDetailsTask circleDetailsTask = new GetCircleDetailsTask();
+        circleDetailsTask.setEntity(selectedEntityService.getEntityProperty());
+        circleDetailsTask.setOnSucceeded(event -> {
+            CircleDetails circleDetails = circleDetailsTask.getValue();
+            Text area = new Text("Area of the circle is: " + circleDetails.getArea());
+            Text circumference = new Text("Circumference of the circle is: " + circleDetails.getCircumference());
+            Text entitiesInside = new Text("Contains entities: " + circleDetails.getEntitiesInside()
+                                                                                .stream()
+                                                                                .collect(joining(",")));
+            vbox.getChildren()
+                .addAll(area, circumference, entitiesInside);
+        });
+        circleDetailsTask.setOnFailed(event -> {
+            printException(circleDetailsTask.getException());
+            showError("Database error", "Could not load details");
+        });
+        Configuration.THREAD_POOL.submit(circleDetailsTask);
     }
 
     private void initForCircle(EntityGeometry entityGeometry) {
@@ -92,6 +129,7 @@ public class CircleInfoPresenter implements Initializable {
                         center.setX(backUpCenter.getX());
                         configuration.getMapRenderer()
                                      .redraw();
+                        loadDetails();
                         showInfo("Entity updated", "Entity updated successfully");
                     },
                     () -> {
@@ -111,6 +149,7 @@ public class CircleInfoPresenter implements Initializable {
                         center.setY(backUpCenter.getY());
                         configuration.getMapRenderer()
                                      .redraw();
+                        loadDetails();
                         showInfo("Entity updated", "Entity updated successfully");
                     },
                     () -> {
@@ -131,6 +170,7 @@ public class CircleInfoPresenter implements Initializable {
                         radius.set(backUpRadius.get());
                         configuration.getMapRenderer()
                                      .redraw();
+                        loadDetails();
                         showInfo("Entity updated", "Entity updated successfully");
                     },
                     () -> {

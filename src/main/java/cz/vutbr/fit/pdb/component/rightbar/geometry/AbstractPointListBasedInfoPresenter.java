@@ -28,6 +28,7 @@ import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
 
 @Log
 public abstract class AbstractPointListBasedInfoPresenter implements Initializable {
+
     @FXML
     private ListView<Point> pointsListView;
     @FXML
@@ -73,6 +74,7 @@ public abstract class AbstractPointListBasedInfoPresenter implements Initializab
         entityService.updateEntity(copy, "geometry",
                 () -> {
                     updatePointInList(oldValue, newValue, points);
+                    reloadDetails();
                     configuration.getMapRenderer()
                                  .redraw();
                     showInfo("Entity updated", "Entity updated successfully");
@@ -80,6 +82,7 @@ public abstract class AbstractPointListBasedInfoPresenter implements Initializab
                     showError("Database error", "Could not update entity");
                 });
     }
+
 
     private void updatePointInList(Point oldValue, Point newValue, ObservableList<Point> updatedPoints) {
         int i = updatedPoints.indexOf(oldValue);
@@ -98,6 +101,7 @@ public abstract class AbstractPointListBasedInfoPresenter implements Initializab
                 () -> {
                     points.remove(point);
                     pointsListView.refresh();
+                    reloadDetails();
                     configuration.getMapRenderer()
                                  .redraw();
                     showInfo("Entity updated", "Entity updated successfully");
@@ -120,6 +124,7 @@ public abstract class AbstractPointListBasedInfoPresenter implements Initializab
                         this.points.add(newPoint);
                         xField.setText("");
                         yField.setText("");
+                        reloadDetails();
                         configuration.getMapRenderer()
                                      .redraw();
                         showInfo("Entity updated", "Entity updated successfully");
@@ -128,6 +133,12 @@ public abstract class AbstractPointListBasedInfoPresenter implements Initializab
                     });
         });
     }
+
+    protected Entity getSelectedEntity() {
+        return selectedEntityService.getEntityProperty();
+    }
+
+    protected abstract void reloadDetails();
 
     public abstract EntityGeometry createGeometry(ObservableList<Point> points);
 }

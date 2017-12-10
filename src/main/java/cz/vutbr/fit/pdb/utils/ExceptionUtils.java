@@ -5,7 +5,7 @@ import lombok.extern.java.Log;
 import java.util.Random;
 
 @Log
-public class ExceptionGun {
+public class ExceptionUtils {
 
     private static final Random random = new Random();
 
@@ -14,5 +14,10 @@ public class ExceptionGun {
             log.severe("Muheheheh...");
             throw new RuntimeException("Hey, I just met you and this is crazy...");
         }
+    }
+
+    public static void printException(Throwable exception) {
+        log.severe("Task failed with exception:" + exception);
+        exception.printStackTrace();
     }
 }
