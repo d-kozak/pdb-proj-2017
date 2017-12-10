@@ -20,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import lombok.extern.java.Log;
 
 import javax.inject.Inject;
@@ -58,23 +59,6 @@ public class MapPresenter implements Initializable, MapRenderer {
     private Painter painter;
 
     @Override
-    public void redraw() {
-
-        if(leaflet == null) {
-            return;
-        }
-        log.info("Redraw!");
-
-        leaflet.call("clearAll");
-        ObservableList<Entity> entities = entityService.getEntities(configuration.getYear());
-        for (Entity entity : entities) {
-            EntityGeometry geometry = entity.getGeometry();
-            leaflet.call("draw", entity);
-            log.info(gson.toJson(geometry));
-        }
-    }
-
-    @Override
     public void initialize(URL location, ResourceBundle resources) {
         WebEngine webEngine = webview.getEngine();
 
@@ -95,6 +79,7 @@ public class MapPresenter implements Initializable, MapRenderer {
 
                 // get the Javascript connector object.
                 leaflet.call("running");
+                leaflet.call("setColor", toRGBCode(configuration.getDrawingColor()));
 
                 // TEMP:
                 redraw();
@@ -112,12 +97,17 @@ public class MapPresenter implements Initializable, MapRenderer {
                 .addListener((observable, oldValue, newValue) -> {
                     redraw();
                 });
-        this.entityService.initDataLoadedProperty()
+        entityService.initDataLoadedProperty()
                 .addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
                         redraw();
                     }
                 });
+
+        configuration.drawingColorProperty().addListener(((observable, oldValue, newValue) -> {
+            if(leaflet != null)
+                leaflet.call("setColor", toRGBCode(newValue));
+        }));
 
         /*
         this.canvas.setOnMouseClicked(this::onMouseClicked);
@@ -130,6 +120,23 @@ public class MapPresenter implements Initializable, MapRenderer {
                          }
                      });
                      */
+    }
+
+    @Override
+    public void redraw() {
+
+        if(leaflet == null) {
+            return;
+        }
+        log.info("Redraw!");
+
+        leaflet.call("clearAll");
+        ObservableList<Entity> entities = entityService.getEntities(configuration.getYear());
+        for (Entity entity : entities) {
+            EntityGeometry geometry = entity.getGeometry();
+            leaflet.call("draw", entity);
+            log.info(gson.toJson(geometry));
+        }
     }
 
     private void onMouseClicked(MouseEvent mouseEvent) {
@@ -192,5 +199,12 @@ public class MapPresenter implements Initializable, MapRenderer {
         private WebViewLevel(String name, int level) {
             super(name, level);
         }
+    }
+
+    public static String toRGBCode(Color color) {
+        return String.format( "#%02X%02X%02X",
+            (int)( color.getRed() * 255 ),
+            (int)( color.getGreen() * 255 ),
+            (int)( color.getBlue() * 255 ) );
     }
 }

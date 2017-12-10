@@ -21,6 +21,7 @@ VMBridge.prototype = {
 			options[ent] = setting
 		})
 		DrawControl.setDrawingOptions(options)
+		this.vm.log("Selecting drawing color " + color)
 	},
 	
 	draw: function(javaEnt) {

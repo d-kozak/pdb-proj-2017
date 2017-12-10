@@ -40,11 +40,6 @@
                         <Insets left="5.0" right="5.0" top="10.0"/>
                     </HBox.margin>
                 </Text>
-                <ComboBox fx:id="colors" maxHeight="20.0" maxWidth="20.0" prefHeight="20.0" prefWidth="20.0">
-                    <HBox.margin>
-                        <Insets bottom="5.0" top="5.0"/>
-                    </HBox.margin>
-                </ComboBox>
                 <Button mnemonicParsing="false" onAction="#onFinishDrawing" text="Complete current entity">
                     <HBox.margin>
                         <Insets bottom="5.0" left="5.0" top="5.0"/>
@@ -52,6 +47,11 @@
                 </Button>
             </children>
         </HBox>
+        <ComboBox fx:id="colors" maxHeight="20.0" maxWidth="20.0" prefHeight="20.0" prefWidth="20.0">
+            <HBox.margin>
+                <Insets bottom="5.0" top="5.0"/>
+            </HBox.margin>
+        </ComboBox>
         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mode:">
             <HBox.margin>
                 <Insets left="5.0" right="5.0"/>
