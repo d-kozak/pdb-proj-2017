@@ -102,11 +102,20 @@ VMBridge.prototype = {
 						dpt = dePoint(layer.getLatLng())
 						
 						layer._javaEnt.updatePointGeometry(dpt[0], dpt[1])
-						self.vm.log(":" + dpt)
 					} else if(layer instanceof L.Circle) {
 						dpt = dePoint(layer.getLatLng())
 						
 						layer._javaEnt.updateCircleGeometry(dpt[0], dpt[1], deRadius(layer.getRadius()))
+					} else if(layer instanceof L.Rectangle) {
+						coords2 = []
+						coords = layer.getLatLngs()[0]
+					
+						for(i = 0; i < coords.length; i += 2) { // every other points of rectangle (one of diagonals)
+							dpt = dePoint(coords[i])
+							coords2.push(dpt[0], dpt[1])
+						}
+						
+						layer._javaEnt.updateStringGeometry(JSON.stringify(coords2))
 					} else if(layer instanceof L.Polyline) {
 						coords2 = []
 						coords = layer.getLatLngs()

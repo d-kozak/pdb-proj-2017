@@ -219,8 +219,6 @@ public class Entity {
         log.info("Selection of entity from map.");
     }
 
-    ;
-
     private void updateGeometry() {
         Entity copy = this.copyOf();
         entityService.updateEntity(copy, "geometry", () -> {
@@ -250,6 +248,8 @@ public class Entity {
         }
         if (geometry.get() instanceof PolygonGeometry)
             setGeometry(new PolygonGeometry(points));
+        else if(geometry.get() instanceof RectangleGeometry)
+            setGeometry(new RectangleGeometry(points));
         else//(geometry instanceof PolygonGeometry)
             setGeometry(new LineGeometry(points));
         updateGeometry();
