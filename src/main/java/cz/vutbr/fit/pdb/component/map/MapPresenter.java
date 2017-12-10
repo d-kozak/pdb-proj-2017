@@ -35,6 +35,8 @@ import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 import com.google.gson.Gson;
 
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.toRGBCode;
+
 @Log
 public class MapPresenter implements Initializable, MapRenderer {
 
@@ -134,7 +136,7 @@ public class MapPresenter implements Initializable, MapRenderer {
         ObservableList<Entity> entities = entityService.getEntities(configuration.getYear());
         for (Entity entity : entities) {
             EntityGeometry geometry = entity.getGeometry();
-            leaflet.call("draw", entity);
+            leaflet.call("draw", entity, toRGBCode(entity.getColor()));
             log.info(gson.toJson(geometry));
         }
     }
@@ -199,12 +201,5 @@ public class MapPresenter implements Initializable, MapRenderer {
         private WebViewLevel(String name, int level) {
             super(name, level);
         }
-    }
-
-    public static String toRGBCode(Color color) {
-        return String.format( "#%02X%02X%02X",
-            (int)( color.getRed() * 255 ),
-            (int)( color.getGreen() * 255 ),
-            (int)( color.getBlue() * 255 ) );
     }
 }

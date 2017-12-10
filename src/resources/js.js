@@ -24,9 +24,9 @@ VMBridge.prototype = {
 		this.vm.log("Selecting drawing color " + color)
 	},
 	
-	draw: function(javaEnt) {
+	draw: function(javaEnt, color) {
 		var geom = javaEnt.getGeometry(),
-			desc,
+			desc, col = {color: color},
 			pt, pts, ent,
 			x, y, self = this
 			
@@ -36,7 +36,7 @@ VMBridge.prototype = {
 			case "POINT":
 				desc = geom.getDescription()
 				x = desc.getX(); y = desc.getY()
-				ent = L.marker(Point(x, y))
+				ent = L.marker(Point(x, y), col)
 				// this.vm.log("drawing: " + x + ", " + y)
 				break;
 				
@@ -49,15 +49,15 @@ VMBridge.prototype = {
 				}
 				// this.vm.log("drawing: " + pts)
 				if(geom.getType() == "LINE")
-					ent = L.polyline(pts)
+					ent = L.polyline(pts, col)
 				else
-					ent = L.polygon(pts)
+					ent = L.polygon(pts, col)
 				break
 				
 			case "CIRCLE":
 				desc = geom.getDescription() // [Point, Java DoubleProperty]
 				pt = desc[0]
-				ent = L.circle(Point(pt.getX(), pt.getY()), {radius: Radius(desc[1].get())})
+				ent = L.circle(Point(pt.getX(), pt.getY()), {radius: Radius(desc[1].get())}, col)
 		}
 		
 		ent._javaEnt = javaEnt
