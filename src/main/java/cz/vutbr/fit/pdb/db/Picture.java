@@ -261,6 +261,18 @@ public class Picture {
         return modifyPicture("contentFormat=monochrome fileformat=png", id);
     }
 
+    public static boolean makeImageGrayscale(Integer id) {
+        return modifyPicture("contentFormat=8bitlutgray fileformat=png", id);
+    }
+
+    public static boolean makeImageMirror(Integer id) {
+        return modifyPicture("mirror fileformat=png", id);
+    }
+
+    public static boolean makeImageRotate90(Integer id) {
+        return modifyPicture("rotate=90 fileformat=png", id);
+    }
+
     private static boolean modifyPicture(String modification, Integer srcId) {
         Integer dstId = dbConnection.getMaxId("Picture") + 1;
 
