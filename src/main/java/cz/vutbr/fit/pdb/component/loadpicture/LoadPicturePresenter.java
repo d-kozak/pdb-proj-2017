@@ -37,7 +37,7 @@ public class LoadPicturePresenter implements Initializable {
 
     private StringProperty descriptionProperty = new SimpleStringProperty();
     private ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
-    private ObjectProperty<LocalDate> dateProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<LocalDate> dateProperty = new SimpleObjectProperty<>(LocalDate.now());
 
     private Stage stage;
     private EntityImage result = new EntityImage();
