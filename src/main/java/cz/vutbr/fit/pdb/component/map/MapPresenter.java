@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.component.map;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -20,8 +21,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import lombok.extern.java.Log;
+import netscape.javascript.JSObject;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -29,15 +32,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import netscape.javascript.JSException;
-import netscape.javascript.JSObject;
-import com.google.gson.Gson;
-
-import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
-import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
-import static cz.vutbr.fit.pdb.utils.JavaFXUtils.toRGBCode;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.*;
 
 @Log
 public class MapPresenter implements Initializable, MapRenderer {
@@ -69,51 +64,59 @@ public class MapPresenter implements Initializable, MapRenderer {
         WebEngine webEngine = webview.getEngine();
 
         // set up the listener
-        webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
-            if (Worker.State.SUCCEEDED == newValue) {
-                // set an interface object named 'javaConnector' in the web engine's page
-                leaflet = (JSObject) webEngine.executeScript("new VMBridge");
+        webEngine.getLoadWorker()
+                 .stateProperty()
+                 .addListener((observable, oldValue, newValue) -> {
+                     if (Worker.State.SUCCEEDED == newValue) {
+                         // set an interface object named 'javaConnector' in the web engine's page
+                         leaflet = (JSObject) webEngine.executeScript("new VMBridge");
 
-                if(leaflet.getMember("_bridgeUp").toString().equals("VeriBridge")) {
-                    log.info("Bridge Java VM -> JS VM is up.");
-                } else {
-                    log.severe("Bridge is not up!");
-                    return;
-                }
+                         if (leaflet.getMember("_bridgeUp")
+                                    .toString()
+                                    .equals("VeriBridge")) {
+                             log.info("Bridge Java VM -> JS VM is up.");
+                         } else {
+                             log.severe("Bridge is not up!");
+                             return;
+                         }
 
-                leaflet.setMember("vm", new VMBridge());
+                         leaflet.setMember("vm", new VMBridge());
 
-                // get the Javascript connector object.
-                leaflet.call("running");
-                leaflet.call("setColor", toRGBCode(configuration.getDrawingColor()));
+                         // get the Javascript connector object.
+                         leaflet.call("running");
+                         leaflet.call("setColor", toRGBCode(configuration.getDrawingColor()));
 
-                // TEMP:
-                redraw();
-            }
-        });
+                         // TEMP:
+                         redraw();
+                     }
+                 });
 
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Point.class, new PointAdapter());
         gson = builder.create();
 
-        webEngine.load(this.getClass().getClassLoader().getResource("leaflet.html").toExternalForm());
+        webEngine.load(this.getClass()
+                           .getClassLoader()
+                           .getResource("leaflet.html")
+                           .toExternalForm());
 
         configuration.setMapRenderer(this);
         configuration.yearProperty()
-                .addListener((observable, oldValue, newValue) -> {
-                    redraw();
-                });
+                     .addListener((observable, oldValue, newValue) -> {
+                         redraw();
+                     });
         entityService.initDataLoadedProperty()
-                .addListener((observable, oldValue, newValue) -> {
-                    if (newValue) {
-                        redraw();
-                    }
-                });
+                     .addListener((observable, oldValue, newValue) -> {
+                         if (newValue) {
+                             redraw();
+                         }
+                     });
 
-        configuration.drawingColorProperty().addListener(((observable, oldValue, newValue) -> {
-            if(leaflet != null)
-                leaflet.call("setColor", toRGBCode(newValue));
-        }));
+        configuration.drawingColorProperty()
+                     .addListener(((observable, oldValue, newValue) -> {
+                         if (leaflet != null)
+                             leaflet.call("setColor", toRGBCode(newValue));
+                     }));
 
         /*
         this.canvas.setOnMouseClicked(this::onMouseClicked);
@@ -131,7 +134,7 @@ public class MapPresenter implements Initializable, MapRenderer {
     @Override
     public void redraw() {
 
-        if(leaflet == null) {
+        if (leaflet == null) {
             return;
         }
         log.info("Redraw!");
@@ -159,11 +162,11 @@ public class MapPresenter implements Initializable, MapRenderer {
     public class VMBridge {
         final public String _bridgeUp = "VeriBridge";
         final WebViewLevel lvl = new WebViewLevel("WEBVIEW", 850);
+
         /**
          * called when the JS side wants a String to be converted.
          *
-         * @param msg
-         *         the String to convert
+         * @param msg the String to convert
          */
         public void log(String msg) {
             log.log(lvl, msg);
@@ -182,14 +185,15 @@ public class MapPresenter implements Initializable, MapRenderer {
         }
 
         private void saveEntity(Entity ent) {
+            log.info("Saving entity" + ent);
             entityService.addEntity(
-                ent,
-                () -> showInfo("Entity added", "Entity added successfully"),
-                () -> {
-                    showError("Database error", "Sorry, could not add the entity, please try again");
-                    configuration.getMapRenderer()
-                            .redraw();
-                });
+                    ent,
+                    () -> showInfo("Entity added", "Entity added successfully"),
+                    () -> {
+                        showError("Database error", "Sorry, could not add the entity, please try again");
+                        configuration.getMapRenderer()
+                                     .redraw();
+                    });
         }
 
         private ObservableList<Point> createString(String _coords) {
@@ -249,13 +253,13 @@ public class MapPresenter implements Initializable, MapRenderer {
                     entity,
                     () -> {
                         showInfo("Entity removed", "Entity removed successfully");
-                        if(selectedEntityService.getEntityProperty() == entity)
+                        if (selectedEntityService.getEntityProperty() == entity)
                             selectedEntityService.setEntityProperty(null);
                     },
                     () -> {
                         showError("Database error", "Could not remove entity, please try again");
                         configuration.getMapRenderer()
-                                .redraw();
+                                     .redraw();
                     });
         }
     }
