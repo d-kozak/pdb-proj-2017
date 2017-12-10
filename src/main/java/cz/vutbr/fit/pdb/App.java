@@ -11,9 +11,7 @@ import lombok.extern.java.Log;
 import lombok.val;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -68,9 +66,11 @@ public class App extends Application {
     public void stop() throws Exception {
         log.info("Preparing to close the application...");
         log.info("Closing the database connection");
-        DBConnection.getInstance()
-                    .disconnect();
-        log.info("Success...");
+        if (!DBConnection.getInstance()
+                         .disconnect()) {
+            log.severe("Could not disconnect from the database");
+        } else
+            log.info("Success...");
         log.info("Shutting down the thread pool...");
         Configuration.THREAD_POOL.shutdown();
         try {
@@ -81,5 +81,6 @@ public class App extends Application {
             Configuration.THREAD_POOL.shutdownNow();
         }
         log.info("Cleanup finished, closing the application...");
+        System.exit(0);
     }
 }

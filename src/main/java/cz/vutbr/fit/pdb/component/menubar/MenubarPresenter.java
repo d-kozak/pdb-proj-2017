@@ -2,7 +2,6 @@ package cz.vutbr.fit.pdb.component.menubar;
 
 import cz.vutbr.fit.pdb.component.settings.SettingsView;
 import cz.vutbr.fit.pdb.configuration.Configuration;
-import cz.vutbr.fit.pdb.db.DBConnection;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.concurent.InitDatabaseTask;
 import cz.vutbr.fit.pdb.utils.JavaFXUtils;
@@ -65,8 +64,6 @@ public class MenubarPresenter {
 
     @FXML
     private void onClose(ActionEvent event) {
-        DBConnection dbConnection = DBConnection.getInstance();
-        dbConnection.disconnect();
         Platform.exit();
     }
 
