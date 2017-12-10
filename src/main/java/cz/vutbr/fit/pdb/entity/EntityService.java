@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import static cz.vutbr.fit.pdb.configuration.Configuration.THREAD_POOL;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
+import static java.util.stream.Collectors.joining;
 
 @Log
 public class EntityService {
@@ -189,7 +190,10 @@ public class EntityService {
         log.info("All entities :" + entities);
         log.info("Selecting year " + selectedYear);
         FilteredList<Entity> selected = entities.filtered(entity -> entity.existsInYear(selectedYear));
-        log.info("Selected entities :" + selected);
+        String prettyEntities = selected.stream()
+                                        .map(Entity::toString)
+                                        .collect(joining("\n"));
+        log.info("Selected entities :" + prettyEntities);
         return selected;
     }
 
