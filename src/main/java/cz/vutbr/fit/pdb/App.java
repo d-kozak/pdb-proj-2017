@@ -3,6 +3,7 @@ package cz.vutbr.fit.pdb;
 import com.airhacks.afterburner.injection.Injector;
 import cz.vutbr.fit.pdb.component.main.MainView;
 import cz.vutbr.fit.pdb.configuration.Configuration;
+import cz.vutbr.fit.pdb.configuration.DBConfiguration;
 import cz.vutbr.fit.pdb.db.DBConnection;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -25,11 +26,11 @@ public class App extends Application {
     public static void main(String[] args) throws SQLException {
         DBConnection dbConnection = DBConnection.getInstance();
         boolean succeeded = dbConnection.connect(
-                "gort.fit.vutbr.cz",
-                "1521",
-                "gort.fit.vutbr.cz",
-                System.getProperty("username"),
-                System.getProperty("password")
+                DBConfiguration.HOST_DEFAULT,
+                DBConfiguration.PORT_DEFAULT + "",
+                DBConfiguration.SERVICE_NAME_DEFAULT,
+                DBConfiguration.USERNAME_DEFAULT,
+                DBConfiguration.PASSWORD_DEFAULT
         );
         if (!succeeded) {
             log.severe("Connection failed!");

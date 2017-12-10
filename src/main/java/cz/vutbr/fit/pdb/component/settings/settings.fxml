@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.*?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
       fx:controller="cz.vutbr.fit.pdb.component.settings.SettingsPresenter">
     <children>
@@ -22,14 +21,23 @@
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                             </rowConstraints>
                             <children>
                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Username"/>
                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Password" GridPane.rowIndex="1"/>
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="DatabaseURI" GridPane.rowIndex="2"/>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Host" GridPane.rowIndex="2"/>
                                 <TextField fx:id="usernameField" GridPane.columnIndex="1"/>
                                 <TextField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                                <TextField fx:id="databaseURIField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                                <TextField fx:id="hostField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Port" GridPane.rowIndex="3"/>
+                                <TextField fx:id="portField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Service name" GridPane.rowIndex="4"/>
+                                <TextField fx:id="serviceNameField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                                <Text fx:id="fullURIText" strokeType="OUTSIDE" strokeWidth="0.0" text="NULL"
+                                      GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5"/>
                             </children>
                         </GridPane>
                     </content>

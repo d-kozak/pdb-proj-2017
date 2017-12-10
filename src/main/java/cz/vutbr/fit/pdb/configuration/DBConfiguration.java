@@ -1,12 +1,22 @@
 package cz.vutbr.fit.pdb.configuration;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class DBConfiguration {
-    private StringProperty username = new SimpleStringProperty(System.getProperty("username"));
-    private StringProperty password = new SimpleStringProperty(System.getProperty("password"));
-    private StringProperty databaseURI = new SimpleStringProperty("LALALA");
+    public static final String USERNAME_DEFAULT = System.getProperty("username");
+    public static final String PASSWORD_DEFAULT = System.getProperty("password");
+    public static final String HOST_DEFAULT = "gort.fit.vutbr.cz";
+    public static final int PORT_DEFAULT = 1521;
+    public static final String SERVICE_NAME_DEFAULT = "gort.fit.vutbr.cz";
+
+    private StringProperty username = new SimpleStringProperty(USERNAME_DEFAULT);
+    private StringProperty password = new SimpleStringProperty(PASSWORD_DEFAULT);
+    private StringProperty host = new SimpleStringProperty(HOST_DEFAULT);
+    private IntegerProperty port = new SimpleIntegerProperty(PORT_DEFAULT);
+    private StringProperty serviceName = new SimpleStringProperty(SERVICE_NAME_DEFAULT);
 
     public String getUsername() {
         return username.get();
@@ -32,16 +42,40 @@ public class DBConfiguration {
         return password;
     }
 
-    public String getDatabaseURI() {
-        return databaseURI.get();
+    public String getHost() {
+        return host.get();
     }
 
-    public void setDatabaseURI(String databaseURI) {
-        this.databaseURI.set(databaseURI);
+    public void setHost(String host) {
+        this.host.set(host);
     }
 
-    public StringProperty databaseURIProperty() {
-        return databaseURI;
+    public StringProperty hostProperty() {
+        return host;
+    }
+
+    public int getPort() {
+        return port.get();
+    }
+
+    public void setPort(int port) {
+        this.port.set(port);
+    }
+
+    public IntegerProperty portProperty() {
+        return port;
+    }
+
+    public String getServiceName() {
+        return serviceName.get();
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName.set(serviceName);
+    }
+
+    public StringProperty serviceNameProperty() {
+        return serviceName;
     }
 
     @Override
@@ -49,7 +83,9 @@ public class DBConfiguration {
         return "DBConfiguration{" +
                 "username=" + username +
                 ", password=" + password +
-                ", databaseURI=" + databaseURI +
+                ", host=" + host +
+                ", port=" + port +
+                ", serviceName=" + serviceName +
                 '}';
     }
 }

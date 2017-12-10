@@ -1,11 +1,10 @@
 package cz.vutbr.fit.pdb.db;
 
-import java.lang.Exception;
-import java.sql.*;
-import java.util.List;
-
 import lombok.extern.java.Log;
 import oracle.jdbc.pool.OracleDataSource;
+
+import java.sql.*;
+import java.util.List;
 
 /*
  * Wrapper over database connection.
@@ -31,7 +30,7 @@ public class DBConnection {
      * @return DBConnection
      */
     public static DBConnection getInstance() {
-        if (dbConnection == null){
+        if (dbConnection == null) {
             dbConnection = new DBConnection();
         }
         return dbConnection;
@@ -39,11 +38,12 @@ public class DBConnection {
 
     /**
      * Connects to the database. When there is already a connection, use disconnect() first.
-     * @param host Host name.
-     * @param port Port number.
+     *
+     * @param host        Host name.
+     * @param port        Port number.
      * @param serviceName Service name.
-     * @param username User.
-     * @param password Password.
+     * @param username    User.
+     * @param password    Password.
      * @return True, when connection succeeded, false otherwise.
      */
     public boolean connect(String host, String port, String serviceName, String username, String password) {
@@ -63,24 +63,28 @@ public class DBConnection {
                 isConnected = false;
                 throw new RuntimeException(ex);
             }
-        }
+        } else
+            log.severe("Connection was made already");
         log.info("DB successfully connnected.");
         return true;
     }
 
     /**
      * Closes the current connection.
+     *
      * @return True, when disconnect succeded, false otherwise.
      */
-    public boolean disconnect(){
-        if (isConnected){
+    public boolean disconnect() {
+        if (isConnected) {
             try {
                 connection.close();
+                isConnected = false;
             } catch (SQLException ex) {
                 log.severe("SQLException: " + ex);
                 return false;
             }
-        }
+        } else
+            log.severe("Already disconnected");
         return true;
     }
 
@@ -91,6 +95,7 @@ public class DBConnection {
 
     /**
      * Executes the given queries.
+     *
      * @param queries
      */
     public void execute(List<String> queries) {
@@ -127,6 +132,7 @@ public class DBConnection {
 
     /**
      * Executes the given query.
+     *
      * @param query
      * @return Result of the query.
      * @throws SQLException
@@ -141,21 +147,19 @@ public class DBConnection {
             try (Statement stmt = connection.createStatement()) {
                 try {
                     stmt.executeQuery(query);
-                }
-                catch (SQLException ex) {
-                    log.severe("DB query failed: Execute SQL query exception: " + ex + " : " +query);
+                } catch (SQLException ex) {
+                    log.severe("DB query failed: Execute SQL query exception: " + ex + " : " + query);
                     throw new RuntimeException(ex);
                 }
 
             }
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             log.severe("DB query failed: Create SQL statement exception: " + ex + " : " + query);
             throw new RuntimeException(ex);
         }
     }
 
-    public Integer getMaxId(String table){
+    public Integer getMaxId(String table) {
         try (PreparedStatement stmt = connection.prepareStatement(
                 "SELECT max(id) AS max FROM " + table
         )) {
@@ -167,8 +171,7 @@ public class DBConnection {
                 log.severe("Execute SQL query exception: " + ex + stmt.toString());
                 return 0;
             }
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             log.severe("Create SQL statement exception: " + ex);
             return 0;
         }
