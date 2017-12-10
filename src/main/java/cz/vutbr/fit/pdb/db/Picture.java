@@ -269,8 +269,12 @@ public class Picture {
         return modifyPicture("mirror fileformat=png", id);
     }
 
-    public static boolean makeImageRotate90(Integer id) {
+    public static boolean makeImageRotateLeft(Integer id) {
         return modifyPicture("rotate=90 fileformat=png", id);
+    }
+
+    public static boolean makeImageRotateRight(Integer id) {
+        return modifyPicture("rotate=270 fileformat=png", id);
     }
 
     private static boolean modifyPicture(String modification, Integer srcId) {
