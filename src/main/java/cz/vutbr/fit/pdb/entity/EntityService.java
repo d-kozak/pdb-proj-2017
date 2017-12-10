@@ -134,6 +134,7 @@ public class EntityService {
             onSucceeded.run();
         });
         addPictureTask.setOnFailed(event -> {
+            printException(addPictureTask.getException());
             onFailed.run();
         });
 
@@ -148,6 +149,7 @@ public class EntityService {
             onSucceeded.run();
         });
         removeImageTask.setOnFailed(event -> {
+            printException(removeImageTask.getException());
             onFailed.run();
         });
 
@@ -163,6 +165,7 @@ public class EntityService {
             onSucceeded.run();
         });
         setAsFlagTask.setOnFailed(event -> {
+            printException(setAsFlagTask.getException());
             onFailed.run();
         });
 
@@ -202,6 +205,7 @@ public class EntityService {
             onSucceeded.run();
         });
         deleteFlagTask.setOnFailed(event -> {
+            printException(deleteFlagTask.getException());
             onFailed.run();
         });
         Configuration.THREAD_POOL.submit(deleteFlagTask);
