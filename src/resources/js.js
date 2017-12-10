@@ -41,6 +41,7 @@ VMBridge.prototype = {
 				break;
 				
 			case "LINE":
+			case "RECTANGLE":
 			case "POLYGON":
 				desc = geom.getPtArr()
 				pts = []
@@ -50,6 +51,8 @@ VMBridge.prototype = {
 				// this.vm.log("drawing: " + pts)
 				if(geom.getType() == "LINE")
 					ent = L.polyline(pts, col)
+				else if(geom.getType() == "RECTANGLE")
+					ent = L.rectangle(pts, col)
 				else
 					ent = L.polygon(pts, col)
 				break
@@ -58,6 +61,7 @@ VMBridge.prototype = {
 				desc = geom.getDescription() // [Point, Java DoubleProperty]
 				pt = desc[0]
 				ent = L.circle(Point(pt.getX(), pt.getY()), {radius: Radius(desc[1].get())}, col)
+				break
 		}
 		
 		ent._javaEnt = javaEnt
