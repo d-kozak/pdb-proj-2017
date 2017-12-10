@@ -123,6 +123,8 @@ public class MapPresenter implements Initializable, MapRenderer {
 
         webEngine.load(this.getClass().getClassLoader().getResource("leaflet.html").toExternalForm());
 
+        configuration.setMapRenderer(this);
+
         /*
         this.canvas = new ResizableCanvas();
         vbox.getChildren()

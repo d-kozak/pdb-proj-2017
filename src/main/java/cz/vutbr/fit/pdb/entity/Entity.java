@@ -1,9 +1,9 @@
 package cz.vutbr.fit.pdb.entity;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import cz.vutbr.fit.pdb.configuration.DrawingMode;
-import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
-import cz.vutbr.fit.pdb.entity.geometry.Point;
-import cz.vutbr.fit.pdb.entity.geometry.PointGeometry;
+import cz.vutbr.fit.pdb.entity.geometry.*;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -208,14 +208,40 @@ public class Entity {
         return copy;
     }
 
-    public SelectedEntityService selectedEntityService;
+    public EntityService entityService;
 
     public void select() {
-        selectedEntityService.setEntityProperty(this);
+        entityService.selectedEntityService.setEntityProperty(this);
         log.info("Selection of entity from map.");
     };
 
+    private void updateGeometry() {
+        Entity copy = this.copyOf();
+        entityService.updateEntity(copy, "geometry", () -> {}, () -> {});
+    }
+
     public void updatePointGeometry(double x, double y) {
         setGeometry(new PointGeometry(new Point(x, y)));
+        updateGeometry();
+    }
+
+    public void updateCircleGeometry(double x, double y, double r) {
+        setGeometry(new CircleGeometry(x, y, r));
+        updateGeometry();
+    }
+
+    public void updateStringGeometry(String _coords) {
+        Gson gson = new Gson();
+        ObservableList<Point> points = FXCollections.observableArrayList();
+        double coords[] = gson.fromJson(_coords, double[].class);
+
+        for(int i = 0; i < coords.length; i += 2) {
+            points.add(new Point(coords[i], coords[i+1]));
+        }
+        if(geometry instanceof PolygonGeometry)
+            setGeometry(new PolygonGeometry(points));
+        else//(geometry instanceof PolygonGeometry)
+            setGeometry(new LineGeometry(points));
+        updateGeometry();
     }
 }

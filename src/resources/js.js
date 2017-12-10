@@ -5,7 +5,7 @@ VMBridge.prototype = {
 	vm: null,
 	
 	clearAll: function() {
-		geoEntities.removeLayer()
+		geoEntities.clearLayers()
 	},
 	
 	draw: function(javaEnt) {
@@ -39,9 +39,9 @@ VMBridge.prototype = {
 				break
 				
 			case "CIRCLE":
-				desc = geom.getDescription()
-				pt = desc.getCenter()
-				ent = L.circle(Point(pt.getX(), pt.getY()), {radius: desc.getRadius()})
+				desc = geom.getDescription() // [Point, Java DoubleProperty]
+				pt = desc[0]
+				ent = L.circle(Point(pt.getX(), pt.getY()), {radius: desc[1].get()})
 		}
 		
 		ent._javaEnt = javaEnt
@@ -76,13 +76,32 @@ VMBridge.prototype = {
 			// Layer editation
 			map.on(L.Draw.Event.EDITED, function (e) {
 				e.layers.eachLayer(function (layer) {
-					self.vm.log("testuju")
+					var coords, coords2, i, dpt
+					
 					if(layer instanceof L.Marker) {
-						var dpt = dePoint(layer.getLatLng())
+						dpt = dePoint(layer.getLatLng())
 						
 						layer._javaEnt.updatePointGeometry(dpt[0], dpt[1])
 						self.vm.log(":" + dpt)
+					} else if(layer instanceof L.Circle) {
+						dpt = dePoint(layer.getLatLng())
+						
+						layer._javaEnt.updateCircleGeometry(dpt[0], dpt[1], layer.getRadius())
+					} else if(layer instanceof L.Polyline) {
+						coords2 = []
+						coords = layer.getLatLngs()
+						if(layer instanceof L.Polygon) // [R-space, R-cycle]
+							coords = coords[0]
+						
+						for(i = 0; i < coords.length; i++) {
+							dpt = dePoint(coords[i])
+							coords2.push(dpt[0], dpt[1])
+						}
+						
+						self.vm.log(JSON.stringify(coords2))
+						layer._javaEnt.updateStringGeometry(JSON.stringify(coords2))
 					}
+			
 				})
 			})
 			

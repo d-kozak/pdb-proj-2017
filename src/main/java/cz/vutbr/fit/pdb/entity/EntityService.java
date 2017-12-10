@@ -27,7 +27,7 @@ import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
 public class EntityService {
 
     @Inject
-    private SelectedEntityService selectedEntityService;
+    SelectedEntityService selectedEntityService;
 
     private ObservableList<Entity> entities = FXCollections.observableArrayList(entity -> new Observable[]{entity.nameProperty()});
 
@@ -41,7 +41,7 @@ public class EntityService {
                 entities.clear();
                 entities.addAll(loadAllEntitiesTask.get());
                 for(Entity entity : entities) {
-                    entity.selectedEntityService = selectedEntityService;
+                    entity.entityService = this;
                 }
                 log.info("Loaded entities: " + entities);
                 initDataLoaded.set(true);
@@ -60,7 +60,7 @@ public class EntityService {
 
     public Task<Void> addEntity(Entity entity, Runnable onSucceeded, Runnable onFailed) {
         log.info(String.format("Adding new entity %s", entity));
-        entity.selectedEntityService = selectedEntityService;
+        entity.entityService = this;
         AddEntityTask addEntityTask = new AddEntityTask();
         addEntityTask.setEntity(entity);
         addEntityTask.setOnSucceeded(event -> {

@@ -301,31 +301,31 @@ public class MapMakerDB {
           "Brno flag",
           Date.valueOf(LocalDate.now()),
           1,
-          "brno-flag.jpg"
+          "src/resources/brno-flag.jpg"
         );
         res |= Picture.insertImage(
                 "Brno Petrov",
                 Date.valueOf(LocalDate.now()),
                 1,
-                "brno-petrov.jpg"
+                "src/resources/brno-petrov.jpg"
         );
         res |= Picture.insertImage(
                 "Brno square",
                 Date.valueOf(LocalDate.now()),
                 1,
-                "brno-square.jpg"
+                "src/resources/brno-square.jpg"
         );
         res |= Picture.insertFlag(
                 "Praha flag",
                 Date.valueOf(LocalDate.now()),
                 2,
-                "praha-flag.jpg"
+                "src/resources/praha-flag.jpg"
         );
         res |= Picture.insertImage(
                 "Praha bridge",
                 Date.valueOf(LocalDate.now()),
                 2,
-                "praha-bridge.jpg"
+                "src/resources/praha-bridge.jpg"
         );
         res |= Picture.insertFlag(
                 "CR flag",
