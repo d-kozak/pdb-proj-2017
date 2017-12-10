@@ -102,6 +102,7 @@ public class RightbarPresenter implements Initializable {
                         .setValue("");
         flagView.imageProperty()
                 .setValue(null);
+        flagView.setOnContextMenuRequested(null);
         picturesView.setItems(FXCollections.observableArrayList());
         fromDate.getEditor()
                 .clear();
@@ -154,6 +155,8 @@ public class RightbarPresenter implements Initializable {
                             .getImage());
             Tooltip.install(flagView, new Tooltip(flag
                     .getDescription()));
+            initFlagViewContextMenu(flag);
+
         });
         if (!flagOptional.isPresent()) {
             flagView.setImage(null);
@@ -179,6 +182,7 @@ public class RightbarPresenter implements Initializable {
                         entity.setFlag(image);
                         entity.getImages()
                               .remove(image);
+                        initFlagViewContextMenu(image);
                     },
                     () -> {
                         showError("Database error", "Could not update entity");
@@ -235,6 +239,27 @@ public class RightbarPresenter implements Initializable {
             default:
                 throw new RuntimeException();
         }
+    }
+
+    private void initFlagViewContextMenu(EntityImage flag) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem deleteFlagMenuItem = new MenuItem("Delete flag");
+        deleteFlagMenuItem.setOnAction(event -> {
+            entityService.deleteFlag(flag,
+                    () -> {
+                        flagView.setImage(null);
+                        flagView.setOnContextMenuRequested(null);
+                        showInfo("Entity updated", "Entity updated successfully");
+                    },
+                    () -> {
+                        showError("Database error", "Could not update entity");
+                    });
+        });
+        contextMenu.getItems()
+                   .add(deleteFlagMenuItem);
+
+        flagView.setOnContextMenuRequested(contextMenuEvent ->
+                contextMenu.show(flagView, contextMenuEvent.getSceneX(), contextMenuEvent.getSceneY()));
     }
 
     private void unbindAll() {

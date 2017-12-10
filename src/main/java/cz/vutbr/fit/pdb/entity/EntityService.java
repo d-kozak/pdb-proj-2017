@@ -6,6 +6,7 @@ import cz.vutbr.fit.pdb.entity.concurent.LoadAllEntitiesTask;
 import cz.vutbr.fit.pdb.entity.concurent.RemoveEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.UpdateEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.picture.AddPictureTask;
+import cz.vutbr.fit.pdb.entity.concurent.picture.DeleteFlagTask;
 import cz.vutbr.fit.pdb.entity.concurent.picture.RemovePictureTask;
 import cz.vutbr.fit.pdb.entity.concurent.picture.SetAsFlagTask;
 import javafx.beans.Observable;
@@ -192,5 +193,18 @@ public class EntityService {
     public void printException(Throwable exception) {
         log.severe("Task failed with exception:" + exception);
         exception.printStackTrace();
+    }
+
+    public DeleteFlagTask deleteFlag(EntityImage entityImage, Runnable onSucceeded, Runnable onFailed) {
+        DeleteFlagTask deleteFlagTask = new DeleteFlagTask();
+        deleteFlagTask.setEntityImage(entityImage);
+        deleteFlagTask.setOnSucceeded(event -> {
+            onSucceeded.run();
+        });
+        deleteFlagTask.setOnFailed(event -> {
+            onFailed.run();
+        });
+        Configuration.THREAD_POOL.submit(deleteFlagTask);
+        return deleteFlagTask;
     }
 }
