@@ -4,7 +4,7 @@ import cz.vutbr.fit.pdb.component.map.MapRenderer;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.canvas.Canvas;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import lombok.extern.java.Log;
 
@@ -37,7 +37,7 @@ public class Configuration {
     private IntegerProperty minimumYear = new SimpleIntegerProperty(-1000);
     private IntegerProperty maximumYear = new SimpleIntegerProperty(3000);
 
-    private ObjectProperty<Canvas> canvas = new SimpleObjectProperty<>();
+    private ObjectProperty<Node> map = new SimpleObjectProperty<>();
 
     private MapRenderer mapRenderer;
 
@@ -145,18 +145,6 @@ public class Configuration {
         return canvasHeight;
     }
 
-    public Canvas getCanvas() {
-        return canvas.get();
-    }
-
-    public void setCanvas(Canvas canvas) {
-        this.canvas.set(canvas);
-    }
-
-    public ObjectProperty<Canvas> canvasProperty() {
-        return canvas;
-    }
-
     public int getMinimumYear() {
         return minimumYear.get();
     }
@@ -179,5 +167,18 @@ public class Configuration {
 
     public IntegerProperty maximumYearProperty() {
         return maximumYear;
+    }
+
+
+    public Node getMap() {
+        return map.get();
+    }
+
+    public void setMap(Node map) {
+        this.map.set(map);
+    }
+
+    public ObjectProperty<Node> mapProperty() {
+        return map;
     }
 }

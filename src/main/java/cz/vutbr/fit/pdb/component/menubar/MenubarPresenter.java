@@ -96,11 +96,13 @@ public class MenubarPresenter {
         if (file != null) {
             try {
                 WritableImage writableImage = new WritableImage(configuration.getCanvasWidth(), configuration.getCanvasHeight());
-                configuration.getCanvas()
+                configuration.getMap()
                              .snapshot(null, writableImage);
                 RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
                 ImageIO.write(renderedImage, "png", file);
+                showInfo("Success", "Image exported successfully");
             } catch (IOException ex) {
+                showError("Export error", "Could not export image");
                 log.severe("Could not save image");
             }
         }

@@ -118,6 +118,13 @@ public class MapPresenter implements Initializable, MapRenderer {
                              leaflet.call("setColor", toRGBCode(newValue));
                      }));
 
+        configuration.canvasWidthProperty()
+                     .bind(webview.widthProperty());
+        configuration.canvasHeightProperty()
+                     .bind(webview.heightProperty());
+
+        configuration.setMap(webview);
+
         /*
         this.canvas.setOnMouseClicked(this::onMouseClicked);
 
