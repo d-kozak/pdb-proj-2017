@@ -5,10 +5,7 @@ import cz.vutbr.fit.pdb.entity.concurent.AddEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.LoadAllEntitiesTask;
 import cz.vutbr.fit.pdb.entity.concurent.RemoveEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.UpdateEntityTask;
-import cz.vutbr.fit.pdb.entity.concurent.picture.AddPictureTask;
-import cz.vutbr.fit.pdb.entity.concurent.picture.DeleteFlagTask;
-import cz.vutbr.fit.pdb.entity.concurent.picture.RemovePictureTask;
-import cz.vutbr.fit.pdb.entity.concurent.picture.SetAsFlagTask;
+import cz.vutbr.fit.pdb.entity.concurent.picture.*;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,6 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 import static cz.vutbr.fit.pdb.configuration.Configuration.THREAD_POOL;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
@@ -202,7 +200,23 @@ public class EntityService {
         exception.printStackTrace();
     }
 
-    public DeleteFlagTask deleteFlag(EntityImage entityImage, Runnable onSucceeded, Runnable onFailed) {
+    public Task<ObservableList<EntityImage>> getTwoSimilarImagesFor(EntityImage entityImage, Consumer<ObservableList<EntityImage>> onSucceeded, Runnable onFailed) {
+        GetSimilarPicturesTask getSimilarPicturesTask = new GetSimilarPicturesTask();
+        getSimilarPicturesTask.setEntityImage(entityImage);
+        getSimilarPicturesTask.setOnSucceeded(event -> {
+            onSucceeded.accept(getSimilarPicturesTask.getValue());
+        });
+        getSimilarPicturesTask.setOnFailed(event -> {
+            printException(getSimilarPicturesTask.getException());
+            onFailed.run();
+        });
+
+        Configuration.THREAD_POOL.submit(getSimilarPicturesTask);
+
+        return getSimilarPicturesTask;
+    }
+
+    public Task<Void> deleteFlag(EntityImage entityImage, Runnable onSucceeded, Runnable onFailed) {
         DeleteFlagTask deleteFlagTask = new DeleteFlagTask();
         deleteFlagTask.setEntityImage(entityImage);
         deleteFlagTask.setOnSucceeded(event -> {
