@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.sql.Statement;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -87,9 +88,12 @@ public class MapMakerDB {
                             byte[] countryData = rset.getBytes("geometry");
                             JGeometry jGeometryCountry = JGeometry.load(countryData);
                             double[] countryCoords = jGeometryCountry.getOrdinatesArray();
-                            Integer countryCoordsCount = jGeometryCountry.getNumPoints();
+                            int dimensions = jGeometryCountry.getDimensions();
+                            // We do not want the last point - it's same as the frist one in the DB
+                            // and Entity does not store the first one also as the last one
+                            Integer countryCoordsCount = jGeometryCountry.getNumPoints() - 1;
                             ObservableList<Point> countryPoints = FXCollections.observableArrayList();
-                            for (Integer i = 0; i < countryCoordsCount * 2; i += 2) {
+                            for (Integer i = 0; i < countryCoordsCount * dimensions; i +=  dimensions) {
                                 countryPoints.add(new Point(countryCoords[i], countryCoords[i + 1]));
                             }
                             entity.setGeometry(new PolygonGeometry(countryPoints));
@@ -377,13 +381,17 @@ public class MapMakerDB {
                     }
             );
         } else if (geometry instanceof PolygonGeometry){
-            ObservableList<Point> points = ((PolygonGeometry) geometry).getPoints();
+            List<Point> points = new ArrayList<>(((PolygonGeometry) geometry).getPoints());
             if (are_clockwise_points(points)) {
                 for (int i = 0; i < points.size() / 2; ++i) {
                     Point tmp = points.get(i);
                     points.set(i, points.get(points.size() - 1 - i));
                     points.set(points.size() - 1 - i, tmp);
                 }
+            }
+            // DB needs the first points also as the last one. In Entity, each points is unique.
+            if (!points.isEmpty()){
+                points.add(points.get(0));
             }
             double coords[] = new double[points.size() * DIMENSION];
             for ( int i = 0; i < points.size(); i++) {
@@ -414,7 +422,7 @@ public class MapMakerDB {
         return null;
     }
 
-    private static boolean are_clockwise_points(ObservableList<Point> points) {
+    private static boolean are_clockwise_points(List<Point> points) {
         // Based on: https://stackoverflow.com/a/1165943/5601069
         int sum = 0;
         for (int i = 0; i < (points.size() - 1); ++i) {
@@ -422,9 +430,12 @@ public class MapMakerDB {
                     (points.get(i + 1).getY() + points.get(i).getY());
         }
         if (points.size() > 1) {
-            sum += (points.get(points.size() - 1).getX() - points.get(0).getX()) *
-                    (points.get(points.size() - 1).getY() + points.get(0).getY());
+            sum += (points.get(0).getX() - points.get(points.size() - 1).getX()) *
+                    (points.get(0).getY() + points.get(points.size() - 1).getY());
         }
+        // https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order#comment28629100_1165943
+        // DB has 0,0 in left down corner, we have upper left, so this way it works (experimetns).
+        log.severe("SUM " + sum);
         return sum > 0;
     }
 }

@@ -185,7 +185,6 @@ public class Entity {
         LocalDate to = this.to.getValue();
         if (from == null || to == null)
             return true;
-
         return from.getYear() <= selectedYear && selectedYear <= to.getYear();
     }
 
