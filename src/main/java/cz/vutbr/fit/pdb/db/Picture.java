@@ -448,17 +448,17 @@ public class Picture {
         return images;
     }
 
-    public ObservableList<Image> findSmiliar(Integer id, Integer count) {
-        ObservableList<Image> images = FXCollections.observableArrayList();
+    public static ObservableList<EntityImage> findSmiliar(EntityImage entityImage, Integer count) {
+        ObservableList<EntityImage> images = FXCollections.observableArrayList();
         try (PreparedStatement stmt = connection.prepareStatement(
                 "SELECT dest.*, SI_ScoreByFtrList(" +
-                        "new SI_FeatureList(src.img_ac, 0.3, src.img_ch,0.3, src.img_pc, 0.1, src.img_tx, 0.3), dest.img_si) " +
+                        "new SI_FeatureList(src.img_ac, 0.4, src.img_ch,0.4, src.img_pc, 0.2, src.img_tx, 0.7), dest.img_si) " +
                         "AS similarity FROM Picture src, Picture dest " +
                         "WHERE (src.id <> dest.id) AND src.id = ? " +
                         "ORDER BY similarity ASC " +
                         "FETCH FIRST " + count + " ROWS ONLY"
         )) {
-            stmt.setInt(1, id);
+            stmt.setInt(1, entityImage.getId());
             try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()) {
                 for (int i = 0; (i < count) && rset.next(); ++i) {
                     OrdImage imgProxy;
@@ -466,8 +466,16 @@ public class Picture {
                     if (imgProxy != null) {
                         try {
                             if (imgProxy.getDataInByteArray() != null) {
-                                BufferedImage bufferedImg = ImageIO.read(new ByteArrayInputStream(imgProxy.getDataInByteArray()));
-                                images.add(SwingFXUtils.toFXImage(bufferedImg, null));
+                                BufferedImage img = ImageIO.read(
+                                        new ByteArrayInputStream(imgProxy.getDataInByteArray())
+                                );
+                                WritableImage writableImage = SwingFXUtils.toFXImage(img, null);
+                                EntityImage eImage = new EntityImage();
+                                eImage.setImage(writableImage);
+                                eImage.setId(rset.getInt("id"));
+                                eImage.setDescription(rset.getString("description"));
+                                eImage.setTime(rset.getDate("createdAt").toLocalDate());
+                                images.add(eImage);
                             }
                         } catch (IOException ex) {
                             log.severe("Loading similar picture failed: " + ex);

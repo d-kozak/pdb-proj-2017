@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.entity.concurent.picture;
 
+import cz.vutbr.fit.pdb.db.Picture;
 import cz.vutbr.fit.pdb.entity.EntityImage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,11 +10,11 @@ import lombok.extern.java.Log;
 @Log
 public class GetSimilarPicturesTask extends Task<ObservableList<EntityImage>> {
     private EntityImage entityImage;
+    private static final Integer COUNT = 2;
 
     @Override
     protected ObservableList<EntityImage> call() throws Exception {
-        log.severe("Not impl yet!");
-        return FXCollections.observableArrayList();
+        return Picture.findSmiliar(entityImage, COUNT);
     }
 
     public EntityImage getEntityImage() {
