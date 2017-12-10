@@ -5,6 +5,7 @@ import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
 import cz.vutbr.fit.pdb.entity.geometry.CircleGeometry;
+import cz.vutbr.fit.pdb.entity.geometry.EntityGeometry;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
 import cz.vutbr.fit.pdb.utils.Listeners;
 import cz.vutbr.fit.pdb.utils.StringNumConverter;
@@ -38,16 +39,42 @@ public class CircleInfoPresenter implements Initializable {
     @Inject
     private EntityService entityService;
 
+    private Point backUpCenter;
+    private SimpleDoubleProperty backUpRadius;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Object[] description = (Object[]) selectedEntityService.getEntityProperty()
-                                                               .getGeometry()
-                                                               .getDescription();
+        selectedEntityService.getEntityProperty()
+                             .geometryProperty()
+                             .addListener((observable, oldValue, newValue) -> {
+                                 initForCircle(newValue);
+                             });
+        initForCircle(selectedEntityService.getEntityProperty()
+                                           .getGeometry());
+
+
+        Listeners.addRedrawListener(configuration.getMapRenderer(), centerXField.textProperty(), centerYField.textProperty(), radiusField.textProperty());
+    }
+
+    private void initForCircle(EntityGeometry entityGeometry) {
+        Object[] description = (Object[]) entityGeometry.getDescription();
         Point center = ((Point) description[0]);
         DoubleProperty radius = (DoubleProperty) description[1];
 
-        Point backUpCenter = new Point(center.getX(), center.getY());
-        DoubleProperty backUpRadius = new SimpleDoubleProperty(radius.get());
+        if (backUpCenter != null) {
+            centerXField.textProperty()
+                        .unbindBidirectional(backUpCenter.xProperty());
+            centerYField.textProperty()
+                        .unbindBidirectional(backUpCenter.yProperty());
+        }
+
+        if (backUpRadius != null) {
+            radiusField.textProperty()
+                       .unbindBidirectional(backUpRadius);
+        }
+
+        backUpCenter = new Point(center.getX(), center.getY());
+        backUpRadius = new SimpleDoubleProperty(radius.get());
 
         centerXField.textProperty()
                     .bindBidirectional(backUpCenter.xProperty(), new StringNumConverter());
@@ -63,10 +90,14 @@ public class CircleInfoPresenter implements Initializable {
             entityService.updateEntity(copy, "geometry",
                     () -> {
                         center.setX(backUpCenter.getX());
+                        configuration.getMapRenderer()
+                                     .redraw();
                         showInfo("Entity updated", "Entity updated successfully");
                     },
                     () -> {
                         centerXField.setText("" + center.getX());
+                        configuration.getMapRenderer()
+                                     .redraw();
                         showError("Database error", "Could not update entity");
                     });
         });
@@ -78,10 +109,14 @@ public class CircleInfoPresenter implements Initializable {
             entityService.updateEntity(copy, "geometry",
                     () -> {
                         center.setY(backUpCenter.getY());
+                        configuration.getMapRenderer()
+                                     .redraw();
                         showInfo("Entity updated", "Entity updated successfully");
                     },
                     () -> {
                         centerYField.setText("" + center.getY());
+                        configuration.getMapRenderer()
+                                     .redraw();
                         showError("Database error", "Could not update entity");
                     });
         });
@@ -94,15 +129,16 @@ public class CircleInfoPresenter implements Initializable {
             entityService.updateEntity(copy, "geometry",
                     () -> {
                         radius.set(backUpRadius.get());
+                        configuration.getMapRenderer()
+                                     .redraw();
                         showInfo("Entity updated", "Entity updated successfully");
                     },
                     () -> {
                         radiusField.setText("" + radius.get());
+                        configuration.getMapRenderer()
+                                     .redraw();
                         showError("Database error", "Could not update entity");
                     });
         });
-
-
-        Listeners.addRedrawListener(configuration.getMapRenderer(), centerXField.textProperty(), centerYField.textProperty(), radiusField.textProperty());
     }
 }

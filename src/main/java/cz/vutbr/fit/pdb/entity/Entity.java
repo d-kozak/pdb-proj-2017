@@ -1,7 +1,6 @@
 package cz.vutbr.fit.pdb.entity;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import cz.vutbr.fit.pdb.configuration.DrawingMode;
 import cz.vutbr.fit.pdb.entity.geometry.*;
 import javafx.beans.property.*;
@@ -10,10 +9,11 @@ import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import lombok.extern.java.Log;
 
-import javax.inject.Inject;
-import javax.swing.*;
 import java.time.LocalDate;
 import java.util.List;
+
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
 
 @Log
 public class Entity {
@@ -26,7 +26,7 @@ public class Entity {
     private ObjectProperty<LocalDate> from = new SimpleObjectProperty<>(LocalDate.now());
     private ObjectProperty<LocalDate> to = new SimpleObjectProperty<>(LocalDate.now());
 
-    private EntityGeometry geometry;
+    private ObjectProperty<EntityGeometry> geometry = new SimpleObjectProperty<>();
     private ObjectProperty<Color> color = new SimpleObjectProperty<>();
 
     public Entity() {
@@ -38,7 +38,7 @@ public class Entity {
         this.description.setValue(description);
         this.flag.setValue(flag);
         this.images = FXCollections.observableArrayList(images);
-        this.geometry = geometry;
+        this.geometry = new SimpleObjectProperty<>(geometry);
     }
 
     public Entity(Integer id, String name, String description, EntityImage flag, List<EntityImage> images, EntityGeometry geometry, LocalDate from, LocalDate to) {
@@ -47,7 +47,7 @@ public class Entity {
         this.description.setValue(description);
         this.flag.setValue(flag);
         this.images = FXCollections.observableArrayList(images);
-        this.geometry = geometry;
+        this.geometry = new SimpleObjectProperty<>(geometry);
         this.from.setValue(from);
         this.to.setValue(to);
     }
@@ -133,15 +133,20 @@ public class Entity {
     }
 
     public EntityGeometry getGeometry() {
-        return geometry;
+        return geometry.get();
     }
 
     public void setGeometry(EntityGeometry geometry) {
-        this.geometry = geometry;
+        this.geometry.set(geometry);
+    }
+
+    public ObjectProperty<EntityGeometry> geometryProperty() {
+        return geometry;
     }
 
     public DrawingMode getGeometryType() {
-        return geometry.getType();
+        return geometry.get()
+                       .getType();
     }
 
     public Color getColor() {
@@ -213,11 +218,17 @@ public class Entity {
     public void select() {
         entityService.selectedEntityService.setEntityProperty(this);
         log.info("Selection of entity from map.");
-    };
+    }
+
+    ;
 
     private void updateGeometry() {
         Entity copy = this.copyOf();
-        entityService.updateEntity(copy, "geometry", () -> {}, () -> {});
+        entityService.updateEntity(copy, "geometry", () -> {
+            showInfo("Entity updated", "Entity updated successfully");
+        }, () -> {
+            showError("Database error", "Could not update entity");
+        });
     }
 
     public void updatePointGeometry(double x, double y) {
@@ -235,10 +246,10 @@ public class Entity {
         ObservableList<Point> points = FXCollections.observableArrayList();
         double coords[] = gson.fromJson(_coords, double[].class);
 
-        for(int i = 0; i < coords.length; i += 2) {
-            points.add(new Point(coords[i], coords[i+1]));
+        for (int i = 0; i < coords.length; i += 2) {
+            points.add(new Point(coords[i], coords[i + 1]));
         }
-        if(geometry instanceof PolygonGeometry)
+        if (geometry.get() instanceof PolygonGeometry)
             setGeometry(new PolygonGeometry(points));
         else//(geometry instanceof PolygonGeometry)
             setGeometry(new LineGeometry(points));

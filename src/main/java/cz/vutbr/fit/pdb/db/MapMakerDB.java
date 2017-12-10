@@ -206,6 +206,11 @@ public class MapMakerDB {
             log.severe("NOT IMPLEMENTED YET!");
             throw new RuntimeException();
         }
+        if (field == "from") {
+            field = "validFrom";
+        } else if (field == "to") {
+            field = "validTo";
+        }
         try (PreparedStatement stmt = connection.prepareStatement(
                 "UPDATE SpatialEntity SET " + field + " = ? WHERE id = ?"
         )) {
@@ -215,10 +220,10 @@ public class MapMakerDB {
                 case "name":
                     stmt.setString(1, entity.getName());
                     break;
-                case "from":
+                case "validFrom":
                     stmt.setDate(1, Date.valueOf(entity.getFrom()));
                     break;
-                case "to":
+                case "validTo":
                     stmt.setDate(1, Date.valueOf(entity.getTo()));
                     break;
                 case "color":
