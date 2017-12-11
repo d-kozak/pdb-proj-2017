@@ -7,11 +7,26 @@ VMBridge.prototype = {
 	selLayer: null,
 	
 	highlight: function(layer) {
+		var pos
 		// highligh selected entity
-		if(this.selLayer)
+		if(this.selLayer && !(this.selLayer instanceof L.Marker)) {
 			this.selLayer.setStyle({opacity: 0.75})
-		layer.setStyle({opacity: 1})
-		this.selLayer = layer
+			if(this.selLayer._marker)
+				this.selLayer._marker.remove()
+		}
+		if(layer instanceof L.Marker)
+			layer.bounce()
+		else {
+			layer.setStyle({opacity: 1})
+			if(layer instanceof L.Circle)
+				pos = layer.getLatLng()
+			else
+				pos = layer.getCenter()
+			
+			layer._marker = new L.Marker(pos)
+			layer._marker.addTo(map).bounce()
+			this.selLayer = layer
+		}
 	}, _highlight: function(layer) {
 		var self = this
 		return function() {self.highlight.call(self, layer)}
