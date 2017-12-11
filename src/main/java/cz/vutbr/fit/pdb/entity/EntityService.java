@@ -147,11 +147,11 @@ public class EntityService {
         return removeEntityTask;
     }
 
-    public <T> Task<Void> updateEntity(Entity entity, String fieldName, Runnable onSucceeded, Runnable onFailed) {
+    public Task<Entity> updateEntity(Entity entity, String fieldName, Consumer<Entity> onSucceeded, Runnable onFailed) {
         UpdateEntityTask updateEntityTask = new UpdateEntityTask();
         updateEntityTask.setEntity(entity);
         updateEntityTask.setFieldName(fieldName);
-        updateEntityTask.setOnSucceeded(event -> onSucceeded.run());
+        updateEntityTask.setOnSucceeded(event -> onSucceeded.accept(updateEntityTask.getValue()));
         updateEntityTask.setOnFailed(event -> {
             printException(updateEntityTask.getException());
             onFailed.run();
@@ -275,5 +275,9 @@ public class EntityService {
         });
         Configuration.THREAD_POOL.submit(deleteFlagTask);
         return deleteFlagTask;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
     }
 }

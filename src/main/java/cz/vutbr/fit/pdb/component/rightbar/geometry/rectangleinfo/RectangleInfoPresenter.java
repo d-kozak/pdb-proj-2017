@@ -129,7 +129,7 @@ public class RectangleInfoPresenter implements Initializable {
                                                .copyOf();
             copy.setGeometry(new RectangleGeometry(FXCollections.observableArrayList(leftUpBinded.copyOf(), rightDownBinded.copyOf())));
             entityService.updateEntity(copy, "geometry",
-                    () -> {
+                    (newEntity) -> {
                         leftUp.setX(leftUpBinded.getX());
                         leftUp.setY(leftUpBinded.getY());
                         rightDown.setX(rightDownBinded.getX());

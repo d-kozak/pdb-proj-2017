@@ -205,6 +205,7 @@ public class Entity {
         copy.setId(getId());
         copy.setName(getName());
         copy.setDescription(getDescription());
+        copy.setColor(getColor());
         copy.setFlag(getFlag());
         copy.setFrom(getFrom());
         copy.setTo(getTo());
@@ -223,7 +224,14 @@ public class Entity {
     private void updateGeometry() {
         Entity copy = this.copyOf();
         log.info("Updating geometry...");
-        entityService.updateEntity(copy, "geometry", () -> {
+        entityService.updateEntity(copy, "geometry", (newEntity) -> {
+            entityService.getEntities()
+                         .remove(copy);
+            entityService.getEntities()
+                         .add(newEntity);
+            entityService.getConfiguration()
+                         .getMapRenderer()
+                         .redraw();
             showInfo("Entity updated", "Entity updated successfully");
         }, () -> {
             showError("Database error", "Could not update entity");

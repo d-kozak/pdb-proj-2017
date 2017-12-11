@@ -72,8 +72,11 @@ public abstract class AbstractPointListBasedInfoPresenter implements Initializab
         updatePointInList(oldValue, newValue, updatedPoints);
         copy.setGeometry(createGeometry(updatedPoints));
         entityService.updateEntity(copy, "geometry",
-                () -> {
-                    updatePointInList(oldValue, newValue, points);
+                (newEntity) -> {
+                    ObservableList<Point> newPoints = ((ObservableList<Point>) newEntity.getGeometry()
+                                                                                        .getDescription());
+                    this.points.clear();
+                    this.points.addAll(newPoints);
                     reloadDetails();
                     configuration.getMapRenderer()
                                  .redraw();
@@ -98,8 +101,11 @@ public abstract class AbstractPointListBasedInfoPresenter implements Initializab
         newPoints.remove(point);
         copy.setGeometry(createGeometry(newPoints));
         entityService.updateEntity(copy, "geometry",
-                () -> {
-                    points.remove(point);
+                (newEntity) -> {
+                    ObservableList<Point> updatedPoint = ((ObservableList<Point>) newEntity.getGeometry()
+                                                                                           .getDescription());
+                    this.points.clear();
+                    this.points.addAll(updatedPoint);
                     pointsListView.refresh();
                     reloadDetails();
                     configuration.getMapRenderer()
@@ -120,8 +126,11 @@ public abstract class AbstractPointListBasedInfoPresenter implements Initializab
             pointsCopy.add(newPoint);
             copy.setGeometry(createGeometry(pointsCopy));
             entityService.updateEntity(copy, "geometry",
-                    () -> {
-                        this.points.add(newPoint);
+                    (newEntity) -> {
+                        ObservableList<Point> newPoints = ((ObservableList<Point>) newEntity.getGeometry()
+                                                                                            .getDescription());
+                        this.points.clear();
+                        this.points.addAll(newPoints);
                         xField.setText("");
                         yField.setText("");
                         reloadDetails();

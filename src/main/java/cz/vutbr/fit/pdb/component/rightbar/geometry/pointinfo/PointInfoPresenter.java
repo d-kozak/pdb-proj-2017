@@ -113,7 +113,7 @@ public class PointInfoPresenter implements Initializable {
             copy.setGeometry(new PointGeometry(editedPoint));
 
             entityService.updateEntity(copy, "geometry",
-                    () -> {
+                    (newEntity) -> {
                         originalPoint.setX(editedPoint.getX());
                         originalPoint.setY(editedPoint.getY());
                         configuration.getMapRenderer()

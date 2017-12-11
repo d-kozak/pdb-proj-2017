@@ -121,7 +121,7 @@ public class RightbarPresenter implements Initializable {
             Entity copy = entity.copyOf();
             copy.setName(nameField.getText());
             entityService.updateEntity(copy, "name",
-                    () -> {
+                    (newEntity) -> {
                         showInfo("Entity updated", "Entity updated successfully");
                         entity.setName(nameField.getText());
                     },
@@ -138,7 +138,7 @@ public class RightbarPresenter implements Initializable {
             if (keyEvent.getCode()
                         .equals(KeyCode.ENTER)) {
                 entityService.updateEntity(copy, "description",
-                        () -> {
+                        (newEntity) -> {
                             showInfo("Entity updated", "Entity updated successfully");
                             entity.setDescription(descriptionField.getText());
                         },
@@ -204,7 +204,7 @@ public class RightbarPresenter implements Initializable {
             Entity copy = entity.copyOf();
             copy.setFrom(newValue);
             entityService.updateEntity(copy, "from",
-                    () -> {
+                    (newEntity) -> {
                         showInfo("Entity updated", "Entity updated successfully");
                         entity.setFrom(fromDate.getValue());
                     },
@@ -221,7 +221,7 @@ public class RightbarPresenter implements Initializable {
             Entity copy = entity.copyOf();
             copy.setTo(newValue);
             entityService.updateEntity(copy, "to",
-                    () -> {
+                    (newEntity) -> {
                         showInfo("Entity updated", "Entity updated successfully");
                         entity.setTo(toDate.getValue());
                     },

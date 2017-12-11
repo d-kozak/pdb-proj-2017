@@ -130,7 +130,7 @@ public class CircleInfoPresenter implements Initializable {
                                                .copyOf();
             copy.setGeometry(new CircleGeometry(backUpCenter.getX(), center.getY(), radius.get()));
             entityService.updateEntity(copy, "geometry",
-                    () -> {
+                    (newEntity) -> {
                         center.setX(backUpCenter.getX());
                         configuration.getMapRenderer()
                                      .redraw();
@@ -150,7 +150,7 @@ public class CircleInfoPresenter implements Initializable {
                                                .copyOf();
             copy.setGeometry(new CircleGeometry(center.getX(), backUpCenter.getY(), radius.get()));
             entityService.updateEntity(copy, "geometry",
-                    () -> {
+                    (newEntity) -> {
                         center.setY(backUpCenter.getY());
                         configuration.getMapRenderer()
                                      .redraw();
@@ -171,7 +171,7 @@ public class CircleInfoPresenter implements Initializable {
                                                .copyOf();
             copy.setGeometry(new CircleGeometry(center.getX(), center.getY(), backUpRadius.get()));
             entityService.updateEntity(copy, "geometry",
-                    () -> {
+                    (newEntity) -> {
                         radius.set(backUpRadius.get());
                         configuration.getMapRenderer()
                                      .redraw();
