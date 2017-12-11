@@ -5,9 +5,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import lombok.extern.java.Log;
 
-import static cz.vutbr.fit.pdb.utils.MathUtils.distance;
-import static java.lang.String.format;
-
 @Log
 public class CircleGeometry implements EntityGeometry {
     private Point center;
@@ -31,13 +28,6 @@ public class CircleGeometry implements EntityGeometry {
     @Override
     public Object getDescription() {
         return new Object[]{center, radius};
-    }
-
-    @Override
-    public boolean containsPoint(double x, double y) {
-        double distance = distance(x, y, center.getX(), center.getY());
-        log.info(format("Distance between [%f,%f] and [%f,%f] is %f", x, y, center.getX(), center.getY(), distance));
-        return distance < radius.getValue();
     }
 
     public Point getCenter() {

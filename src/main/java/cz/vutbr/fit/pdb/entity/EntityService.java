@@ -5,7 +5,9 @@ import cz.vutbr.fit.pdb.entity.concurent.AddEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.LoadAllEntitiesTask;
 import cz.vutbr.fit.pdb.entity.concurent.RemoveEntityTask;
 import cz.vutbr.fit.pdb.entity.concurent.UpdateEntityTask;
+import cz.vutbr.fit.pdb.entity.concurent.geometry.SelectEntitiesAtTask;
 import cz.vutbr.fit.pdb.entity.concurent.picture.*;
+import cz.vutbr.fit.pdb.entity.geometry.Point;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -17,6 +19,9 @@ import lombok.extern.java.Log;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -89,15 +94,35 @@ public class EntityService {
         return entities;
     }
 
-    public void tryToSelectEntityAt(double x, double y) {
-        Optional<Entity> entityAt = entities.stream()
-                                            .filter(entity -> entity.getGeometry()
-                                                                    .containsPoint(x, y))
-                                            .findFirst();
-        entityAt.ifPresent(entity -> {
-            log.info(String.format("Changing entity from %s to %s", selectedEntityService.getEntityProperty(), entity));
-            selectedEntityService.setEntityProperty(entity);
+    public Task<ObservableList<Integer>> tryToSelectEntityAt(double x, double y) {
+        log.info(String.format("Trying to select entity at [%f,%f]", x, y));
+        SelectEntitiesAtTask selectEntitiesAtTask = new SelectEntitiesAtTask();
+        selectEntitiesAtTask.setPoint(new Point(x, y));
+        selectEntitiesAtTask.setOnSucceeded(event -> {
+            ObservableList<Integer> loadedEntities = selectEntitiesAtTask.getValue();
+            Map<Integer, Entity> entitiesMap = new HashMap<>();
+            for (Entity entity : entities) {
+                entitiesMap.put(entity.getId(), entity);
+            }
+            Optional<Entity> entityAt = loadedEntities.stream()
+                                                      .map(entitiesMap::get)
+                                                      .sorted(Comparator.comparingInt(value -> value.getGeometryType()
+                                                                                                    .ordinal()))
+                                                      .findFirst();
+            entityAt.ifPresent(entity -> {
+                showInfo(entity.getName() + " selected", "");
+                log.info(String.format("Changing entity from %s to %s", selectedEntityService.getEntityProperty(), entity));
+                selectedEntityService.setEntityProperty(entity);
+            });
+            if (!entityAt.isPresent()) {
+                showInfo("Empty select", String.format("No entities found at [%f,%f]", x, y));
+            }
         });
+        selectEntitiesAtTask.setOnFailed(event -> {
+            showError("Database error", "Could not select entity");
+        });
+        Configuration.THREAD_POOL.submit(selectEntitiesAtTask);
+        return selectEntitiesAtTask;
     }
 
     public Task<Void> removeEntity(Entity entity, Runnable onSucceeded, Runnable onFailed) {
