@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.entity.concurent.geometry;
 
+import cz.vutbr.fit.pdb.db.Spatial;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.geometry.PointDetails;
 import javafx.concurrent.Task;
@@ -10,9 +11,8 @@ public class GetPointDetailsTask extends Task<PointDetails> {
 
     @Override
     protected PointDetails call() throws Exception {
-        Thread.sleep(2000);
         PointDetails pointDetails = new PointDetails();
-        pointDetails.setNearestRiver("Amazonka");
+        pointDetails.setNearestRiver(Spatial.getNearestRiver(entity));
         return pointDetails;
     }
 
