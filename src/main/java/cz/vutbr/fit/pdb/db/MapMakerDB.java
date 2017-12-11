@@ -345,7 +345,6 @@ public class MapMakerDB {
                     new int[]{1, 1003, 3}, // exterior polygon
                     coords
             );
-            geo = cutToNotOverlap(geo);
             return geo;
         } else if (geometry instanceof PolygonGeometry) {
             List<Point> points = new ArrayList<>(((PolygonGeometry) geometry).getPoints());
