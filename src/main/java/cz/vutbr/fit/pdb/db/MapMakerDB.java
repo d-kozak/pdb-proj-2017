@@ -508,6 +508,31 @@ public class MapMakerDB {
         return -1;
     }
 
+    public static String getNearestRiver(Entity entity) {
+        try (PreparedStatement stmt = DBConnection.getInstance()
+                .getConnection()
+                .prepareStatement(
+                        "SELECT r.name, SDO_GEOM.SDO_DISTANCE(e.geometry, r.geometry, 0.005) AS dist " +
+                                "FROM spatialEntity e, spatialEntity r "+
+                                "WHERE e.id = ? AND e.id <> r.id  AND r.entityType = 'river' " +
+                                "ORDER BY dist"
+                )) {
+            stmt.setInt(1, entity.getId());
+            try (ResultSet rset = stmt.executeQuery()) {
+                if (rset.next()) {
+                    return rset.getString("name");
+                }
+            } catch (SQLException ex) {
+                log.severe("Execute SQL query exception: " + ex);
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException ex) {
+            log.severe("Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+        return "";
+    }
+
     /**
      * Returns names of entities inside the given entity.
      * @param entity
