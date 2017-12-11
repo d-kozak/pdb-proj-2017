@@ -62,6 +62,7 @@ public class MapPresenter implements Initializable, MapRenderer {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         WebEngine webEngine = webview.getEngine();
+        webview.setContextMenuEnabled(false);
 
         // set up the listener
         webEngine.getLoadWorker()
