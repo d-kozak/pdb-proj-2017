@@ -369,8 +369,8 @@ public class MapMakerDB {
         return null;
     }
 
-    public static List<Integer> entitiesContainingPoint(Point point) {
-        List<Integer> list = new Vector<>();
+    public static ObservableList<Integer> entitiesContainingPoint(Point point) {
+        ObservableList<Integer> list = FXCollections.observableArrayList();
         try (PreparedStatement stmt = DBConnection.getInstance()
                 .getConnection()
                 .prepareStatement(
@@ -452,7 +452,6 @@ public class MapMakerDB {
      */
     public static ObservableList<String> entitiesInside(Entity entity) {
         ObservableList<String> list = FXCollections.observableArrayList();
-        log.severe("IN");
         try (PreparedStatement stmt = DBConnection.getInstance()
                 .getConnection()
                 .prepareStatement(
@@ -464,7 +463,6 @@ public class MapMakerDB {
                 )) {
             stmt.setInt(1, entity.getId());
             try (ResultSet rset = stmt.executeQuery()) {
-                log.severe("IN");
                 while (rset.next()) {
                     list.add(rset.getString("name"));
                 }

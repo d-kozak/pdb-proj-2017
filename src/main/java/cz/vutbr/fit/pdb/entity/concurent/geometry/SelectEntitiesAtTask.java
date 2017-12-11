@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.entity.concurent.geometry;
 
+import cz.vutbr.fit.pdb.db.MapMakerDB;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,7 +11,7 @@ public class SelectEntitiesAtTask extends Task<ObservableList<Integer>> {
 
     @Override
     protected ObservableList<Integer> call() throws Exception {
-        return FXCollections.observableArrayList();
+        return MapMakerDB.entitiesContainingPoint(point);
     }
 
     public void setPoint(Point point) {
