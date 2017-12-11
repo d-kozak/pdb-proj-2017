@@ -17,10 +17,13 @@ public class ImageEditTask extends Task<EntityImage> {
                 Picture.makeImageGrayscale(entityImage);
                 break;
             case MONOCHROMATIC:
+                Picture.makeImageMonochrome(entityImage);
                 break;
             case ROTATE_LEFT:
+                Picture.makeImageRotateLeft(entityImage);
                 break;
             case ROTATE_RIGHT:
+                Picture.makeImageRotateRight(entityImage);
                 break;
         }
         return null;
