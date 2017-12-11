@@ -387,7 +387,6 @@ public class MapMakerDB {
             try (ResultSet rset = stmt.executeQuery()) {
                 while (rset.next()) {
                     list.add(rset.getInt("id"));
-                    log.severe("ENT " + list.get(list.size() - 1));
                 }
             } catch (SQLException ex) {
                 log.severe("Execute SQL query exception: " + ex);
@@ -398,7 +397,86 @@ public class MapMakerDB {
             throw new RuntimeException(ex);
         }
         return list;
+    }
 
+    public static double getArea(Entity entity) {
+        try (PreparedStatement stmt = DBConnection.getInstance()
+                .getConnection()
+                .prepareStatement(
+                        "SELECT SDO_GEOM.SDO_AREA(e.geometry,0.005) AS area " +
+                           "FROM spatialEntity e WHERE e.id = ?"
+                )) {
+            stmt.setInt(1, entity.getId());
+            try (ResultSet rset = stmt.executeQuery()) {
+                if (rset.next()) {
+                    return rset.getDouble("area");
+                }
+            } catch (SQLException ex) {
+                log.severe("Execute SQL query exception: " + ex);
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException ex) {
+            log.severe("Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+        return -1;
+    }
+
+    public static double getCircumference(Entity entity) {
+        try (PreparedStatement stmt = DBConnection.getInstance()
+                .getConnection()
+                .prepareStatement(
+                        "SELECT SDO_GEOM.SDO_LENGTH(e.geometry,0.005) AS length " +
+                                "FROM spatialEntity e WHERE e.id = ?"
+                )) {
+            stmt.setInt(1, entity.getId());
+            try (ResultSet rset = stmt.executeQuery()) {
+                if (rset.next()) {
+                    return rset.getDouble("length");
+                }
+            } catch (SQLException ex) {
+                log.severe("Execute SQL query exception: " + ex);
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException ex) {
+            log.severe("Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+        return -1;
+    }
+
+    /**
+     * Returns names of entities inside the given entity.
+     * @param entity
+     * @return
+     */
+    public static ObservableList<String> entitiesInside(Entity entity) {
+        ObservableList<String> list = FXCollections.observableArrayList();
+        log.severe("IN");
+        try (PreparedStatement stmt = DBConnection.getInstance()
+                .getConnection()
+                .prepareStatement(
+                        "SELECT outerE.name " +
+                                "FROM spatialEntity innerE, spatialEntity outerE " +
+                                "WHERE SDO_CONTAINS(outerE.geometry, innerE.geometry) = 'TRUE' " +
+                                "AND (innerE.id <> outerE.id) " +
+                                "AND innerE.id = ?"
+                )) {
+            stmt.setInt(1, entity.getId());
+            try (ResultSet rset = stmt.executeQuery()) {
+                log.severe("IN");
+                while (rset.next()) {
+                    list.add(rset.getString("name"));
+                }
+            } catch (SQLException ex) {
+                log.severe("Execute SQL query exception: " + ex);
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException ex) {
+            log.severe("Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+        return list;
     }
 
     private boolean initPictures() {
