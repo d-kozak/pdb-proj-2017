@@ -337,12 +337,14 @@ public class MapMakerDB {
                               .getX();
             coords[3] = points.get(1)
                               .getY();
-            return new JGeometry(
+            JGeometry geo = new JGeometry(
                     3,
                     SRID,
                     new int[]{1, 1003, 3}, // exterior polygon
                     coords
             );
+            geo = cutToNotOverlap(geo);
+            return geo;
         } else if (geometry instanceof PolygonGeometry) {
             List<Point> points = new ArrayList<>(((PolygonGeometry) geometry).getPoints());
             if (are_clockwise_points(points)) {
@@ -364,12 +366,14 @@ public class MapMakerDB {
                                                   .getY();
             }
             ;
-            return new JGeometry(
+            JGeometry geo = new JGeometry(
                     3,
                     SRID,
                     new int[]{1, 1003, 1}, // exterior polygon
                     coords
             );
+            geo = cutToNotOverlap(geo);
+            return geo;
         } else if (geometry instanceof LineGeometry) {
             ObservableList<Point> points = ((LineGeometry) geometry).getPoints();
             double coords[] = new double[points.size() * DIMENSION];
@@ -497,6 +501,71 @@ public class MapMakerDB {
             throw new RuntimeException(ex);
         }
         return list;
+    }
+
+    private static JGeometry cutToNotOverlap(JGeometry geo) {
+        List<Integer> overlappingIds = new Vector<>();
+        Struct geoStruct;
+        try {
+            geoStruct = JGeometry.storeJS(DBConnection.getInstance().getConnection(), geo);
+        } catch (Exception ex) {
+            log.severe("To JGeometry: " + ex);
+            throw new RuntimeException(ex);
+        }
+        try (PreparedStatement stmt = DBConnection.getInstance()
+                .getConnection()
+                .prepareStatement(
+                        "SELECT e.id " +
+                                "FROM spatialEntity e " +
+                                "WHERE SDO_RELATE(e.geometry, ?, 'mask=OVERLAPBDYINTERSECT') = 'TRUE' " +
+                                "AND e.entityType IN ('country', 'countryRec')"
+
+                )) {
+            stmt.setObject(1, geoStruct);
+            try (ResultSet rset = stmt.executeQuery()) {
+                while (rset.next()) {
+                    overlappingIds.add(rset.getInt("id"));
+                }
+            } catch (SQLException ex) {
+                log.severe("Execute SQL query exception: " + ex);
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException ex) {
+            log.severe("Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+        return cutWithEntities(geo, overlappingIds);
+    }
+
+    private static JGeometry cutWithEntities(JGeometry geo, List<Integer> overlappingIds) {
+        for (Integer id : overlappingIds) {
+            Struct geoStruct;
+            try {
+                geoStruct = JGeometry.storeJS(DBConnection.getInstance().getConnection(), geo);
+            } catch (Exception ex) {
+                log.severe("To JGeometry: " + ex);
+                throw new RuntimeException(ex);
+            }
+            try (PreparedStatement stmt = DBConnection.getInstance().getConnection()
+                    .prepareStatement(
+                            "SELECT SDO_GEOM.SDO_DIFFERENCE(?, e.geometry, 0.005) AS geo " +
+                                    "FROM spatialEntity e " +
+                                    "WHERE e.id = ?"
+                    )) {
+                stmt.setObject(1, geoStruct);
+                stmt.setInt(2, id);
+                try (ResultSet rset = stmt.executeQuery()) {
+                    if (rset.next()) {
+                        byte[] data = rset.getBytes("geo");
+                        geo = JGeometry.load(data);
+                    }
+                }
+            } catch (Exception ex) {
+                log.severe("Create SQL statement exception: " + ex);
+                throw new RuntimeException(ex);
+            }
+        }
+        return geo;
     }
 
     private boolean initPictures() {
