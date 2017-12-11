@@ -4,5 +4,6 @@ public enum ImageOperation {
     ROTATE_LEFT,
     ROTATE_RIGHT,
     MONOCHROMATIC,
-    GREYSCALE;
+    GREYSCALE,
+    MIRROW;
 }

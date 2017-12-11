@@ -61,8 +61,13 @@ public class PictureListViewItem {
             onImageOperation.accept(image, ImageOperation.GREYSCALE);
         });
 
+        MenuItem mirrowMenuItem = new MenuItem("Mirrow");
+        greyscaleMenuItem.setOnAction(event -> {
+            onImageOperation.accept(image, ImageOperation.MIRROW);
+        });
+
         contextMenu.getItems()
-                   .addAll(setAsFlagMenuItem, deletePictureMenuItem, rotateLeftMenuItem, rotateRightMenuItem, monochromaticMenuItem, greyscaleMenuItem);
+                   .addAll(setAsFlagMenuItem, deletePictureMenuItem, rotateLeftMenuItem, rotateRightMenuItem, monochromaticMenuItem, greyscaleMenuItem, mirrowMenuItem);
         hbox.setOnContextMenuRequested(event -> {
             contextMenu.show(getView(), event.getSceneX(), event.getSceneY());
         });
