@@ -40,13 +40,16 @@ public class PolygonInfoPresenter extends AbstractPointListBasedInfoPresenter {
         polygonDetailsTask.setEntity(getSelectedEntity());
         polygonDetailsTask.setOnSucceeded(event -> {
             PolygonDetails polygonDetails = polygonDetailsTask.getValue();
-            Text area = new Text("Are of the polygon is: " + polygonDetails.getArea());
+            Text area = new Text("Area of the polygon is: " + polygonDetails.getArea());
+            area.setWrappingWidth(150);
             Text circumference = new Text("Circumference of the polygon is: " + polygonDetails.getCircumference());
+            circumference.setWrappingWidth(150);
             Text entitiesInside = new Text("Contains entities: " +
                     polygonDetails.getEntitiesInside()
                                   .stream()
                                   .collect(joining(","))
             );
+            entitiesInside.setWrappingWidth(150);
             vbox.getChildren()
                 .addAll(area, circumference, entitiesInside);
         });

@@ -1,5 +1,6 @@
 package cz.vutbr.fit.pdb.component.menubar;
 
+import cz.vutbr.fit.pdb.component.about.AboutView;
 import cz.vutbr.fit.pdb.component.settings.SettingsView;
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.EntityService;
@@ -103,18 +104,8 @@ public class MenubarPresenter {
 
 
     @FXML
-    private void onShowTutorial(ActionEvent event) {
-        notImpl();
-    }
-
-
-    @FXML
     private void onShowAbout(ActionEvent event) {
-        notImpl();
+        JavaFXUtils.openModalDialog(primaryStage, "About", new AboutView());
     }
 
-    private void notImpl() {
-        showError("Error", "Not impl yet!");
-        log.severe("Not impl yet!");
-    }
 }
