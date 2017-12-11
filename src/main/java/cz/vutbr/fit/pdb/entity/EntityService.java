@@ -114,13 +114,12 @@ public class EntityService {
                                                                                                     .ordinal()))
                                                       .findFirst();
             entityAt.ifPresent(entity -> {
-                showInfo(entity.getName() + " selected", "");
+                // TODO fix the db select
                 log.info(String.format("Changing entity from %s to %s", selectedEntityService.getEntityProperty(), entity));
-                selectedEntityService.setEntityProperty(entity);
             });
         });
         selectEntitiesAtTask.setOnFailed(event -> {
-            showError("Database error", "Could not select entity");
+
         });
         Configuration.THREAD_POOL.submit(selectEntitiesAtTask);
         return selectEntitiesAtTask;
