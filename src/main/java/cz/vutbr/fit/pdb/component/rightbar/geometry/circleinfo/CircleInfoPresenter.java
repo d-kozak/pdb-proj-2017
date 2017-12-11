@@ -85,8 +85,9 @@ public class CircleInfoPresenter implements Initializable {
             Text entitiesInside = new Text("Contains entities: " + circleDetails.getEntitiesInside()
                                                                                 .stream()
                                                                                 .collect(joining(",")));
-            Text nearestRiver = new Text("Nearest river: " + circleDetails.getNearestRiver());
             entitiesInside.setWrappingWidth(150);
+            Text nearestRiver = new Text("Nearest river: " + circleDetails.getNearestRiver());
+            nearestRiver.setWrappingWidth(150);
             vbox.getChildren()
                 .addAll(area, circumference, entitiesInside, nearestRiver);
         });
