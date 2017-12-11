@@ -90,10 +90,15 @@ public class MapMakerDB {
                             byte[] countryData = rset.getBytes("geometry");
                             JGeometry jGeometryCountry = JGeometry.load(countryData);
                             double[] countryCoords = jGeometryCountry.getOrdinatesArray();
+                            int[] elemInfo = jGeometryCountry.getElemInfo();
                             int dimensions = jGeometryCountry.getDimensions();
                             // We do not want the last point - it's same as the frist one in the DB
                             // and Entity does not store the first one also as the last one
                             Integer countryCoordsCount = jGeometryCountry.getNumPoints() - 1;
+                            if (elemInfo.length > 3) {
+                                // We want elements only from the first part.
+                                countryCoordsCount = (elemInfo[3] / dimensions);
+                            }
                             ObservableList<Point> countryPoints = FXCollections.observableArrayList();
                             for (Integer i = 0; i < countryCoordsCount * dimensions; i += dimensions) {
                                 countryPoints.add(new Point(countryCoords[i], countryCoords[i + 1]));
