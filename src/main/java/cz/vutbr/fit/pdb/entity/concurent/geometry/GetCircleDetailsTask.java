@@ -16,6 +16,7 @@ public class GetCircleDetailsTask extends Task<CircleDetails> {
         circleDetails.setArea(Spatial.getArea(entity));
         circleDetails.setCircumference(Spatial.getCircumference(entity));
         circleDetails.setEntitiesInside(Spatial.entitiesInside(entity));
+        circleDetails.setNearestRiver(Spatial.getNearestRiver(entity));
         return circleDetails;
     }
 
