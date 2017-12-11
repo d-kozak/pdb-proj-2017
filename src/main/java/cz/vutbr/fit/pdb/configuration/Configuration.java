@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import lombok.extern.java.Log;
 
+import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,6 +39,8 @@ public class Configuration {
     private IntegerProperty maximumYear = new SimpleIntegerProperty(3000);
 
     private ObjectProperty<Node> map = new SimpleObjectProperty<>();
+
+    private ObjectProperty<URI> mapBG = new SimpleObjectProperty(getClass().getResource("WoW.jpg"));
 
     private MapRenderer mapRenderer;
 
@@ -180,5 +183,18 @@ public class Configuration {
 
     public ObjectProperty<Node> mapProperty() {
         return map;
+    }
+
+
+    public URI getMapBG() {
+        return mapBG.get();
+    }
+
+    public void setMapBG(URI bg) {
+        this.mapBG.set(bg);
+    }
+
+    public ObjectProperty<URI> mapBGProperty() {
+        return mapBG;
     }
 }

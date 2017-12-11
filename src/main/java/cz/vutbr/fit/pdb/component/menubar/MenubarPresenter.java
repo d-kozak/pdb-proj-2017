@@ -1,11 +1,13 @@
 package cz.vutbr.fit.pdb.component.menubar;
 
+import cz.vutbr.fit.pdb.App;
 import cz.vutbr.fit.pdb.component.about.AboutView;
 import cz.vutbr.fit.pdb.component.settings.SettingsView;
 import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.concurent.InitDatabaseTask;
 import cz.vutbr.fit.pdb.utils.JavaFXUtils;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -57,6 +59,16 @@ public class MenubarPresenter {
         });
         showInfo("Initialization started", "Please wait a little");
         Configuration.THREAD_POOL.submit(initDatabaseTask);
+    }
+
+    @FXML
+    private void onLoadBG(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select image for map background");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image", "*.jpg", "*.jpeg", "*.png", "*.bmp"));
+        File img = fileChooser.showOpenDialog(primaryStage);
+        configuration.setMapBG(img.toURI());
     }
 
     @FXML
