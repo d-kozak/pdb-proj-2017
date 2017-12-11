@@ -217,9 +217,11 @@ public class MapMakerDB {
             return entity;
         }
         if (field == "from") {
-            field = "validFrom";
+            updateFrom(entity);
+            return entity;
         } else if (field == "to") {
-            field = "validTo";
+            updateTo(entity);
+            return entity;
         }
         EntityGeometry geo = entity.getGeometry();
         JGeometry jGeo = Spatial.geometryToJGeometry(geo);
@@ -234,12 +236,6 @@ public class MapMakerDB {
             switch (field) {
                 case "name":
                     stmt.setString(1, entity.getName());
-                    break;
-                case "validFrom":
-                    stmt.setDate(1, Date.valueOf(entity.getFrom()));
-                    break;
-                case "validTo":
-                    stmt.setDate(1, Date.valueOf(entity.getTo()));
                     break;
                 case "color":
                     stmt.setString(1, entity.getColor()
@@ -281,6 +277,91 @@ public class MapMakerDB {
         dbConnection.execute("DELETE FROM SpatialEntity " +
                 "WHERE id = " + entity.getId()
         );
+    }
+
+    private static void updateFrom(Entity entity) {
+        LocalDate oldFrom = null;
+        try (PreparedStatement stmt = DBConnection.getInstance()
+                .getConnection()
+                .prepareStatement(
+                        "SELECT validFrom FROM SPATIALENTITY WHERE id = ? "
+                )) {
+            stmt.setInt(1, entity.getId());
+            try (ResultSet rset = stmt.executeQuery()) {
+                if (rset.next()) {
+                    oldFrom = rset.getDate("validFrom").toLocalDate();
+                } else {
+                    throw new RuntimeException();
+                }
+            }
+        } catch (SQLException ex) {
+            log.severe("Insert entity: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+
+        try (PreparedStatement stmt = DBConnection.getInstance()
+                .getConnection()
+                .prepareStatement(
+                        "UPDATE SpatialEntity SET validFrom = ? WHERE id = ? "
+                )) {
+            stmt.setDate(1, Date.valueOf(entity.getFrom()));
+            stmt.setInt(2, entity.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            log.severe("Insert entity: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+
+        if (entity.getFrom().compareTo(oldFrom) > 0) {
+            Entity e = entity.copyOf();
+            e.setTo(e.getFrom());
+            e.setFrom(oldFrom);
+            insertEntity(e);
+        }
+    }
+
+
+    private static void updateTo(Entity entity) {
+        LocalDate oldTo = null;
+        try (PreparedStatement stmt = DBConnection.getInstance()
+                .getConnection()
+                .prepareStatement(
+                        "SELECT validTo FROM SPATIALENTITY WHERE id = ? "
+                )) {
+            stmt.setInt(1, entity.getId());
+            try (ResultSet rset = stmt.executeQuery()) {
+                if (rset.next()) {
+                    oldTo = rset.getDate("validTo").toLocalDate();
+                } else {
+                    throw new RuntimeException();
+                }
+            }
+        } catch (SQLException ex) {
+            log.severe("Insert entity: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+
+        try (PreparedStatement stmt = DBConnection.getInstance()
+                .getConnection()
+                .prepareStatement(
+                        "UPDATE SpatialEntity SET validTo = ? WHERE id = ? "
+                )) {
+            stmt.setDate(1, Date.valueOf(entity.getTo()));
+            stmt.setInt(2, entity.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            log.severe("Insert entity: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+
+        if (entity.getTo().compareTo(oldTo) < 0) {
+            Entity e = entity.copyOf();
+            e.setFrom(e.getTo());
+            e.setTo(oldTo);
+            insertEntity(e);
+        }
     }
 
     /**
