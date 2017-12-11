@@ -19,28 +19,36 @@ import java.util.Vector;
 public class Spatial {
 
     /**
-     * Returns IDs of entities that contain the given point.
+     * Returns IDs of entities that contain the given point with the given tolerance.
      * @param point
+     * @param tolerance
      * @return
      */
-    public static ObservableList<Integer> entitiesContainingPoint(Point point) {
+    public static ObservableList<Integer> entitiesContainingPoint(Point point, int tolerance) {
+        log.info("Searching for near entities...");
         ObservableList<Integer> list = FXCollections.observableArrayList();
         try (PreparedStatement stmt = DBConnection.getInstance()
                 .getConnection()
                 .prepareStatement(
-                    "SELECT e.id " +
+                    "SELECT e.id, e.name " +
                        "FROM spatialEntity e " +
-                       "WHERE SDO_CONTAINS(e.geometry, " +
-                       "  SDO_GEOMETRY(2001, NULL, " +
-                       "     SDO_POINT_TYPE(?, ?, NULL), " +
-                       "     NULL, NULL) " +
-                       "  ) = 'TRUE'"
+                       "WHERE SDO_RELATE(e.geometry, " +
+                       "  SDO_GEOMETRY(2003, NULL, NULL, " +
+                       "    SDO_ELEM_INFO_ARRAY(1, 1003, 4), " +
+                       "    SDO_ORDINATE_ARRAY(?, ?, ?, ?, ?, ?)), " +
+                       "  'mask=anyinteract') = 'TRUE'"
                 )) {
             stmt.setDouble(1, point.getX());
-            stmt.setDouble(2, point.getY());
+            stmt.setDouble(2, point.getY() - tolerance);
+            stmt.setDouble(3, point.getX());
+            stmt.setDouble(4, point.getY() + tolerance);
+            stmt.setDouble(5, point.getX() + tolerance);
+            stmt.setDouble(6, point.getY());
+
             try (ResultSet rset = stmt.executeQuery()) {
                 while (rset.next()) {
                     list.add(rset.getInt("id"));
+                    log.info(("Near entities: " + rset.getString("name")));
                 }
             } catch (SQLException ex) {
                 log.severe("Execute SQL query exception: " + ex);

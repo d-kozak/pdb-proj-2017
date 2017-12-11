@@ -8,11 +8,13 @@ import javafx.concurrent.Task;
 
 public class SelectEntitiesAtTask extends Task<ObservableList<Integer>> {
     private Point point;
+    private static final int TOLERANCE = 10;
 
     @Override
     protected ObservableList<Integer> call() throws Exception {
         JavaFXUtils.startWithTimeout(3000, this);
-        return Spatial.entitiesContainingPoint(point);
+        return Spatial.entitiesContainingPoint(point, TOLERANCE);
+
     }
 
     public void setPoint(Point point) {
