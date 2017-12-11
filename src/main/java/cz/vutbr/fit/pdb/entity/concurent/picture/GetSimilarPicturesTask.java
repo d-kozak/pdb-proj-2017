@@ -2,7 +2,6 @@ package cz.vutbr.fit.pdb.entity.concurent.picture;
 
 import cz.vutbr.fit.pdb.db.Picture;
 import cz.vutbr.fit.pdb.entity.EntityImage;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import lombok.extern.java.Log;
@@ -14,7 +13,7 @@ public class GetSimilarPicturesTask extends Task<ObservableList<EntityImage>> {
 
     @Override
     protected ObservableList<EntityImage> call() throws Exception {
-        return Picture.findSmiliar(entityImage, COUNT);
+        return Picture.findSimilar(entityImage, COUNT);
     }
 
     public EntityImage getEntityImage() {

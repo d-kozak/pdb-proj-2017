@@ -471,7 +471,7 @@ public class Picture {
         return images;
     }
 
-    public static ObservableList<EntityImage> findSmiliar(EntityImage entityImage, Integer count) {
+    public static ObservableList<EntityImage> findSimilar(EntityImage entityImage, Integer count) {
         Connection connection = DBConnection.getInstance()
                                             .getConnection();
         ObservableList<EntityImage> images = FXCollections.observableArrayList();
