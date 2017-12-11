@@ -26,11 +26,26 @@
 <div id="map"></div>
 
 <script>
-    var map = new L.Map('map', { center: new L.LatLng(49.2, 16.6333000), zoom: 6 }),
-            geoEntities = L.featureGroup().addTo(map);
+    /*var map = new L.Map('map', { center: new L.LatLng(49.2, 16.6333000), zoom: 6 })
     L.tileLayer('https://mapserver.mapy.cz/zemepis-m/{z}-{x}-{y}', {
         attribution: "<img src=\"http://mapy.cz/img/logo-small.svg\" style=\"height: 10px\" /> © <a href=\"//www.seznam.cz\" target=\"_blank\">Seznam.cz, a.s.</a>, © <a href=\"//www.openstreetmap.org/copyright\" target=\"_blank\">OpenStreetMap</a>"
-    }).addTo(map);
+    }).addTo(map);*/
+	
+	var map = L.map('map', {
+		crs: L.CRS.Simple,
+		maxBounds: [[0,0], [1067, 1600]],
+		minZoom: -1,
+		zoomDelta: 0.5,
+        zoomSnap: 0,
+		maxBoundsViscosity: 1
+	})
+	
+	var bounds = [[0,0], [1067, 1600]];
+	var image = L.imageOverlay('WoW.jpg', bounds).addTo(map);
+	map.fitBounds(bounds)
+	map.setMinZoom(map.getZoom())
+	
+    geoEntities = L.featureGroup().addTo(map);
 	
     map.addControl(DrawControl = new L.Control.Draw({
         edit: {
@@ -57,6 +72,10 @@
 			layer;
 		})
     });
+	
+	map.on('drag', function() {
+		map.panInsideBounds(bounds, { animate: false });
+	});
 	
 	if(navigator.userAgent.indexOf("JavaFX") < 0) {
 		map.on("click", function(e) {

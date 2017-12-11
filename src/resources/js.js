@@ -228,17 +228,17 @@ VMBridge.prototype = {
 }
 
 function Point(x, y) {
-	return [48 + y / 100, 11 + x / 100] // [latitude, longitude]
+	return [y / 1000 * 1067, x / 1000 * 1600] // [latitude, longitude]
 }
 
 function Radius(r) {
-	return r*100
+	return r / 500 * 1600
 }
 
 function dePoint(xy) {
-	return [(xy.lng - 11) * 100, (xy.lat - 48) * 100] // [longitude, latitude]
+	return [xy.lng / 1600 * 1000, xy.lat / 1067 * 1000] // [longitude, latitude]
 }
 
 function deRadius(r) {
-	return r/100
+	return r / 1600 * 500
 }
