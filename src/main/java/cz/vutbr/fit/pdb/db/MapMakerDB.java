@@ -185,7 +185,7 @@ public class MapMakerDB {
 
     private static boolean addDescription(Entity entity) {
         Integer id = DBConnection.getInstance()
-                .getMaxId("spatialEntity") + 1;
+                .getMaxId("description") + 1;
         try (PreparedStatement stmt = DBConnection.getInstance()
                 .getConnection()
                 .prepareStatement(
@@ -194,13 +194,14 @@ public class MapMakerDB {
                 )) {
             stmt.setInt(1, id);
             stmt.setString(2, entity.getDescription());
-            stmt.setDate(3, Date.valueOf(entity.getFrom()));
-            stmt.setDate(4, Date.valueOf(entity.getTo()));
+            stmt.setDate(3, Date.valueOf(LocalDate.now()));
+            stmt.setDate(4, Date.valueOf(LocalDate.now()));
             stmt.setInt(5, entity.getId());
+            log.severe("UPDATING DESCR: " + entity.getDescription());
 
             stmt.executeUpdate();
         } catch (SQLException ex) {
-            log.severe("Update entity: Create SQL statement exception: " + ex);
+            log.severe("Update description: Create SQL statement exception: " + ex);
             throw new RuntimeException(ex);
         }
         return true;
@@ -245,6 +246,7 @@ public class MapMakerDB {
     public static void updateEntity(Entity entity, String field) {
         if (field == "description") {
             addDescription(entity);
+            return;
         }
         if (field == "from") {
             field = "validFrom";
