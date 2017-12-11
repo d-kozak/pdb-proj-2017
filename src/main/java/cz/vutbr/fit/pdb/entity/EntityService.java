@@ -121,12 +121,17 @@ public class EntityService {
                                                                                                     .ordinal()))
                                                       .findFirst();
             entityAt.ifPresent(entity -> {
-                // TODO fix the db select
                 log.info(String.format("Changing entity from %s to %s", selectedEntityService.getEntityProperty(), entity));
+                selectedEntityService.setEntityProperty(entity);
+                showInfo("Entity selected", "Entity " + entity.getName() + " selected");
             });
+            if (!entityAt.isPresent()) {
+                log.info("No entity found at [" + x + "," + y + "]");
+            }
         });
         selectEntitiesAtTask.setOnFailed(event -> {
-
+            printException(selectEntitiesAtTask.getException());
+            showError("Database errror", "Could not select an entity at [" + x + "," + y + "]");
         });
         Configuration.THREAD_POOL.submit(selectEntitiesAtTask);
         return selectEntitiesAtTask;
