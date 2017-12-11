@@ -294,7 +294,6 @@ public class Spatial {
         }
         // https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order#comment28629100_1165943
         // DB has 0,0 in left down corner, we have upper left, so this way it works (experimetns).
-        log.severe("SUM " + sum);
         return sum > 0;
     }
 
