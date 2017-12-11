@@ -9,6 +9,7 @@ import cz.vutbr.fit.pdb.configuration.DBConfiguration;
 import cz.vutbr.fit.pdb.db.DBConnection;
 import cz.vutbr.fit.pdb.utils.JavaFXUtils;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.extern.java.Log;
@@ -67,9 +68,12 @@ public class App extends Application {
         log.info("Verifying db connection");
         DBConnection dbConnection = DBConnection.getInstance();
         if (!dbConnection.isConnected()) {
-            while (!dbConnection.isConnected()) {
-                showError("Wrong credentials", "Please correct your database credentials and check the internet connection");
-                JavaFXUtils.openModalDialog(mainStage, "Settings", new SettingsView());
+            showError("Wrong credentials", "Please correct your database credentials and check the internet connection");
+            JavaFXUtils.openModalDialog(mainStage, "Settings", new SettingsView());
+            if (!dbConnection.isConnected()) {
+                log.severe("Use closed settings without connecting to the database, closing the app...");
+                Platform.exit();
+                return;
             }
             log.info("DB connection was fixed successfully");
             mainPresenter.reload();
