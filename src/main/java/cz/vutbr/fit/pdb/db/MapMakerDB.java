@@ -139,7 +139,7 @@ public class MapMakerDB {
                         default:
                             log.severe("Unknown spatial entity: " + entityType);
                     }
-                    entity.setDescription(loadDescriptionFor(entity.getId()));
+                    entity.setDescription(Description.loadDescriptionFor(entity.getId()));
                     entity.setFlag(Picture.loadFlagFor(entity.getId()));
                     entity.setImages(Picture.loadImagesFor(entity.getId()));
                     addEntity(entity);
@@ -156,55 +156,6 @@ public class MapMakerDB {
             throw new RuntimeException(ex);
         }
         return entities;
-    }
-
-    private static String loadDescriptionFor(Integer entityId) {
-        try (PreparedStatement stmt = DBConnection.getInstance()
-                                                  .getConnection()
-                                                  .prepareStatement(
-                                                          "SELECT * FROM Description " +
-                                                                  "WHERE spatialEntityId = ? " +
-                                                                  "ORDER BY validTo DESC " +
-                                                                  "FETCH FIRST 1 row ONLY"
-                                                  )) {
-            stmt.setInt(1, entityId);
-            try (ResultSet rset = stmt.executeQuery()) {
-                if (rset.next()) {
-                    return rset.getString("description");
-                }
-            } catch (SQLException ex) {
-                log.severe("Load description: Execute SQL query exception: " + ex);
-                throw new RuntimeException(ex);
-            }
-        } catch (SQLException ex) {
-            log.severe("Load description: Create SQL statement exception: " + ex);
-            throw new RuntimeException(ex);
-        }
-        return "Description.";
-    }
-
-    private static boolean addDescription(Entity entity) {
-        Integer id = DBConnection.getInstance()
-                .getMaxId("description") + 1;
-        try (PreparedStatement stmt = DBConnection.getInstance()
-                .getConnection()
-                .prepareStatement(
-                        "INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) " +
-                           "VALUES(?, ?, ?, ?, ?)"
-                )) {
-            stmt.setInt(1, id);
-            stmt.setString(2, entity.getDescription());
-            stmt.setDate(3, Date.valueOf(LocalDate.now()));
-            stmt.setDate(4, Date.valueOf(LocalDate.now()));
-            stmt.setInt(5, entity.getId());
-            log.severe("UPDATING DESCR: " + entity.getDescription());
-
-            stmt.executeUpdate();
-        } catch (SQLException ex) {
-            log.severe("Update description: Create SQL statement exception: " + ex);
-            throw new RuntimeException(ex);
-        }
-        return true;
     }
 
     /**
@@ -262,7 +213,7 @@ public class MapMakerDB {
 
     public static Entity updateEntity(Entity entity, String field) {
         if (field == "description") {
-            addDescription(entity);
+            Description.addDescription(entity);
             return entity;
         }
         if (field == "from") {
