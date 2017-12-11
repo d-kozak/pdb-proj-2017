@@ -213,7 +213,9 @@ public class MapMakerDB {
      *
      * @param entity
      */
-    public static void insertEntity(Entity entity) {
+    public static Entity insertEntity(Entity entity) {
+        EntityGeometry geo = entity.getGeometry();
+        JGeometry jGeo = null;
         try (PreparedStatement stmt = DBConnection.getInstance()
                                                   .getConnection()
                                                   .prepareStatement(
@@ -225,8 +227,9 @@ public class MapMakerDB {
             stmt.setInt(1, entity.getId());
             stmt.setString(2, entity.getName());
             try {
+                jGeo = geometryToJGeometry(geo);
                 stmt.setObject(3, JGeometry.storeJS(DBConnection.getInstance()
-                                                                .getConnection(), geometryToJGeometry(entity.getGeometry())));
+                                                                .getConnection(), jGeo));
             } catch (Exception ex) {
                 log.severe("Insert entity: Conversion to JGeometry: " + ex);
                 throw new RuntimeException(ex);
@@ -241,18 +244,35 @@ public class MapMakerDB {
             log.severe("Insert entity: Create SQL statement exception: " + ex);
             throw new RuntimeException(ex);
         }
+        if ((!(geo instanceof RectangleGeometry)) && (geo instanceof PolygonGeometry)) {
+            double[] countryCoords = jGeo.getOrdinatesArray();
+            int dimensions = jGeo.getDimensions();
+            // We do not want the last point - it's same as the frist one in the DB
+            // and Entity does not store the first one also as the last one
+            Integer countryCoordsCount = jGeo.getNumPoints() - 1;
+            ObservableList<Point> countryPoints = FXCollections.observableArrayList();
+            for (Integer i = 0; i < countryCoordsCount * dimensions; i += dimensions) {
+                countryPoints.add(new Point(countryCoords[i], countryCoords[i + 1]));
+            }
+            geo = new PolygonGeometry(countryPoints);
+        }
+        entity.setGeometry(geo);
+        return entity;
     }
 
-    public static void updateEntity(Entity entity, String field) {
+    public static Entity updateEntity(Entity entity, String field) {
         if (field == "description") {
             addDescription(entity);
-            return;
+            return entity;
         }
         if (field == "from") {
             field = "validFrom";
         } else if (field == "to") {
             field = "validTo";
         }
+        EntityGeometry geo = entity.getGeometry();
+        JGeometry jGeo = geometryToJGeometry(geo);
+
         try (PreparedStatement stmt = DBConnection.getInstance()
                                                   .getConnection()
                                                   .prepareStatement(
@@ -277,7 +297,7 @@ public class MapMakerDB {
                 case "geometry":
                     try {
                         stmt.setObject(1, JGeometry.storeJS(DBConnection.getInstance()
-                                                                        .getConnection(), geometryToJGeometry(entity.getGeometry())));
+                                                                        .getConnection(), jGeo));
                     } catch (Exception ex) {
                         log.severe("Update entity: Conversion to JGeometry: " + ex);
                         throw new RuntimeException(ex);
@@ -293,6 +313,22 @@ public class MapMakerDB {
             log.severe("Update entity: Create SQL statement exception: " + ex);
             throw new RuntimeException(ex);
         }
+        if (field == "geometry"){
+            if ((!(geo instanceof RectangleGeometry)) && (geo instanceof PolygonGeometry)) {
+                double[] countryCoords = jGeo.getOrdinatesArray();
+                int dimensions = jGeo.getDimensions();
+                // We do not want the last point - it's same as the frist one in the DB
+                // and Entity does not store the first one also as the last one
+                Integer countryCoordsCount = jGeo.getNumPoints() - 1;
+                ObservableList<Point> countryPoints = FXCollections.observableArrayList();
+                for (Integer i = 0; i < countryCoordsCount * dimensions; i += dimensions) {
+                    countryPoints.add(new Point(countryCoords[i], countryCoords[i + 1]));
+                }
+                geo = new PolygonGeometry(countryPoints);
+            }
+            entity.setGeometry(geo);
+        }
+        return entity;
     }
 
     public static void deleteEntity(Entity entity) {
