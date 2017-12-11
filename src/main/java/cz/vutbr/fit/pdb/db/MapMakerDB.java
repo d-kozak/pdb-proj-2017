@@ -216,6 +216,11 @@ public class MapMakerDB {
             // We do not want the last point - it's same as the frist one in the DB
             // and Entity does not store the first one also as the last one
             Integer countryCoordsCount = jGeo.getNumPoints() - 1;
+            int[] elemInfo = jGeo.getElemInfo();
+            if (elemInfo.length > 3) {
+                // We want elements only from the first part.
+                countryCoordsCount = (elemInfo[3] / dimensions);
+            }
             ObservableList<Point> countryPoints = FXCollections.observableArrayList();
             for (Integer i = 0; i < countryCoordsCount * dimensions; i += dimensions) {
                 countryPoints.add(new Point(countryCoords[i], countryCoords[i + 1]));
@@ -293,6 +298,11 @@ public class MapMakerDB {
                 // and Entity does not store the first one also as the last one
                 Integer countryCoordsCount = jGeo.getNumPoints() - 1;
                 ObservableList<Point> countryPoints = FXCollections.observableArrayList();
+                int[] elemInfo = jGeo.getElemInfo();
+                if (elemInfo.length > 3) {
+                    // We want elements only from the first part.
+                    countryCoordsCount = (elemInfo[3] / dimensions);
+                }
                 for (Integer i = 0; i < countryCoordsCount * dimensions; i += dimensions) {
                     countryPoints.add(new Point(countryCoords[i], countryCoords[i + 1]));
                 }
