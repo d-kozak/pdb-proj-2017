@@ -51,10 +51,13 @@ unicode,linkcolor=black]{hyperref}
 \newpage
 
 \section{Úvod}
+Tato dokumentace popisuje aplikaci MapMaker, která vznikla jako projekt do předmětu Pokročilé databázové systémy v zimním semestru akademického roko 2017. Cílem tohoto programu je umožňovat uživatelům jednoduchým způsobem vytvářet mapy, které jsou interaktivní a proměnlivé v čase. Do mapy je možné vložit různé geometrické entity a poté je i upravovat. Ke každé entitě je možné přidat detaily jako jméno, popis, rozsah platnosti, geometrické detaily a sérii obrázků charakterizujících dané místo.
 
 \section{Přeložení a spuštění aplikace}
+Jedná se o JavaFX aplikaci sestavovanou jako Maven projekt. Je tedy možné ji přeložit příkazem \textit{mvn clean install}. Po překladu naleznete ve složce \textit{target} jar archiv \textit{fit-pdb17-epsilon-1.0-SNAPSHOT.jar}, ve kterém se nachází aplikace i se všemi podpůrnými knihovnami. Pro spuštění lze využít přiložený skript \textit{run.sh}. 
 
 \section{Popis grafického uživatelského rozhraní}
+Aplikace se skládá z několika oken, jmenovitě z hlavního okna, nastavení a okna \textit{about} zobrazující základní informace o aplikaci. Druhé dvě okna jsou poměrně jednoduché, důležité je hlavní okno, ve kterém se nacházejí všechny důležité komponenty. 
 
 \begin{figure}[!htbp]
 	\centering
@@ -64,8 +67,18 @@ unicode,linkcolor=black]{hyperref}
 \end{figure}
 
 \subsection{Hlavní okno}
+Hlavní okno sestává z několika částí. Jeho valnou většinu zabírá interaktivní mapa, přes kterou je možné přidávat nové entity do aplikace. 
+
+Nahoře naleznete menu, přes které je možné zobrazit inicializovat databázi, zobrazit nastavení, zavřít aplikaci, smazat všechny entity, exportovat obrázek z mapy a zobrazit dialog about. 
+
+Napravo od menu se nachází toolbar, který umožňuje změnit barvu, kterou jsou entity vykreslovány a také přepínat mezi třemi módy aplikace, view, edit a blind map. Dále je zde také možné vybrat entitu, jejíž detaily chceme editovat, a tuto entitu smazat. Stejné operace je také možné provést přes samotnou mapu.
 
 \subsection{Pravá lišta}
+Pravá lišta může mít dvě různé podoby v závislosti na módu aplikace.
+
+V módech view a edit se zde zobrazují informace o právě zvolené entitě. Je tedy možné nově vytvořenou entitu hned editovat. 
+
+V módu blindmap se zde zobrazuje jednoduchá hra, ve  které uživatel musí určit, který z daných tří obrázků patří ke zvolenému místu.
 
 \begin{figure}[!htbp]
 	\centering
@@ -73,8 +86,6 @@ unicode,linkcolor=black]{hyperref}
 	\caption{Details pravá lišta}
 	\label{rightBar}
 \end{figure}
-
-\subsection{Slepá mapa}
 
 \begin{figure}[!htbp]
 	\centering
@@ -84,6 +95,8 @@ unicode,linkcolor=black]{hyperref}
 \end{figure}
 
 \subsection{Nastavení}
+V okně nastavení je možné změnit URI databáze a také změnit přihlašovací údaje. Při kliknutí na potvrzovací tlačítko dojde k pokusu a připojení a okno se ukončí, pouze pokud připojení proběhne úspěšně, jinak dojde k vypsání chybového hlášení a uživatel má možnost údaje upravit.
+
 \begin{figure}[!htbp]
 	\centering
 	\includegraphics[scale=0.25]{full_window}
@@ -92,6 +105,7 @@ unicode,linkcolor=black]{hyperref}
 \end{figure}
 
 \section{Prostorové dotazy}
+V této sekci se nachází popis jednotlivých dotazů a analytických funkcí, které poskytujeme uživateli jako doplňující materiál zvyšující využitelnost aplikaci.
 
 \subsection{Složité dotazy}
 
