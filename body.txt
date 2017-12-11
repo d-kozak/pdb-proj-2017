@@ -1,0 +1,12 @@
+xkozak15    100 %
+xplask00    100 %
+xvelec07    100 %
+
+xkozak15 se seznamil s platformou JavaFX a navrhnul architekturu cele aplikace. Pote vytvoril GUI aplikace
+a propojil ho se tridami komunikujicimi s databazi. V zaveru se podilel na navrhu prostorovych dotazu a na tvorbe dokumentace.
+
+xplask00 se podilel na navrhu prostorovych a temporalnich dotazu a naimplementoval tridy komunikujici s databazi.
+
+xvelec07 se seznamil s knihovnou leaflet pro kresleni geometrickych objektu v javascriptu a pote s jejim pomoci
+do GUI aplikace doplnil interaktivni mapu. V zaveru se podilel na navrhu temporalnich a prostorovych dotazu.
+
