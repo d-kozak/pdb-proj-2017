@@ -1,0 +1,9 @@
+\select@language {czech}
+\contentsline {section}{\numberline {1}\IeC {\'U}vod}{2}{section.1}
+\contentsline {section}{\numberline {2}P\IeC {\v r}elo\IeC {\v z}en\IeC {\'\i } a spu\IeC {\v s}t\IeC {\v e}n\IeC {\'\i } aplikace}{2}{section.2}
+\contentsline {section}{\numberline {3}Popis grafick\IeC {\'e}ho u\IeC {\v z}ivatelsk\IeC {\'e}ho rozhran\IeC {\'\i }}{2}{section.3}
+\contentsline {subsection}{\numberline {3.1}Hlavn\IeC {\'\i } okno}{2}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Prav\IeC {\'a} li\IeC {\v s}ta}{2}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Nastaven\IeC {\'\i }}{3}{subsection.3.3}
+\contentsline {section}{\numberline {4}Datab\IeC {\'a}ze}{3}{section.4}
+\contentsline {section}{\numberline {5}Z\IeC {\'a}v\IeC {\v e}r}{7}{section.5}
