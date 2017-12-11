@@ -177,7 +177,7 @@ public class RightbarPresenter implements Initializable {
                             });
                 }, image -> {
             entityService.setAsFlag(selectedEntity.getId(), image, () -> {
-                        showInfo("Entity updated", "Entity updated successfully");
+                        showInfo("Entity updated", "Flag set successfully");
                         flagView.setImage(image.getImage());
                         Tooltip.install(flagView, new Tooltip(image.getDescription()));
                         entity.setFlag(image);

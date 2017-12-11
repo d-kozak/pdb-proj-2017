@@ -72,7 +72,7 @@ public class DBConnection {
     /**
      * Closes the current connection.
      *
-     * @return True, when disconnect succeded, false otherwise.
+     * @return True, when disconnect succeeded, false otherwise.
      */
     public boolean disconnect() {
         if (isConnected) {
