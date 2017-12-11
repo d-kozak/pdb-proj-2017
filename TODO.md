@@ -5,3 +5,4 @@ Our humble todo list
 * Add more temporal requests
 * Update for all fields of Entity
 * Implement all methods from the menubar 
+* 70, 50 should be in Brno - it's not on the map
