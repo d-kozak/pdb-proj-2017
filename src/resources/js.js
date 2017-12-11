@@ -198,7 +198,7 @@ VMBridge.prototype = {
 						coordes.push(dpt[0], dpt[1])
 					}
 					
-					self.vm.addRectangle(coordes[0], coordes[1], coordes[2], coordes[3])
+					ent = self.vm.addRectangle(coordes[0], coordes[1], coordes[2], coordes[3])
 				} else if(layer instanceof L.Polyline) {
 					coordes = []
 					coords = layer.getLatLngs()
