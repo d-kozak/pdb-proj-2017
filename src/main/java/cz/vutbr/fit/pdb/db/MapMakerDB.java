@@ -183,6 +183,29 @@ public class MapMakerDB {
         return "Description.";
     }
 
+    private static boolean addDescription(Entity entity) {
+        Integer id = DBConnection.getInstance()
+                .getMaxId("spatialEntity") + 1;
+        try (PreparedStatement stmt = DBConnection.getInstance()
+                .getConnection()
+                .prepareStatement(
+                        "INSERT INTO Description(id, description, validFrom, validTo, spatialEntityId) " +
+                           "VALUES(?, ?, ?, ?, ?)"
+                )) {
+            stmt.setInt(1, id);
+            stmt.setString(2, entity.getDescription());
+            stmt.setDate(3, Date.valueOf(entity.getFrom()));
+            stmt.setDate(4, Date.valueOf(entity.getTo()));
+            stmt.setInt(5, entity.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            log.severe("Update entity: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+        return true;
+    }
+
     /**
      * Inserts the given entity to the database and sets correct ID.
      * Only description, dates and geometry is inserted. Images and flag are NOT inserted!
@@ -221,8 +244,7 @@ public class MapMakerDB {
 
     public static void updateEntity(Entity entity, String field) {
         if (field == "description") {
-            log.severe("NOT IMPLEMENTED YET!");
-            throw new RuntimeException();
+            addDescription(entity);
         }
         if (field == "from") {
             field = "validFrom";
