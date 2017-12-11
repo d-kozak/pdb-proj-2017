@@ -222,6 +222,7 @@ public class Entity {
 
     private void updateGeometry() {
         Entity copy = this.copyOf();
+        log.info("Updating geometry...");
         entityService.updateEntity(copy, "geometry", () -> {
             showInfo("Entity updated", "Entity updated successfully");
         }, () -> {
