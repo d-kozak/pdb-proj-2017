@@ -26,28 +26,32 @@
 <div id="map"></div>
 
 <script>
+	// GLOBALS
+	var SCALEX = 1600,
+		SCALEY = 1067,
+		map, Background, geoEntities
+	
     /*var map = new L.Map('map', { center: new L.LatLng(49.2, 16.6333000), zoom: 6 })
     L.tileLayer('https://mapserver.mapy.cz/zemepis-m/{z}-{x}-{y}', {
         attribution: "<img src=\"http://mapy.cz/img/logo-small.svg\" style=\"height: 10px\" /> © <a href=\"//www.seznam.cz\" target=\"_blank\">Seznam.cz, a.s.</a>, © <a href=\"//www.openstreetmap.org/copyright\" target=\"_blank\">OpenStreetMap</a>"
     }).addTo(map);*/
 	
-	var map = L.map('map', {
+	map = L.map('map', {
 		crs: L.CRS.Simple,
-		maxBounds: [[0,0], [1067, 1600]],
+		maxBounds: [[0,0], [SCALEY, SCALEX]],
 		minZoom: -1,
 		zoomDelta: 0.5,
         zoomSnap: 0,
 		maxBoundsViscosity: 1
 	})
-	
-	var bounds = [[0,0], [1067, 1600]];
-	var image = L.imageOverlay('WoW.jpg', bounds).addTo(map);
+	bounds = [[0,0], [SCALEY, SCALEX]];
+	Background = L.imageOverlay('WoW.jpg', bounds).addTo(map);
 	map.fitBounds(bounds)
 	map.setMinZoom(map.getZoom())
 	
-    geoEntities = L.featureGroup().addTo(map);
+    geoEntities = L.featureGroup()
 	
-    map.addControl(DrawControl = new L.Control.Draw({
+	DrawControl = new L.Control.Draw({
         edit: {
             featureGroup: geoEntities,
             poly: {
@@ -61,27 +65,24 @@
             },
 			circlemarker: false
         }
-    }));
-
-    map.on(L.Draw.Event.CREATED, function (event) {
-        var layer = event.layer;
-
-        geoEntities.addLayer(layer);
-		
-		layer.on("click", function(e) {
-			layer;
-		})
-    });
-	
-	map.on('drag', function() {
-		map.panInsideBounds(bounds, { animate: false });
-	});
+    })
 	
 	if(navigator.userAgent.indexOf("JavaFX") < 0) {
 		map.on("click", function(e) {
 			//alert(e.latlng)
 			coord = e.latlng
 		})
+
+		map.on(L.Draw.Event.CREATED, function (event) {
+			var layer = event.layer;
+
+			geoEntities.addLayer(layer);
+			
+			layer.on("click", function(e) {
+				layer;
+				//VMBridge.prototype.clearAll()
+			})
+		});
 		
 		map.on(L.Draw.Event.EDITED, function (e) {
 			e.layers.eachLayer(function (layer) {
@@ -95,13 +96,6 @@
 		L.rectangle([[51.5, -0.09], [52.5, 1.09]]).addTo(map)
 	}
 
-</script>
-
-<script type="text/javascript" src="bck2brwsr.js"></script>
-<script>
-    var vm = bck2brwsr('l4jdemo.js');
-    var main = vm.loadClass('org.apidesign.html.leaflet.demo.Main');
-    main.invoke('onPageLoad');
 </script>
 </body>
 </html>

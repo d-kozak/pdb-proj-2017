@@ -87,6 +87,10 @@ public class MapPresenter implements Initializable, MapRenderer {
                          leaflet.call("running");
                          leaflet.call("setColor", toRGBCode(configuration.getDrawingColor()));
 
+                         configuration.mapBGProperty()
+                                 .addListener((__, old, nevv) -> {
+                                     leaflet.call("changeBG", nevv.toString());
+                                 });
                          // TEMP:
                          redraw();
                      }
@@ -184,6 +188,8 @@ public class MapPresenter implements Initializable, MapRenderer {
             log.info("You clicked the map at " + x + " " + y);
             entityService.tryToSelectEntityAt(x, y);
         }
+
+        public void redraw() {MapPresenter.this.redraw();}
 
         private Entity newEntity() {
             Entity ent = new Entity();

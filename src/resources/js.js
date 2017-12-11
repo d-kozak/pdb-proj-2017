@@ -51,6 +51,39 @@ VMBridge.prototype = {
 		DrawControl.setDrawingOptions(options)
 		this.vm.log("Selecting drawing color " + color)
 	},
+	changeBG: function(URL) {
+		var self = this
+		this.vm.log("Changing BG to: " + URL)
+		
+		var img = new Image()
+		img.onload = function() {
+			SCALEX = img.width
+			SCALEY = img.height
+			
+			map.remove()
+			map = new L.map('map', {
+				crs: L.CRS.Simple,
+				maxBounds: [[0,0], [SCALEY, SCALEX]],
+				minZoom: -1,
+				zoomDelta: 0.5,
+				zoomSnap: 0,
+				maxBoundsViscosity: 1
+			})
+			
+			var bounds = [[0,0], [SCALEY, SCALEX]]
+			Background.remove()
+			Background = L.imageOverlay(img.src, bounds)
+			
+			Background.addTo(map)
+			map.fitBounds(bounds)
+			map.setMinZoom(map.getZoom())
+
+			self.clearAll()
+			self.initialize.call(self)
+			self.vm.redraw()
+		}
+		img.src = URL
+	},
 	
 	draw: function(javaEnt, color) {
 		var geom = javaEnt.getGeometry(),
@@ -112,133 +145,146 @@ VMBridge.prototype = {
 	},
 	
 	running: function() {
-		var self = this
-		
 		if(this.vm._bridgeUp == this._bridgeUp) {
 			this.vm.log("Bridge Java VM <- JS VM is up.")
 			
 			// and now initialize WebView
-			// Map click
-			map.on("click", function(e) {
-				var dpt = dePoint(e.latlng)
-				
-				//self.vm.log("You clicked the map at " + e.latlng + " " + dePoint(e.latlng))
-				self.vm.clickEvent(dpt[0], dpt[1])
-			})
+			this.initialize()
+		} else // no bridge - no message
+			this.vm.log(this.vm._bridgeUp)
+	},
+	
+	initialize: function(bgSrc) {
+		var self = this
+		
+		geoEntities.addTo(map)
+		
+		map.addControl(DrawControl)
+		
+		map.on('drag', function() {
+			map.panInsideBounds(bounds, { animate: false });
+		})
+		
+		// Map click
+		map.on("click", function(e) {
+			var dpt = dePoint(e.latlng)
 			
-			// Editation of geometry
-			map.on(L.Draw.Event.EDITED, function (e) {
-				e.layers.eachLayer(function (layer) {
-					var coords, coords2, i, dpt
-					
-					if(layer instanceof L.Marker) {
-						dpt = dePoint(layer.getLatLng())
-						
-						layer._javaEnt.updatePointGeometry(dpt[0], dpt[1])
-					} else if(layer instanceof L.Circle) {
-						dpt = dePoint(layer.getLatLng())
-						
-						layer._javaEnt.updateCircleGeometry(dpt[0], dpt[1], deRadius(layer.getRadius()))
-					} else if(layer instanceof L.Rectangle) {
-						coords2 = []
-						coords = layer.getLatLngs()[0]
-					
-						for(i = 0; i < coords.length; i += 2) { // every other points of rectangle (one of diagonals)
-							dpt = dePoint(coords[i])
-							coords2.push(dpt[0], dpt[1])
-						}
-						
-						layer._javaEnt.updateStringGeometry(JSON.stringify(coords2))
-					} else if(layer instanceof L.Polyline) {
-						coords2 = []
-						coords = layer.getLatLngs()
-						if(layer instanceof L.Polygon) // [R-space, R-cycle]
-							coords = coords[0]
-						
-						for(i = 0; i < coords.length; i++) {
-							dpt = dePoint(coords[i])
-							coords2.push(dpt[0], dpt[1])
-						}
-						
-						self.vm.log(JSON.stringify(coords2))
-						layer._javaEnt.updateStringGeometry(JSON.stringify(coords2))
-					}
-			
-				})
-			})
-			
-			// Entity deletion
-			map.on(L.Draw.Event.DELETED, function (e) {
-				e.layers.eachLayer(function (layer) {
-
-					self.vm.removeEntity(layer._javaEnt)
-				})
-			})
-			
-			// Entity creation
-			map.on(L.Draw.Event.CREATED, function (e) {
-				var coords, coordes = [], i, dpt, ent,
-					layer = e.layer
+			setTimeout(function() {self.vm.clickEvent(dpt[0], dpt[1])})
+		})
+		
+		// Editation of geometry
+		map.on(L.Draw.Event.EDITED, function (e) {
+			e.layers.eachLayer(function (layer) {
+				var coords, coords2, i, dpt
 				
 				if(layer instanceof L.Marker) {
 					dpt = dePoint(layer.getLatLng())
 					
-					ent = self.vm.addPoint(dpt[0], dpt[1])
+					layer._javaEnt.updatePointGeometry(dpt[0], dpt[1])
 				} else if(layer instanceof L.Circle) {
 					dpt = dePoint(layer.getLatLng())
 					
-					ent = self.vm.addCircle(dpt[0], dpt[1], deRadius(layer.getRadius()))
-				}
-				else if(layer instanceof L.Rectangle)
-				{
+					layer._javaEnt.updateCircleGeometry(dpt[0], dpt[1], deRadius(layer.getRadius()))
+				} else if(layer instanceof L.Rectangle) {
+					coords2 = []
 					coords = layer.getLatLngs()[0]
-					
-					for(i = 0; i < coords.length; i += 2) { // every other points of rectangle (oen of diagonals)
+				
+					for(i = 0; i < coords.length; i += 2) { // every other points of rectangle (one of diagonals)
 						dpt = dePoint(coords[i])
-						coordes.push(dpt[0], dpt[1])
+						coords2.push(dpt[0], dpt[1])
 					}
 					
-					ent = self.vm.addRectangle(coordes[0], coordes[1], coordes[2], coordes[3])
+					layer._javaEnt.updateStringGeometry(JSON.stringify(coords2))
 				} else if(layer instanceof L.Polyline) {
-					coordes = []
+					coords2 = []
 					coords = layer.getLatLngs()
 					if(layer instanceof L.Polygon) // [R-space, R-cycle]
 						coords = coords[0]
 					
 					for(i = 0; i < coords.length; i++) {
 						dpt = dePoint(coords[i])
-						coordes.push(dpt[0], dpt[1])
+						coords2.push(dpt[0], dpt[1])
 					}
 					
-					coordes = JSON.stringify(coordes)
-					if(layer instanceof L.Polygon)
-						ent = self.vm.addPolygon(coordes)
-					else
-						ent = self.vm.addLine(coordes)
+					self.vm.log(JSON.stringify(coords2))
+					layer._javaEnt.updateStringGeometry(JSON.stringify(coords2))
+				}
+		
+			})
+		})
+		
+		// Entity deletion
+		map.on(L.Draw.Event.DELETED, function (e) {
+			e.layers.eachLayer(function (layer) {
+
+				self.vm.removeEntity(layer._javaEnt)
+			})
+		})
+		
+		// Entity creation
+		map.on(L.Draw.Event.CREATED, function (e) {
+			var coords, coordes = [], i, dpt, ent,
+				layer = e.layer
+			
+			geoEntities.addLayer(layer)
+			
+			if(layer instanceof L.Marker) {
+				dpt = dePoint(layer.getLatLng())
+				
+				ent = self.vm.addPoint(dpt[0], dpt[1])
+			} else if(layer instanceof L.Circle) {
+				dpt = dePoint(layer.getLatLng())
+				
+				ent = self.vm.addCircle(dpt[0], dpt[1], deRadius(layer.getRadius()))
+			}
+			else if(layer instanceof L.Rectangle)
+			{
+				coords = layer.getLatLngs()[0]
+				
+				for(i = 0; i < coords.length; i += 2) { // every other points of rectangle (oen of diagonals)
+					dpt = dePoint(coords[i])
+					coordes.push(dpt[0], dpt[1])
 				}
 				
-				layer._javaEnt = ent
-				layer.on("click", self._highlight(layer))
-				ent.setLayer({highlight: self._highlight(layer)})
-			})
+				ent = self.vm.addRectangle(coordes[0], coordes[1], coordes[2], coordes[3])
+			} else if(layer instanceof L.Polyline) {
+				coordes = []
+				coords = layer.getLatLngs()
+				if(layer instanceof L.Polygon) // [R-space, R-cycle]
+					coords = coords[0]
+				
+				for(i = 0; i < coords.length; i++) {
+					dpt = dePoint(coords[i])
+					coordes.push(dpt[0], dpt[1])
+				}
+				
+				coordes = JSON.stringify(coordes)
+				if(layer instanceof L.Polygon)
+					ent = self.vm.addPolygon(coordes)
+				else
+					ent = self.vm.addLine(coordes)
+			}
 			
-		} else // no bridge - no message
-			this.vm.log(this.vm._bridgeUp)
-	}
+			layer._javaEnt = ent
+			layer.on("click", self._highlight(layer))
+			ent.setLayer({highlight: self._highlight(layer)})
+		})
+		
+		}
 }
 
 function Point(x, y) {
-	return [y / 1000 * 1067, x / 1000 * 1600] // [latitude, longitude]
+	return [y / 1000 * SCALEX, x / 1000 * SCALEY] // [latitude, longitude]
 }
 
 function Radius(r) {
-	return r / 500 * 1600
+	return r / 500 * Math.max(SCALEX, SCALEY)
 }
 
 function dePoint(xy) {
-	return [xy.lng / 1600 * 1000, xy.lat / 1067 * 1000] // [longitude, latitude]
+	return [xy.lng / SCALEY * 1000, xy.lat / SCALEX * 1000] // [longitude, latitude]
 }
 
 function deRadius(r) {
-	return r / 1600 * 500
+	return r / Math.max(SCALEX, SCALEY) * 500
 }
