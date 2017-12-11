@@ -1,9 +1,8 @@
 package cz.vutbr.fit.pdb.entity.concurent.geometry;
 
-import cz.vutbr.fit.pdb.db.MapMakerDB;
+import cz.vutbr.fit.pdb.db.Spatial;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.geometry.CircleDetails;
-import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import lombok.extern.java.Log;
 
@@ -14,9 +13,9 @@ public class GetCircleDetailsTask extends Task<CircleDetails> {
     @Override
     protected CircleDetails call() throws Exception {
         CircleDetails circleDetails = new CircleDetails();
-        circleDetails.setArea(MapMakerDB.getArea(entity));
-        circleDetails.setCircumference(MapMakerDB.getCircumference(entity));
-        circleDetails.setEntitiesInside(MapMakerDB.entitiesInside(entity));
+        circleDetails.setArea(Spatial.getArea(entity));
+        circleDetails.setCircumference(Spatial.getCircumference(entity));
+        circleDetails.setEntitiesInside(Spatial.entitiesInside(entity));
         return circleDetails;
     }
 

@@ -15,10 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 
 /*
@@ -28,8 +26,8 @@ import java.util.Vector;
  */
 @Log
 public class MapMakerDB {
-    private static final int SRID = 0;
-    private static final int DIMENSION = 2;
+    public static final int SRID = 0;
+    public static final int DIMENSION = 2;
 
     private static MapMakerDB mapMakerDB = null;
     private static DBConnection dbConnection = DBConnection.getInstance();
@@ -38,6 +36,10 @@ public class MapMakerDB {
 
     }
 
+    /**
+     * Returns (singleton) instance of this class.
+     * @return
+     */
     public static MapMakerDB getInstance() {
         if (mapMakerDB == null) {
             mapMakerDB = new MapMakerDB();
@@ -51,10 +53,18 @@ public class MapMakerDB {
         entities.add(entity);
     }
 
+    /**
+     * Returns all loaded entities.
+     * @return
+     */
     public static ObservableList<Entity> getEntities() {
         return loadEntities();
     }
 
+    /**
+     * Loads all entities from the database.
+     * @return
+     */
     private static ObservableList<Entity> loadEntities() {
         if (entities == null)
             entities = FXCollections.observableArrayList();
@@ -178,7 +188,7 @@ public class MapMakerDB {
             stmt.setInt(1, entity.getId());
             stmt.setString(2, entity.getName());
             try {
-                jGeo = geometryToJGeometry(geo);
+                jGeo = Spatial.geometryToJGeometry(geo);
                 stmt.setObject(3, JGeometry.storeJS(DBConnection.getInstance()
                                                                 .getConnection(), jGeo));
             } catch (Exception ex) {
@@ -187,7 +197,7 @@ public class MapMakerDB {
             }
             stmt.setDate(4, Date.valueOf(entity.getFrom()));
             stmt.setDate(5, Date.valueOf(entity.getTo()));
-            stmt.setString(6, geometryToType(entity.getGeometry()));
+            stmt.setString(6, Spatial.geometryToType(entity.getGeometry()));
             stmt.setString(7, entity.getColor()
                                     .toString());
             stmt.executeUpdate();
@@ -211,6 +221,12 @@ public class MapMakerDB {
         return entity;
     }
 
+    /**
+     * Updates the specified field of the entity with value in 'entity'.
+     * @param entity
+     * @param field
+     * @return
+     */
     public static Entity updateEntity(Entity entity, String field) {
         if (field == "description") {
             Description.addDescription(entity);
@@ -222,7 +238,7 @@ public class MapMakerDB {
             field = "validTo";
         }
         EntityGeometry geo = entity.getGeometry();
-        JGeometry jGeo = geometryToJGeometry(geo);
+        JGeometry jGeo = Spatial.geometryToJGeometry(geo);
 
         try (PreparedStatement stmt = DBConnection.getInstance()
                                                   .getConnection()
@@ -282,305 +298,20 @@ public class MapMakerDB {
         return entity;
     }
 
+    /**
+     * Removes the given entity from the database.
+     * @param entity
+     */
     public static void deleteEntity(Entity entity) {
         dbConnection.execute("DELETE FROM SpatialEntity " +
                 "WHERE id = " + entity.getId()
         );
     }
 
-    private static JGeometry geometryToJGeometry(EntityGeometry geometry) {
-        if (geometry instanceof PointGeometry) {
-            return new JGeometry(
-                    ((PointGeometry) geometry).getX(),
-                    ((PointGeometry) geometry).getY(),
-                    SRID
-            );
-        } else if (geometry instanceof CircleGeometry) {
-            CircleGeometry cGeometry = (CircleGeometry) geometry;
-            double radius = cGeometry.getRadius();
-            return new JGeometry(
-                    3,
-                    SRID,
-                    new int[]{1, 1003, 4},
-                    new double[]{
-                            cGeometry.getCenter().getX(), cGeometry.getCenter()
-                                                                   .getY() - radius,
-                            cGeometry.getCenter().getX(), cGeometry.getCenter()
-                                                                   .getY() + radius,
-                            cGeometry.getCenter()
-                                     .getX() + radius, cGeometry.getCenter().getY()
-                    }
-            );
-        } else if (geometry instanceof RectangleGeometry) {
-            List<Point> points = new ArrayList<>(((RectangleGeometry) geometry).getPoints());
-            if (points.size() < 2) {
-                log.severe("Not enough rectangle points.");
-                throw new RuntimeException();
-            }
-            double coords[] = new double[4];
-            coords[0] = points.get(0)
-                              .getX();
-            coords[1] = points.get(0)
-                              .getY();
-            coords[2] = points.get(1)
-                              .getX();
-            coords[3] = points.get(1)
-                              .getY();
-            JGeometry geo = new JGeometry(
-                    3,
-                    SRID,
-                    new int[]{1, 1003, 3}, // exterior polygon
-                    coords
-            );
-            return geo;
-        } else if (geometry instanceof PolygonGeometry) {
-            List<Point> points = new ArrayList<>(((PolygonGeometry) geometry).getPoints());
-            if (are_clockwise_points(points)) {
-                for (int i = 0; i < points.size() / 2; ++i) {
-                    Point tmp = points.get(i);
-                    points.set(i, points.get(points.size() - 1 - i));
-                    points.set(points.size() - 1 - i, tmp);
-                }
-            }
-            // DB needs the first points also as the last one. In Entity, each points is unique.
-            if (!points.isEmpty()) {
-                points.add(points.get(0));
-            }
-            double coords[] = new double[points.size() * DIMENSION];
-            for (int i = 0; i < points.size(); i++) {
-                coords[i * DIMENSION] = points.get(i)
-                                              .getX();
-                coords[i * DIMENSION + 1] = points.get(i)
-                                                  .getY();
-            }
-            ;
-            JGeometry geo = new JGeometry(
-                    3,
-                    SRID,
-                    new int[]{1, 1003, 1}, // exterior polygon
-                    coords
-            );
-            geo = cutToNotOverlap(geo);
-            return geo;
-        } else if (geometry instanceof LineGeometry) {
-            ObservableList<Point> points = ((LineGeometry) geometry).getPoints();
-            double coords[] = new double[points.size() * DIMENSION];
-            for (int i = 0; i < points.size(); i++) {
-                coords[i * DIMENSION] = points.get(i)
-                                              .getX();
-                coords[i * DIMENSION + 1] = points.get(i)
-                                                  .getY();
-            }
-            ;
-            return new JGeometry(
-                    2,
-                    SRID,
-                    new int[]{1, 2, 1},
-                    coords
-            );
-        }
-        log.severe("Unknown geometry: " + geometry.getClass());
-        return null;
-    }
-
-    public static ObservableList<Integer> entitiesContainingPoint(Point point) {
-        ObservableList<Integer> list = FXCollections.observableArrayList();
-        try (PreparedStatement stmt = DBConnection.getInstance()
-                .getConnection()
-                .prepareStatement(
-                    "SELECT e.id " +
-                       "FROM spatialEntity e " +
-                       "WHERE SDO_CONTAINS(e.geometry, " +
-                       "  SDO_GEOMETRY(2001, NULL, " +
-                       "     SDO_POINT_TYPE(?, ?, NULL), " +
-                       "     NULL, NULL) " +
-                       "  ) = 'TRUE'"
-                )) {
-            stmt.setDouble(1, point.getX());
-            stmt.setDouble(2, point.getY());
-            try (ResultSet rset = stmt.executeQuery()) {
-                while (rset.next()) {
-                    list.add(rset.getInt("id"));
-                }
-            } catch (SQLException ex) {
-                log.severe("Execute SQL query exception: " + ex);
-                throw new RuntimeException(ex);
-            }
-        } catch (SQLException ex) {
-            log.severe("Create SQL statement exception: " + ex);
-            throw new RuntimeException(ex);
-        }
-        return list;
-    }
-
-    public static double getArea(Entity entity) {
-        try (PreparedStatement stmt = DBConnection.getInstance()
-                .getConnection()
-                .prepareStatement(
-                        "SELECT SDO_GEOM.SDO_AREA(e.geometry,0.005) AS area " +
-                           "FROM spatialEntity e WHERE e.id = ?"
-                )) {
-            stmt.setInt(1, entity.getId());
-            try (ResultSet rset = stmt.executeQuery()) {
-                if (rset.next()) {
-                    return rset.getDouble("area");
-                }
-            } catch (SQLException ex) {
-                log.severe("Execute SQL query exception: " + ex);
-                throw new RuntimeException(ex);
-            }
-        } catch (SQLException ex) {
-            log.severe("Create SQL statement exception: " + ex);
-            throw new RuntimeException(ex);
-        }
-        return -1;
-    }
-
-    public static double getCircumference(Entity entity) {
-        try (PreparedStatement stmt = DBConnection.getInstance()
-                .getConnection()
-                .prepareStatement(
-                        "SELECT SDO_GEOM.SDO_LENGTH(e.geometry,0.005) AS length " +
-                                "FROM spatialEntity e WHERE e.id = ?"
-                )) {
-            stmt.setInt(1, entity.getId());
-            try (ResultSet rset = stmt.executeQuery()) {
-                if (rset.next()) {
-                    return rset.getDouble("length");
-                }
-            } catch (SQLException ex) {
-                log.severe("Execute SQL query exception: " + ex);
-                throw new RuntimeException(ex);
-            }
-        } catch (SQLException ex) {
-            log.severe("Create SQL statement exception: " + ex);
-            throw new RuntimeException(ex);
-        }
-        return -1;
-    }
-
-    public static String getNearestRiver(Entity entity) {
-        try (PreparedStatement stmt = DBConnection.getInstance()
-                .getConnection()
-                .prepareStatement(
-                        "SELECT r.name, SDO_GEOM.SDO_DISTANCE(e.geometry, r.geometry, 0.005) AS dist " +
-                                "FROM spatialEntity e, spatialEntity r "+
-                                "WHERE e.id = ? AND e.id <> r.id  AND r.entityType = 'river' " +
-                                "ORDER BY dist"
-                )) {
-            stmt.setInt(1, entity.getId());
-            try (ResultSet rset = stmt.executeQuery()) {
-                if (rset.next()) {
-                    return rset.getString("name");
-                }
-            } catch (SQLException ex) {
-                log.severe("Execute SQL query exception: " + ex);
-                throw new RuntimeException(ex);
-            }
-        } catch (SQLException ex) {
-            log.severe("Create SQL statement exception: " + ex);
-            throw new RuntimeException(ex);
-        }
-        return "";
-    }
-
     /**
-     * Returns names of entities inside the given entity.
-     * @param entity
+     * For demo purpose.
      * @return
      */
-    public static ObservableList<String> entitiesInside(Entity entity) {
-        ObservableList<String> list = FXCollections.observableArrayList();
-        try (PreparedStatement stmt = DBConnection.getInstance()
-                .getConnection()
-                .prepareStatement(
-                        "SELECT outerE.name " +
-                                "FROM spatialEntity innerE, spatialEntity outerE " +
-                                "WHERE SDO_INSIDE(outerE.geometry, innerE.geometry) = 'TRUE' " +
-                                "AND (innerE.id <> outerE.id) " +
-                                "AND innerE.id = ?"
-                )) {
-            stmt.setInt(1, entity.getId());
-            try (ResultSet rset = stmt.executeQuery()) {
-                while (rset.next()) {
-                    list.add(rset.getString("name"));
-                }
-            } catch (SQLException ex) {
-                log.severe("Execute SQL query exception: " + ex);
-                throw new RuntimeException(ex);
-            }
-        } catch (SQLException ex) {
-            log.severe("Create SQL statement exception: " + ex);
-            throw new RuntimeException(ex);
-        }
-        return list;
-    }
-
-    private static JGeometry cutToNotOverlap(JGeometry geo) {
-        List<Integer> overlappingIds = new Vector<>();
-        Struct geoStruct;
-        try {
-            geoStruct = JGeometry.storeJS(DBConnection.getInstance().getConnection(), geo);
-        } catch (Exception ex) {
-            log.severe("To JGeometry: " + ex);
-            throw new RuntimeException(ex);
-        }
-        try (PreparedStatement stmt = DBConnection.getInstance()
-                .getConnection()
-                .prepareStatement(
-                        "SELECT e.id " +
-                                "FROM spatialEntity e " +
-                                "WHERE SDO_RELATE(e.geometry, ?, 'mask=OVERLAPBDYINTERSECT') = 'TRUE' " +
-                                "AND e.entityType IN ('country', 'countryRec')"
-
-                )) {
-            stmt.setObject(1, geoStruct);
-            try (ResultSet rset = stmt.executeQuery()) {
-                while (rset.next()) {
-                    overlappingIds.add(rset.getInt("id"));
-                }
-            } catch (SQLException ex) {
-                log.severe("Execute SQL query exception: " + ex);
-                throw new RuntimeException(ex);
-            }
-        } catch (SQLException ex) {
-            log.severe("Create SQL statement exception: " + ex);
-            throw new RuntimeException(ex);
-        }
-        return cutWithEntities(geo, overlappingIds);
-    }
-
-    private static JGeometry cutWithEntities(JGeometry geo, List<Integer> overlappingIds) {
-        for (Integer id : overlappingIds) {
-            Struct geoStruct;
-            try {
-                geoStruct = JGeometry.storeJS(DBConnection.getInstance().getConnection(), geo);
-            } catch (Exception ex) {
-                log.severe("To JGeometry: " + ex);
-                throw new RuntimeException(ex);
-            }
-            try (PreparedStatement stmt = DBConnection.getInstance().getConnection()
-                    .prepareStatement(
-                            "SELECT SDO_GEOM.SDO_DIFFERENCE(?, e.geometry, 0.005) AS geo " +
-                                    "FROM spatialEntity e " +
-                                    "WHERE e.id = ?"
-                    )) {
-                stmt.setObject(1, geoStruct);
-                stmt.setInt(2, id);
-                try (ResultSet rset = stmt.executeQuery()) {
-                    if (rset.next()) {
-                        byte[] data = rset.getBytes("geo");
-                        geo = JGeometry.load(data);
-                    }
-                }
-            } catch (Exception ex) {
-                log.severe("Create SQL statement exception: " + ex);
-                throw new RuntimeException(ex);
-            }
-        }
-        return geo;
-    }
-
     private boolean initPictures() {
         boolean res = false;
         EntityImage entityImage = new EntityImage();
@@ -620,47 +351,6 @@ public class MapMakerDB {
         res |= Picture.insertFlag(entityImage, 4);
 
         return res;
-    }
-
-    private static String geometryToType(EntityGeometry geometry) {
-        if (geometry instanceof PointGeometry) {
-            return "place";
-        } else if (geometry instanceof CircleGeometry) {
-            return "largePlace";
-        } else if (geometry instanceof RectangleGeometry) {
-            return "countryRec";
-        } else if (geometry instanceof PolygonGeometry) {
-            return "country";
-        } else if (geometry instanceof LineGeometry) {
-            return "river";
-        }
-        log.severe("Unknwon geometry.");
-        return "unknown";
-    }
-
-    private static boolean are_clockwise_points(List<Point> points) {
-        // Based on: https://stackoverflow.com/a/1165943/5601069
-        int sum = 0;
-        for (int i = 0; i < (points.size() - 1); ++i) {
-            sum += (points.get(i + 1)
-                          .getX() - points.get(i)
-                                          .getX()) *
-                    (points.get(i + 1)
-                           .getY() + points.get(i)
-                                           .getY());
-        }
-        if (points.size() > 1) {
-            sum += (points.get(0)
-                          .getX() - points.get(points.size() - 1)
-                                          .getX()) *
-                    (points.get(0)
-                           .getY() + points.get(points.size() - 1)
-                                           .getY());
-        }
-        // https://stackoverflow.com/questions/1165647/how-to-determine-if-a-list-of-polygon-points-are-in-clockwise-order#comment28629100_1165943
-        // DB has 0,0 in left down corner, we have upper left, so this way it works (experimetns).
-        log.severe("SUM " + sum);
-        return sum > 0;
     }
 
     /**

@@ -1,10 +1,8 @@
 package cz.vutbr.fit.pdb.entity.concurent.geometry;
 
-import cz.vutbr.fit.pdb.db.MapMakerDB;
-import cz.vutbr.fit.pdb.db.Picture;
+import cz.vutbr.fit.pdb.db.Spatial;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.geometry.PolygonDetails;
-import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import lombok.extern.java.Log;
 
@@ -15,9 +13,9 @@ public class GetPolygonDetailsTask extends Task<PolygonDetails> {
     @Override
     protected PolygonDetails call() throws Exception {
         PolygonDetails polygonDetails = new PolygonDetails();
-        polygonDetails.setArea(MapMakerDB.getArea(entity));
-        polygonDetails.setCircumference(MapMakerDB.getCircumference(entity));
-        polygonDetails.setEntitiesInside(MapMakerDB.entitiesInside(entity));
+        polygonDetails.setArea(Spatial.getArea(entity));
+        polygonDetails.setCircumference(Spatial.getCircumference(entity));
+        polygonDetails.setEntitiesInside(Spatial.entitiesInside(entity));
         return polygonDetails;
     }
 

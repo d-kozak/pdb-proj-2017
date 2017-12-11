@@ -1,6 +1,6 @@
 package cz.vutbr.fit.pdb.entity.concurent.geometry;
 
-import cz.vutbr.fit.pdb.db.MapMakerDB;
+import cz.vutbr.fit.pdb.db.Spatial;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.geometry.LineDetails;
 import javafx.concurrent.Task;
@@ -14,7 +14,7 @@ public class GetLineDetailsTask extends Task<LineDetails> {
     @Override
     protected LineDetails call() throws Exception {
         LineDetails lineDetails = new LineDetails();
-        lineDetails.setLength(MapMakerDB.getCircumference(entity));
+        lineDetails.setLength(Spatial.getCircumference(entity));
         return lineDetails;
     }
 
