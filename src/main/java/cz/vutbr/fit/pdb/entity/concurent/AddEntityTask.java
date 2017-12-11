@@ -5,8 +5,10 @@ import cz.vutbr.fit.pdb.entity.Entity;
 import javafx.concurrent.Task;
 import lombok.extern.java.Log;
 
+import static cz.vutbr.fit.pdb.utils.JavaFXUtils.startWithTimeout;
+
 @Log
-public class AddEntityTask extends Task<Void> {
+public class AddEntityTask extends Task<Entity> {
 
     private Entity entity;
 
@@ -15,9 +17,9 @@ public class AddEntityTask extends Task<Void> {
     }
 
     @Override
-    protected Void call() throws Exception {
-        MapMakerDB.insertEntity(entity);
-        return null;
+    protected Entity call() throws Exception {
+        startWithTimeout(3000, this);
+        return MapMakerDB.insertEntity(entity);
     }
 
 }

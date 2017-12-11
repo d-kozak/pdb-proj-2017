@@ -38,6 +38,9 @@ public class EntityService {
     @Inject
     SelectedEntityService selectedEntityService;
 
+    @Inject
+    private Configuration configuration;
+
     private ObservableList<Entity> entities = FXCollections.observableArrayList(entity -> new Observable[]{entity.nameProperty()});
 
     private BooleanProperty initDataLoaded = new SimpleBooleanProperty(false);
@@ -71,15 +74,19 @@ public class EntityService {
         THREAD_POOL.submit(loadAllEntitiesTask);
     }
 
-    public Task<Void> addEntity(Entity entity, Runnable onSucceeded, Runnable onFailed) {
+    public Task<Entity> addEntity(Entity entity, Runnable onSucceeded, Runnable onFailed) {
         log.info(String.format("Adding new entity %s", entity));
         entity.entityService = this;
         AddEntityTask addEntityTask = new AddEntityTask();
         addEntityTask.setEntity(entity);
         addEntityTask.setOnSucceeded(event -> {
             onSucceeded.run();
-            entities.add(entity);
-            selectedEntityService.setEntityProperty(entity);
+            Entity newEntity = addEntityTask.getValue();
+            newEntity.entityService = this;
+            entities.add(newEntity);
+            selectedEntityService.setEntityProperty(newEntity);
+            configuration.getMapRenderer()
+                         .redraw();
         });
         addEntityTask.setOnFailed(event -> {
             printException(addEntityTask.getException());
