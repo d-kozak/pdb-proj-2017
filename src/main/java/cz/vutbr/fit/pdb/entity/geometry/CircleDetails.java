@@ -2,6 +2,8 @@ package cz.vutbr.fit.pdb.entity.geometry;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -9,6 +11,7 @@ public class CircleDetails {
     private DoubleProperty area = new SimpleDoubleProperty();
     private DoubleProperty circumference = new SimpleDoubleProperty();
     private ObservableList<String> entitiesInside = FXCollections.observableArrayList();
+    private StringProperty nearestRiver = new SimpleStringProperty();
 
     public double getArea() {
         return area.get();
@@ -40,5 +43,17 @@ public class CircleDetails {
 
     public void setEntitiesInside(ObservableList<String> entitiesInside) {
         this.entitiesInside = entitiesInside;
+    }
+
+    public String getNearestRiver() {
+        return nearestRiver.get();
+    }
+
+    public void setNearestRiver(String nearestRiver) {
+        this.nearestRiver.set(nearestRiver);
+    }
+
+    public StringProperty nearestRiverProperty() {
+        return nearestRiver;
     }
 }
