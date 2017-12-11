@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 
 @Log
 public class Configuration {
-    public static final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(20);
+    public static final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(100);
 
     public static final ObservableList<String> colors = FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(
             "chocolate", "salmon", "gold", "coral", "darkorchid",

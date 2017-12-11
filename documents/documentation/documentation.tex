@@ -104,11 +104,16 @@ V okně nastavení je možné změnit URI databáze a také změnit přihlašova
 	\label{settings}
 \end{figure}
 
-\section{Prostorové dotazy}
-V této sekci se nachází popis jednotlivých dotazů a analytických funkcí, které poskytujeme uživateli jako doplňující materiál zvyšující využitelnost aplikaci.
+\section{Databáze}
+Hlavní tabulkou v databázi je SpatialEntity, která popisuje jednu geometrickou entitu uloženou v databázi. Obsahuje sloupec geometry typu SDO_geometry, který v sobě skrývá geometrické informace dané entity. Krom toho také tabulka obsahuje jméno, typ entity, jehož hodnota může nabývat country, countryRec, river, place, largePlace, kde každá hodnota specifikuje jeden geometrický typ, kokrétně polygon,rectangle,linestring,point a circle v tomto pořadí.
 
-\subsection{Složité dotazy}
+\subsection{Prostorové dotazy}
+V této sekci se nachází popis jednotlivých dotazů a analytických funkcí, které poskytujeme uživateli pro zvýšení využitelnosti aplikace.
 
-\subsection{Analytické funkce}
+\subsubsection{Složité dotazy}
+
+
+
+\subsubsection{Analytické funkce}
 
 \end{document}
