@@ -258,27 +258,27 @@ public class Picture {
         return true;
     }
 
-    public static boolean makeImageMonochrome(EntityImage entityImage) {
+    public static EntityImage makeImageMonochrome(EntityImage entityImage) {
         return modifyPicture("contentFormat=monochrome fileformat=png", entityImage);
     }
 
-    public static boolean makeImageGrayscale(EntityImage entityImage) {
+    public static EntityImage makeImageGrayscale(EntityImage entityImage) {
         return modifyPicture("contentFormat=8bitlutgray fileformat=png", entityImage);
     }
 
-    public static boolean makeImageMirror(EntityImage entityImage) {
+    public static EntityImage makeImageMirror(EntityImage entityImage) {
         return modifyPicture("mirror fileformat=png", entityImage);
     }
 
-    public static boolean makeImageRotateLeft(EntityImage entityImage) {
-        return modifyPicture("rotate=90 fileformat=png", entityImage);
-    }
-
-    public static boolean makeImageRotateRight(EntityImage entityImage) {
+    public static EntityImage makeImageRotateLeft(EntityImage entityImage) {
         return modifyPicture("rotate=270 fileformat=png", entityImage);
     }
 
-    private static boolean modifyPicture(String modification, EntityImage srcEntityImage) {
+    public static EntityImage makeImageRotateRight(EntityImage entityImage) {
+        return modifyPicture("rotate=90 fileformat=png", entityImage);
+    }
+
+    private static EntityImage modifyPicture(String modification, EntityImage srcEntityImage) {
         Connection connection = DBConnection.getInstance()
                                             .getConnection();
         Integer dstId = dbConnection.getMaxId("Picture") + 1;
@@ -386,7 +386,7 @@ public class Picture {
             }
         } catch (SQLException ex) {
             log.severe("Save picture failed: Create SQL statement exception: " + ex);
-            return false;
+            return null;
         }
 
         // update the target image with StillImage object and features
@@ -423,7 +423,7 @@ public class Picture {
         } catch (SQLException ex) {
             log.info("Cannot commit: " + ex);
         }
-        return true;
+        return loadPicture(dstId);
     }
 
     private static ObservableList<EntityImage> loadPicturesFor(Integer entityId, String type) {
@@ -469,6 +469,48 @@ public class Picture {
             throw new RuntimeException(ex);
         }
         return images;
+    }
+
+    private static EntityImage loadPicture(Integer id) {
+        Connection connection = DBConnection.getInstance()
+                .getConnection();
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "SELECT * FROM Picture " +
+                        "WHERE id = ? "
+        )) {
+            stmt.setInt(1, id);
+            try (OracleResultSet rset = (OracleResultSet) stmt.executeQuery()) {
+                if (rset.next()) {
+                    OrdImage imgProxy = (OrdImage) rset.getORAData("img", OrdImage.getORADataFactory());
+                    if (imgProxy != null) {
+                        try {
+                            if (imgProxy.getDataInByteArray() != null) {
+                                BufferedImage img = ImageIO.read(
+                                        new ByteArrayInputStream(imgProxy.getDataInByteArray())
+                                );
+                                WritableImage writableImage = SwingFXUtils.toFXImage(img, null);
+                                EntityImage entityImage = new EntityImage();
+                                entityImage.setImage(writableImage);
+                                entityImage.setId(rset.getInt("id"));
+                                entityImage.setDescription(rset.getString("description"));
+                                entityImage.setTime(rset.getDate("createdAt").toLocalDate());
+                                return entityImage;
+                            }
+                        } catch (IOException ex) {
+                            log.severe("Load image failed: " + ex);
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                }
+            } catch (SQLException ex) {
+                log.severe("Load image: Execute SQL query exception: " + ex);
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException ex) {
+            log.severe("Load image: Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+        return null;
     }
 
     public static ObservableList<EntityImage> findSimilar(EntityImage entityImage, Integer count) {

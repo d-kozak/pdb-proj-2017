@@ -14,17 +14,13 @@ public class ImageEditTask extends Task<EntityImage> {
     protected EntityImage call() throws Exception {
         switch (imageOperation) {
             case GREYSCALE:
-                Picture.makeImageGrayscale(entityImage);
-                break;
+                return Picture.makeImageGrayscale(entityImage);
             case MONOCHROMATIC:
-                Picture.makeImageMonochrome(entityImage);
-                break;
+                return Picture.makeImageMonochrome(entityImage);
             case ROTATE_LEFT:
-                Picture.makeImageRotateLeft(entityImage);
-                break;
+                return Picture.makeImageRotateLeft(entityImage);
             case ROTATE_RIGHT:
-                Picture.makeImageRotateRight(entityImage);
-                break;
+                return Picture.makeImageRotateRight(entityImage);
         }
         return null;
     }
