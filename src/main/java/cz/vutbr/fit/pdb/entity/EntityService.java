@@ -19,6 +19,7 @@ import lombok.extern.java.Log;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -279,5 +280,61 @@ public class EntityService {
 
     public Configuration getConfiguration() {
         return configuration;
+    }
+
+    public void clearYear(int y) {
+        getEntities(y).forEach((Entity ent) -> {
+            Entity copy, copy2;
+            int to = ent.getTo().getYear(), from = ent.getFrom().getYear();
+            if(from < y) {
+                copy = ent.copyOf();
+                copy.setTo(LocalDate.of(y-1, 1,1));
+                updateEntity(copy, "to", (newEntity) -> {
+                    getEntities().remove(copy);
+                    getEntities().add(newEntity);
+                    getConfiguration()
+                            .getMapRenderer()
+                            .redraw();
+                }, () -> {
+                    showError("Database error", "Could not delete some of entities");
+                });
+
+                if(to > y) {
+                    copy2 = ent.copyOf();
+                    copy2.setFrom(LocalDate.of(y+2, 1,1));
+                    addEntity(copy2, () -> {
+                        getConfiguration()
+                                .getMapRenderer()
+                                .redraw();
+                    }, () -> {
+                        showError("Database error", "Could not delete some of entities");
+                    });
+                }
+            } else if(to > y) {
+                copy = ent.copyOf();
+                copy.setFrom(LocalDate.of(y+1, 1,1));
+                updateEntity(copy, "from", (newEntity) -> {
+                    getEntities().remove(copy);
+                    getEntities().add(newEntity);
+                    getConfiguration()
+                            .getMapRenderer()
+                            .redraw();
+                }, () -> {
+                    showError("Database error", "Could not delete some of entities");
+                });
+            } else {
+                removeEntity(
+                        ent,
+                        () -> {
+                            if (selectedEntityService.getEntityProperty() == ent)
+                                selectedEntityService.setEntityProperty(null);
+                            configuration.getMapRenderer()
+                                    .redraw();
+                        },
+                        () -> {
+                            showError("Database error", "Could not remove entity, please try again");
+                        });
+            }
+        });
     }
 }

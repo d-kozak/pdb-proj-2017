@@ -90,6 +90,12 @@ public class MenubarPresenter {
                      .redraw();
     }
 
+    @FXML
+    private void onClearInside(ActionEvent event) {
+        log.info("Deleting all entities");
+        entityService.clearYear(configuration.getYear());
+    }
+
 
     @FXML
     private void onExportPng(ActionEvent event) {

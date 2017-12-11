@@ -20,6 +20,7 @@
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
                         <MenuItem onAction="#onClearAll" mnemonicParsing="false" text="Clear all"/>
+                        <MenuItem onAction="#onClearInside" mnemonicParsing="false" text="Clear this year"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Export">
