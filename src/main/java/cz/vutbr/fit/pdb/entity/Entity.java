@@ -248,10 +248,10 @@ public class Entity {
         for (int i = 0; i < coords.length; i += 2) {
             points.add(new Point(coords[i], coords[i + 1]));
         }
-        if (geometry.get() instanceof PolygonGeometry)
-            setGeometry(new PolygonGeometry(points));
-        else if(geometry.get() instanceof RectangleGeometry)
+        if (geometry.get() instanceof RectangleGeometry)
             setGeometry(new RectangleGeometry(points));
+        else if (geometry.get() instanceof PolygonGeometry)
+            setGeometry(new PolygonGeometry(points));
         else//(geometry instanceof PolygonGeometry)
             setGeometry(new LineGeometry(points));
         updateGeometry();
@@ -259,7 +259,9 @@ public class Entity {
 
     private JSObject layer; // LeafLet layer
 
-    public void setLayer(JSObject layer) {this.layer = layer;}
+    public void setLayer(JSObject layer) {
+        this.layer = layer;
+    }
 
     public void highlight() {
         layer.call("highlight");
