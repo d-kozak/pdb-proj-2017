@@ -1,0 +1,25 @@
+Dokumentace temporálních dotazù:
+($YEAR v dotazehc pøedstavuje zvolený rok):
+
+
+Výbìr geometrických entit zobrazených v daném roce:
+
+Dotaz:
+
+VALIDTIME DATE $YEAR
+SELECT * FROM SpatialEntity
+
+Mazání geometrických entit v daném roce:
+
+Dotaz
+
+VALIDTIME DATE $YEAR
+DELETE FROM SpatialEntity
+
+Dotaz je implementován na aplikaèní úrovni, upravovány jsou pouze enetity platné v daném roce. Pokud:
+- entita existuje pouze do daného roku: konec platnosti se sníží o 1 rok (aktualizace)
+- entita existuje pouze od daného roku: zaèátek platnosti se zvýší o 1 rok (aktualizace)
+- jinak:
+	entita je naklokonována na 2 èásti s platností od pùvodní do $YEAR - 1 a od $YEAR + 2 do pùvodní
+
+	
