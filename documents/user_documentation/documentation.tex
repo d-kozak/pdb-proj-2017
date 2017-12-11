@@ -82,15 +82,22 @@ V módu blindmap se zde zobrazuje jednoduchá hra, ve  které uživatel musí ur
 
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[scale=0.25]{full_window}
-	\caption{Details pravá lišta}
+	\includegraphics[scale=0.4]{right_bar1}
+	\caption{Detaily pravá lišta obecné}
 	\label{rightBar}
 \end{figure}
 
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[scale=0.25]{full_window}
-	\caption{Detail slepá mapa}
+	\includegraphics[scale=0.4]{right_bar2}
+	\caption{Detaily pravá lišta geometrie}
+	\label{rightBar}
+\end{figure}
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[scale=0.4]{blind_map}
+	\caption{Detaily slepá mapa}
 	\label{blindMap}
 \end{figure}
 
@@ -99,16 +106,15 @@ V okně nastavení je možné změnit URI databáze a také změnit přihlašova
 
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[scale=0.25]{full_window}
-	\caption{Details nastavení}
+	\includegraphics[scale=0.4]{settings}
+	\caption{Detaily nastavení}
 	\label{settings}
 \end{figure}
 
-\section{Prostorové dotazy}
-V této sekci se nachází popis jednotlivých dotazů a analytických funkcí, které poskytujeme uživateli jako doplňující materiál zvyšující využitelnost aplikaci.
+\section{Databáze}
+Hlavní tabulkou v databázi je SpatialEntity, která popisuje jednu geometrickou entitu uloženou v databázi. Obsahuje sloupec geometry typu SDO\_geometry, který v sobě skrývá geometrické informace dané entity. Krom toho také tabulka obsahuje jméno, typ entity, jehož hodnota může nabývat country, countryRec, river, place, largePlace, kde každá hodnota specifikuje jeden geometrický typ, kokrétně polygon,rectangle,linestring,point a circle v tomto pořadí.
 
-\subsection{Složité dotazy}
-
-\subsection{Analytické funkce}
+\section{Závěr}
+Tato dokumentace popisuje aplikaci MapMaker umožňující editování interaktivní mapy proměnlivé v čase. Na pozadí je využito prostorové a multimediální rozšíření relační databáze a na aplikační úrovni zde též najdete temporální dotazy. Detaily těchto dotazů najdete ve speciální dokumentaci právě na tyto účely.
 
 \end{document}

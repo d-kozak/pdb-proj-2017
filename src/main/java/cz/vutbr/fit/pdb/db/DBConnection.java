@@ -134,8 +134,7 @@ public class DBConnection {
      * Executes the given query.
      *
      * @param query
-     * @return Result of the query.
-     * @throws SQLException
+     * @return Result of the query
      */
     public void execute(String query) {
         if (!isConnected) {
