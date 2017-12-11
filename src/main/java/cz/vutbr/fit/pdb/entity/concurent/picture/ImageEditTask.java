@@ -21,6 +21,8 @@ public class ImageEditTask extends Task<EntityImage> {
                 return Picture.makeImageRotateLeft(entityImage);
             case ROTATE_RIGHT:
                 return Picture.makeImageRotateRight(entityImage);
+            case MIRROR:
+                return Picture.makeImageMirror(entityImage);
         }
         return null;
     }

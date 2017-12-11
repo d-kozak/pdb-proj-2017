@@ -63,7 +63,7 @@ public class PictureListViewItem {
 
         MenuItem mirrowMenuItem = new MenuItem("Mirrow");
         greyscaleMenuItem.setOnAction(event -> {
-            onImageOperation.accept(image, ImageOperation.MIRROW);
+            onImageOperation.accept(image, ImageOperation.MIRROR);
         });
 
         contextMenu.getItems()
