@@ -297,6 +297,24 @@ public class Spatial {
         return sum > 0;
     }
 
+    public static ObservableList<Point> jGeometryToPolygonPoints(JGeometry jGeo) {
+        double[] coords = jGeo.getOrdinatesArray();
+        int dimensions = jGeo.getDimensions();
+        // We do not want the last point - it's same as the first one in the DB
+        // and Entity does not store the first one also as the last one
+        Integer coordsCount = jGeo.getNumPoints() - 1;
+        ObservableList<Point> points = FXCollections.observableArrayList();
+        int[] elemInfo = jGeo.getElemInfo();
+        if (elemInfo.length > 3) {
+            // We want elements only from the first part.
+            coordsCount = (elemInfo[3] / dimensions);
+        }
+        for (Integer i = 0; i < coordsCount * dimensions; i += dimensions) {
+            points.add(new Point(coords[i], coords[i + 1]));
+        }
+        return points;
+    }
+
     /**
      * Transforms the given geometry to JGeometry.
      * @param geometry

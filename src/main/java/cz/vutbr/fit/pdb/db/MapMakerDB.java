@@ -89,21 +89,9 @@ public class MapMakerDB {
                         case "country":
                             byte[] countryData = rset.getBytes("geometry");
                             JGeometry jGeometryCountry = JGeometry.load(countryData);
-                            double[] countryCoords = jGeometryCountry.getOrdinatesArray();
-                            int[] elemInfo = jGeometryCountry.getElemInfo();
-                            int dimensions = jGeometryCountry.getDimensions();
-                            // We do not want the last point - it's same as the frist one in the DB
-                            // and Entity does not store the first one also as the last one
-                            Integer countryCoordsCount = jGeometryCountry.getNumPoints() - 1;
-                            if (elemInfo.length > 3) {
-                                // We want elements only from the first part.
-                                countryCoordsCount = (elemInfo[3] / dimensions);
-                            }
-                            ObservableList<Point> countryPoints = FXCollections.observableArrayList();
-                            for (Integer i = 0; i < countryCoordsCount * dimensions; i += dimensions) {
-                                countryPoints.add(new Point(countryCoords[i], countryCoords[i + 1]));
-                            }
-                            entity.setGeometry(new PolygonGeometry(countryPoints));
+                            entity.setGeometry(new PolygonGeometry(
+                                    Spatial.jGeometryToPolygonPoints(jGeometryCountry))
+                            );
                             break;
                         case "countryRec":
                             byte[] countryRecData = rset.getBytes("geometry");
@@ -211,21 +199,7 @@ public class MapMakerDB {
             throw new RuntimeException(ex);
         }
         if ((!(geo instanceof RectangleGeometry)) && (geo instanceof PolygonGeometry)) {
-            double[] countryCoords = jGeo.getOrdinatesArray();
-            int dimensions = jGeo.getDimensions();
-            // We do not want the last point - it's same as the frist one in the DB
-            // and Entity does not store the first one also as the last one
-            Integer countryCoordsCount = jGeo.getNumPoints() - 1;
-            int[] elemInfo = jGeo.getElemInfo();
-            if (elemInfo.length > 3) {
-                // We want elements only from the first part.
-                countryCoordsCount = (elemInfo[3] / dimensions);
-            }
-            ObservableList<Point> countryPoints = FXCollections.observableArrayList();
-            for (Integer i = 0; i < countryCoordsCount * dimensions; i += dimensions) {
-                countryPoints.add(new Point(countryCoords[i], countryCoords[i + 1]));
-            }
-            geo = new PolygonGeometry(countryPoints);
+            geo = new PolygonGeometry(Spatial.jGeometryToPolygonPoints(jGeo));
         }
         entity.setGeometry(geo);
         return entity;
@@ -292,21 +266,7 @@ public class MapMakerDB {
         }
         if (field == "geometry"){
             if ((!(geo instanceof RectangleGeometry)) && (geo instanceof PolygonGeometry)) {
-                double[] countryCoords = jGeo.getOrdinatesArray();
-                int dimensions = jGeo.getDimensions();
-                // We do not want the last point - it's same as the frist one in the DB
-                // and Entity does not store the first one also as the last one
-                Integer countryCoordsCount = jGeo.getNumPoints() - 1;
-                ObservableList<Point> countryPoints = FXCollections.observableArrayList();
-                int[] elemInfo = jGeo.getElemInfo();
-                if (elemInfo.length > 3) {
-                    // We want elements only from the first part.
-                    countryCoordsCount = (elemInfo[3] / dimensions);
-                }
-                for (Integer i = 0; i < countryCoordsCount * dimensions; i += dimensions) {
-                    countryPoints.add(new Point(countryCoords[i], countryCoords[i + 1]));
-                }
-                geo = new PolygonGeometry(countryPoints);
+                geo = new PolygonGeometry(Spatial.jGeometryToPolygonPoints(jGeo));
             }
             entity.setGeometry(geo);
         }
