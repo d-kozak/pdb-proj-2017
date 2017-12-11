@@ -14,7 +14,6 @@ public class GetPolygonDetailsTask extends Task<PolygonDetails> {
 
     @Override
     protected PolygonDetails call() throws Exception {
-        log.severe("Not impl yet");
         PolygonDetails polygonDetails = new PolygonDetails();
         polygonDetails.setArea(MapMakerDB.getArea(entity));
         polygonDetails.setCircumference(MapMakerDB.getCircumference(entity));
