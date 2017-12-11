@@ -90,20 +90,11 @@ public class EntityImage {
 
         EntityImage that = (EntityImage) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (image != null ? !image.equals(that.image) : that.image != null) return false;
-        if (time != null ? !time.equals(that.time) : that.time != null) return false;
-        return url != null ? url.equals(that.url) : that.url == null;
+        return id != null ? id.equals(that.id) : that.id == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (image != null ? image.hashCode() : 0);
-        result = 31 * result + (time != null ? time.hashCode() : 0);
-        result = 31 * result + (url != null ? url.hashCode() : 0);
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 }
