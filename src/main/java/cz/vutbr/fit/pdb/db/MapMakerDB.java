@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 
 /*
@@ -366,6 +367,38 @@ public class MapMakerDB {
         }
         log.severe("Unknown geometry: " + geometry.getClass());
         return null;
+    }
+
+    public static List<Integer> entitiesContainingPoint(Point point) {
+        List<Integer> list = new Vector<>();
+        try (PreparedStatement stmt = DBConnection.getInstance()
+                .getConnection()
+                .prepareStatement(
+                    "SELECT e.id " +
+                       "FROM spatialEntity e " +
+                       "WHERE SDO_CONTAINS(e.geometry, " +
+                       "  SDO_GEOMETRY(2001, NULL, " +
+                       "     SDO_POINT_TYPE(?, ?, NULL), " +
+                       "     NULL, NULL) " +
+                       "  ) = 'TRUE'"
+                )) {
+            stmt.setDouble(1, point.getX());
+            stmt.setDouble(2, point.getY());
+            try (ResultSet rset = stmt.executeQuery()) {
+                while (rset.next()) {
+                    list.add(rset.getInt("id"));
+                    log.severe("ENT " + list.get(list.size() - 1));
+                }
+            } catch (SQLException ex) {
+                log.severe("Execute SQL query exception: " + ex);
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException ex) {
+            log.severe("Create SQL statement exception: " + ex);
+            throw new RuntimeException(ex);
+        }
+        return list;
+
     }
 
     private boolean initPictures() {
