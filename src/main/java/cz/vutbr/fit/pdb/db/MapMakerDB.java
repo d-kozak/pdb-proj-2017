@@ -479,7 +479,7 @@ public class MapMakerDB {
                 .prepareStatement(
                         "SELECT outerE.name " +
                                 "FROM spatialEntity innerE, spatialEntity outerE " +
-                                "WHERE SDO_CONTAINS(outerE.geometry, innerE.geometry) = 'TRUE' " +
+                                "WHERE SDO_INSIDE(outerE.geometry, innerE.geometry) = 'TRUE' " +
                                 "AND (innerE.id <> outerE.id) " +
                                 "AND innerE.id = ?"
                 )) {
