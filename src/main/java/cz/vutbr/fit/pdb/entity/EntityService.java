@@ -99,11 +99,15 @@ public class EntityService {
         SelectEntitiesAtTask selectEntitiesAtTask = new SelectEntitiesAtTask();
         selectEntitiesAtTask.setPoint(new Point(x, y));
         selectEntitiesAtTask.setOnSucceeded(event -> {
-            ObservableList<Integer> loadedEntities = selectEntitiesAtTask.getValue();
             Map<Integer, Entity> entitiesMap = new HashMap<>();
             for (Entity entity : entities) {
                 entitiesMap.put(entity.getId(), entity);
             }
+            ObservableList<Integer> loadedEntities = selectEntitiesAtTask.getValue();
+            log.info("Entities at are: " + loadedEntities.stream()
+                                                         .map(entitiesMap::get)
+                                                         .map(Entity::getName)
+                                                         .collect(joining("\n\n")));
             Optional<Entity> entityAt = loadedEntities.stream()
                                                       .map(entitiesMap::get)
                                                       .sorted(Comparator.comparingInt(value -> value.getGeometryType()
@@ -114,9 +118,6 @@ public class EntityService {
                 log.info(String.format("Changing entity from %s to %s", selectedEntityService.getEntityProperty(), entity));
                 selectedEntityService.setEntityProperty(entity);
             });
-            if (!entityAt.isPresent()) {
-                showInfo("Empty select", String.format("No entities found at [%f,%f]", x, y));
-            }
         });
         selectEntitiesAtTask.setOnFailed(event -> {
             showError("Database error", "Could not select entity");

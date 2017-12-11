@@ -79,10 +79,13 @@ public class CircleInfoPresenter implements Initializable {
         circleDetailsTask.setOnSucceeded(event -> {
             CircleDetails circleDetails = circleDetailsTask.getValue();
             Text area = new Text("Area of the circle is: " + circleDetails.getArea());
+            area.setWrappingWidth(150);
             Text circumference = new Text("Circumference of the circle is: " + circleDetails.getCircumference());
+            circumference.setWrappingWidth(150);
             Text entitiesInside = new Text("Contains entities: " + circleDetails.getEntitiesInside()
                                                                                 .stream()
                                                                                 .collect(joining(",")));
+            entitiesInside.setWrappingWidth(150);
             vbox.getChildren()
                 .addAll(area, circumference, entitiesInside);
         });

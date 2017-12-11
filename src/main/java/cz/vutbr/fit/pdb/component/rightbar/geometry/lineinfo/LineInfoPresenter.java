@@ -40,6 +40,7 @@ public class LineInfoPresenter extends AbstractPointListBasedInfoPresenter {
         lineDetailsTask.setOnSucceeded(event -> {
             LineDetails lineDetails = lineDetailsTask.getValue();
             Text text = new Text("Length of the line is: " + lineDetails.getLength());
+            text.setWrappingWidth(150);
             vbox.getChildren()
                 .add(text);
         });

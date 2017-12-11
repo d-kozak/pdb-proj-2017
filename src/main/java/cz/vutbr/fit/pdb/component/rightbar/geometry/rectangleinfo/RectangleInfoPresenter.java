@@ -4,7 +4,9 @@ import cz.vutbr.fit.pdb.configuration.Configuration;
 import cz.vutbr.fit.pdb.entity.Entity;
 import cz.vutbr.fit.pdb.entity.EntityService;
 import cz.vutbr.fit.pdb.entity.SelectedEntityService;
+import cz.vutbr.fit.pdb.entity.concurent.geometry.GetPolygonDetailsTask;
 import cz.vutbr.fit.pdb.entity.geometry.Point;
+import cz.vutbr.fit.pdb.entity.geometry.PolygonDetails;
 import cz.vutbr.fit.pdb.entity.geometry.RectangleGeometry;
 import cz.vutbr.fit.pdb.utils.StringNumConverter;
 import javafx.collections.FXCollections;
@@ -13,7 +15,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import lombok.extern.java.Log;
 import lombok.val;
 
@@ -21,8 +26,10 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static cz.vutbr.fit.pdb.utils.ExceptionUtils.printException;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showError;
 import static cz.vutbr.fit.pdb.utils.JavaFXUtils.showInfo;
+import static java.util.stream.Collectors.joining;
 
 @Log
 public class RectangleInfoPresenter implements Initializable {
@@ -36,6 +43,9 @@ public class RectangleInfoPresenter implements Initializable {
 
     @FXML
     private TextField rightDownYField;
+
+    @FXML
+    private VBox vbox;
 
     private Point leftUpBinded;
 
@@ -60,10 +70,44 @@ public class RectangleInfoPresenter implements Initializable {
                              .addListener((observable, oldValue, newValue) -> {
                                  val newDescription = (ObservableList<Point>) newValue.getDescription();
                                  initForRectangle(newDescription.get(0), newDescription.get(1));
-
+                                 reloadDetails();
                              });
 
         initForRectangle(description.get(0), description.get(1));
+        loadDetails();
+    }
+
+    private void loadDetails() {
+        ObservableList<Node> children = vbox.getChildren();
+        if (children.size() > 1)
+            children.remove(1, children.size());
+
+        GetPolygonDetailsTask polygonDetailsTask = new GetPolygonDetailsTask();
+        polygonDetailsTask.setEntity(selectedEntityService.getEntityProperty());
+        polygonDetailsTask.setOnSucceeded(event -> {
+            PolygonDetails polygonDetails = polygonDetailsTask.getValue();
+            Text area = new Text("Area of the rectangle is: " + polygonDetails.getArea());
+            area.setWrappingWidth(150);
+            Text circumference = new Text("Circumference of the rectangle is: " + polygonDetails.getCircumference());
+            circumference.setWrappingWidth(150);
+            Text entitiesInside = new Text("Contains entities: " +
+                    polygonDetails.getEntitiesInside()
+                                  .stream()
+                                  .collect(joining(","))
+            );
+            entitiesInside.setWrappingWidth(150);
+            vbox.getChildren()
+                .addAll(area, circumference, entitiesInside);
+        });
+        polygonDetailsTask.setOnFailed(event -> {
+            printException(polygonDetailsTask.getException());
+            showError("Database error", "Could not load details");
+        });
+        Configuration.THREAD_POOL.submit(polygonDetailsTask);
+    }
+
+    public void reloadDetails() {
+        loadDetails();
     }
 
     private void initForRectangle(Point leftUp, Point rightDown) {
