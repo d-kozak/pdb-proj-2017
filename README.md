@@ -7,6 +7,7 @@ Unfortunately this app needs to access a proprietary Oracle spatial database, it
 ## Prequisities
 
 * Java 8
+* JavaFX
 * Maven
 
 ## Compile and run
