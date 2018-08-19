@@ -1,4 +1,4 @@
-# Desktop client using Oracle Spatial database
+# Desktop app connecting to Oracle Spatial database
 
 This repository contains code of our project for [Advanced Database Systems](http://www.fit.vutbr.cz/study/course-l.php.en?id=8791 "Course page") that we made in winter 2017. It is a JavaFX desktop application. Part of it is written in javascript in order to use the [Leaflet](https://leafletjs.com/) library for visualizing maps. This part is located in a WebView JavaFX component. 
 
