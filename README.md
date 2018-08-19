@@ -19,4 +19,4 @@ java -jar target/fit-pdb17-epsilon-1.0-SNAPSHOT.jar
 ## Authors
 * [David Kozak](https://github.com/d-kozak) dkozak94@gmail.com
 * [Pavel Plaskon](https://github.com/enkelli) 
-* Jan Velecky
+* [Jan Velecky](https://github.com/VVelda)
